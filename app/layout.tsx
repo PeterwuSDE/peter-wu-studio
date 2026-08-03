@@ -29,8 +29,8 @@ export const metadata: Metadata = {
     images: ["/peter-wu-studio/og.png"],
   },
   icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon.png",
+    icon: "/peter-wu-studio/favicon.png",
+    shortcut: "/peter-wu-studio/favicon.png",
   },
 };
 
