@@ -1,4 +1,4 @@
-# Peter Wu Studio
+# Northline Studio
 
 A responsive one-page website for an independent web design, development, hosting, and support business.
 

@@ -20,7 +20,8 @@ test("renders the finished studio homepage", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /Peter Wu Studio \| Websites for Small Businesses/);
+  assert.match(html, /Northline Studio \| Websites for Small Businesses/);
+  assert.match(html, /北境/);
   assert.match(html, /Websites that make your business look/);
   assert.match(html, /Selected concepts/);
   assert.match(html, /Everything you need/);

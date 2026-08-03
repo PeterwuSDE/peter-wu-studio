@@ -39,12 +39,12 @@ const projects = [
   {
     number: "03",
     type: "Home Services",
-    name: "Northline Build",
+    name: "Summit Build",
     description: "A bold, direct site that makes quality craftsmanship easy to trust.",
     className: "project-northline",
     mockup: (
       <div className="project-screen northline-screen" aria-hidden="true">
-        <div className="northline-nav"><b>NORTHLINE / BUILD</b><span>PROJECTS&nbsp;&nbsp; PROCESS&nbsp;&nbsp; CONTACT</span></div>
+        <div className="northline-nav"><b>SUMMIT / BUILD</b><span>PROJECTS&nbsp;&nbsp; PROCESS&nbsp;&nbsp; CONTACT</span></div>
         <div className="northline-shape" />
         <strong>BUILT RIGHT.<br />BUILT TO LAST.</strong>
         <i>START A PROJECT →</i>
@@ -97,9 +97,9 @@ export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="Peter Wu Studio, home">
-          <span className="brand-mark">PW</span>
-          <span>Peter Wu<br />Studio</span>
+        <a className="brand" href="#top" aria-label="Northline Studio, home">
+          <span className="brand-mark">N</span>
+          <span className="brand-name"><span className="brand-cn">北境</span><span>Northline<br />Studio</span></span>
         </a>
         <nav className="desktop-nav" aria-label="Primary navigation">
           <a href="#work">Work</a>
@@ -225,15 +225,15 @@ export default function Home() {
 
       <section className="about-section section-pad" id="about">
         <div className="about-card" aria-hidden="true">
-          <span className="about-pw">PW</span>
+          <span className="about-n">N</span>
           <div className="about-lines"><i /><i /><i /></div>
           <span className="about-caption">INDEPENDENT<br />DESIGN STUDIO</span>
         </div>
         <div className="about-copy">
           <p className="section-kicker">The person behind the pixels</p>
           <h2>Big-agency thinking.<br /><em>One-to-one attention.</em></h2>
-          <p>Hi, I&apos;m Peter. I help small businesses show up online with the same care and quality they bring to their own work.</p>
-          <p>You&apos;ll work directly with me from our first conversation through launch. That means fewer handoffs, clearer communication, and a website built by someone who knows your story.</p>
+          <p>Northline Studio helps small businesses show up online with the same care and quality they bring to their own work.</p>
+          <p>You&apos;ll work directly with one dedicated maker from our first conversation through launch. That means fewer handoffs, clearer communication, and a website built by someone who knows your story.</p>
           <a className="text-link" href="#contact">Tell me about your business <span>↗</span></a>
         </div>
       </section>
@@ -260,10 +260,10 @@ export default function Home() {
       </section>
 
       <footer>
-        <a className="brand footer-brand" href="#top" aria-label="Back to top"><span className="brand-mark">PW</span><span>Peter Wu<br />Studio</span></a>
+        <a className="brand footer-brand" href="#top" aria-label="Back to top"><span className="brand-mark">N</span><span className="brand-name"><span className="brand-cn">北境</span><span>Northline<br />Studio</span></span></a>
         <p>Web design, development & ongoing care<br />for small businesses that care about their work.</p>
         <div className="footer-links"><a href="#work">Work</a><a href="#services">Services</a><a href="#about">About</a><a href="#contact">Contact</a></div>
-        <div className="footer-bottom"><span>© {new Date().getFullYear()} Peter Wu Studio</span><span>Designed with care. Built to last.</span><a href="#top">Back to top ↑</a></div>
+        <div className="footer-bottom"><span>© {new Date().getFullYear()} Northline Studio</span><span>Designed with care. Built to last.</span><a href="#top">Back to top ↑</a></div>
       </footer>
     </main>
   );

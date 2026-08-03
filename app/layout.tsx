@@ -13,18 +13,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Peter Wu Studio | Websites for Small Businesses",
+  title: "Northline Studio | Websites for Small Businesses",
   description: "Custom website design, development, hosting, and ongoing support for small businesses that care about their work.",
   metadataBase: new URL("https://peterwusde.github.io/peter-wu-studio/"),
   openGraph: {
-    title: "Peter Wu Studio | Websites for Small Businesses",
+    title: "Northline Studio | Websites for Small Businesses",
     description: "Custom website design, reliable hosting, and ongoing support—all handled for you.",
     type: "website",
-    images: [{ url: "/peter-wu-studio/og.png", width: 1659, height: 948, alt: "Peter Wu Studio — websites for small businesses" }],
+    images: [{ url: "/peter-wu-studio/og.png", width: 1658, height: 949, alt: "Northline Studio — websites for small businesses" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Peter Wu Studio | Websites for Small Businesses",
+    title: "Northline Studio | Websites for Small Businesses",
     description: "Custom website design, reliable hosting, and ongoing support—all handled for you.",
     images: ["/peter-wu-studio/og.png"],
   },
