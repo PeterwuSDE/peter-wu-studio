@@ -98,8 +98,8 @@ export default function Home() {
     <main>
       <header className="site-header">
         <a className="brand" href="#top" aria-label="Northline Studio, home">
-          <span className="brand-mark">N</span>
-          <span className="brand-name"><span className="brand-cn">北境</span><span>Northline<br />Studio</span></span>
+          <span className="brand-mark" aria-hidden="true"><span className="brand-symbol brand-symbol-north">北</span><span className="brand-symbol brand-symbol-south">境</span></span>
+          <span className="brand-name">Northline<br />Studio</span>
         </a>
         <nav className="desktop-nav" aria-label="Primary navigation">
           <a href="#work">Work</a>
@@ -225,7 +225,7 @@ export default function Home() {
 
       <section className="about-section section-pad" id="about">
         <div className="about-card" aria-hidden="true">
-          <span className="about-n">N</span>
+          <span className="about-logo"><span className="about-symbol about-symbol-north">北</span><span className="about-symbol about-symbol-south">境</span></span>
           <div className="about-lines"><i /><i /><i /></div>
           <span className="about-caption">INDEPENDENT<br />DESIGN STUDIO</span>
         </div>
@@ -260,7 +260,7 @@ export default function Home() {
       </section>
 
       <footer>
-        <a className="brand footer-brand" href="#top" aria-label="Back to top"><span className="brand-mark">N</span><span className="brand-name"><span className="brand-cn">北境</span><span>Northline<br />Studio</span></span></a>
+        <a className="brand footer-brand" href="#top" aria-label="Back to top"><span className="brand-mark" aria-hidden="true"><span className="brand-symbol brand-symbol-north">北</span><span className="brand-symbol brand-symbol-south">境</span></span><span className="brand-name">Northline<br />Studio</span></a>
         <p>Web design, development & ongoing care<br />for small businesses that care about their work.</p>
         <div className="footer-links"><a href="#work">Work</a><a href="#services">Services</a><a href="#about">About</a><a href="#contact">Contact</a></div>
         <div className="footer-bottom"><span>© {new Date().getFullYear()} Northline Studio</span><span>Designed with care. Built to last.</span><a href="#top">Back to top ↑</a></div>

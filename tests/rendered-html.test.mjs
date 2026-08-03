@@ -21,7 +21,8 @@ test("renders the finished studio homepage", async () => {
 
   const html = await response.text();
   assert.match(html, /Northline Studio \| Websites for Small Businesses/);
-  assert.match(html, /北境/);
+  assert.match(html, /brand-symbol-north[^>]*>北/);
+  assert.match(html, /brand-symbol-south[^>]*>境/);
   assert.match(html, /Websites that make your business look/);
   assert.match(html, /Selected concepts/);
   assert.match(html, /Everything you need/);

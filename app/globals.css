@@ -39,10 +39,12 @@ button { font: inherit; }
   top: 0;
   z-index: 50;
 }
-.brand { display: inline-flex; align-items: center; gap: 11px; width: fit-content; text-transform: uppercase; font-size: 11px; font-weight: 700; line-height: 1.05; letter-spacing: .06em; }
-.brand-mark { width: 39px; height: 39px; border: 1.5px solid var(--ink); display: grid; place-items: center; border-radius: 50%; font-weight: 800; letter-spacing: 0; }
-.brand-name { display: grid; grid-template-columns: auto auto; align-items: center; gap: 9px; }
-.brand-cn { font-family: Songti SC, STSong, SimSun, Noto Serif CJK SC, serif; font-size: 18px; font-weight: 600; letter-spacing: .08em; line-height: 1; text-transform: none; writing-mode: vertical-rl; }
+.brand { display: inline-flex; align-items: center; gap: 12px; width: fit-content; text-transform: uppercase; font-size: 11px; font-weight: 700; line-height: 1.05; letter-spacing: .06em; }
+.brand-mark { width: 44px; height: 44px; border: 1.5px solid var(--ink); display: block; position: relative; border-radius: 50%; font-family: STFangsong, FangSong, FangSong_GB2312, "仿宋", serif; font-weight: 500; letter-spacing: 0; }
+.brand-symbol { position: absolute; font-size: 17px; line-height: 1; text-transform: none; }
+.brand-symbol-north { left: 8px; top: 7px; }
+.brand-symbol-south { right: 8px; bottom: 7px; }
+.brand-name { display: block; }
 .desktop-nav { display: flex; align-items: center; gap: clamp(24px, 3vw, 48px); font-size: 13px; font-weight: 600; }
 .desktop-nav a { position: relative; }
 .desktop-nav a::after { content: ""; height: 1px; position: absolute; left: 0; right: 100%; bottom: -5px; background: var(--ink); transition: right .25s ease; }
@@ -172,7 +174,10 @@ h1 em, h2 em { color: var(--blue); font-family: Georgia, 'Times New Roman', seri
 
 .about-section { background: var(--paper-bright); display: grid; grid-template-columns: minmax(300px,.75fr) minmax(450px,1.25fr); gap: clamp(70px,10vw,170px); align-items: center; }
 .about-card { aspect-ratio: .88; max-width: 530px; background: var(--lime); position: relative; overflow: hidden; border-radius: 2px; }
-.about-n { position: absolute; top: 8%; left: 9%; font-size: clamp(92px,14vw,205px); font-weight: 800; line-height: .8; letter-spacing: 0; color: var(--blue); }
+.about-logo { position: absolute; top: 8%; left: 9%; width: clamp(130px,18vw,240px); aspect-ratio: 1; border: 3px solid var(--blue); border-radius: 50%; font-family: STFangsong, FangSong, FangSong_GB2312, "仿宋", serif; color: var(--blue); }
+.about-symbol { position: absolute; font-size: clamp(46px,7vw,86px); line-height: 1; }
+.about-symbol-north { left: 17%; top: 15%; }
+.about-symbol-south { right: 17%; bottom: 15%; }
 .about-lines { position: absolute; width: 68%; aspect-ratio: 1; border: 1px solid var(--blue); border-radius: 50%; right: -29%; bottom: -5%; }
 .about-lines i { position: absolute; border: 1px solid var(--blue); border-radius: 50%; inset: 14%; }
 .about-lines i:nth-child(2) { inset: 29%; }
@@ -230,7 +235,10 @@ footer > p { margin: 0; font-size: 14px; line-height: 1.55; color: #555651; }
   .site-header { height: 76px; grid-template-columns: 1fr auto; padding: 0 20px; }
   .desktop-nav, .header-cta { display: none; }
   .mobile-menu { display: block; }
-  .brand-mark { width: 35px; height: 35px; }
+  .brand-mark { width: 39px; height: 39px; }
+  .brand-symbol { font-size: 15px; }
+  .brand-symbol-north { left: 7px; top: 6px; }
+  .brand-symbol-south { right: 7px; bottom: 6px; }
   .hero { min-height: auto; }
   .hero-copy { padding: 70px 22px 108px; }
   .hero h1 { font-size: clamp(54px,16vw,82px); }
