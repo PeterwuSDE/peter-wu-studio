@@ -21,8 +21,9 @@ test("renders the finished studio homepage", async () => {
 
   const html = await response.text();
   assert.match(html, /Northline Studio \| Websites for Small Businesses/);
-  assert.match(html, /brand-symbol-north[^>]*>北/);
-  assert.match(html, /brand-symbol-south[^>]*>境/);
+  assert.match(html, /northline-logo-north[^>]*>北/);
+  assert.match(html, /northline-logo-south[^>]*>境/);
+  assert.doesNotMatch(html, /↗/);
   assert.match(html, /Websites that make your business look/);
   assert.match(html, /Selected concepts/);
   assert.match(html, /Everything you need/);
@@ -43,5 +44,6 @@ test("ships project-specific metadata and assets", async () => {
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await access(new URL("../public/og.png", import.meta.url));
   await access(new URL("../public/favicon.png", import.meta.url));
+  await access(new URL("../public/northline-logo.svg", import.meta.url));
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
 });

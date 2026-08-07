@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="北境 logo">
+  <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="2.4" vector-effect="non-scaling-stroke"/>
+  <text x="30" y="31" fill="currentColor" font-family="STFangsong, FangSong, FangSong_GB2312, 仿宋, serif" font-size="22" font-weight="500" dominant-baseline="middle" text-anchor="middle">北</text>
+  <text x="70" y="70" fill="currentColor" font-family="STFangsong, FangSong, FangSong_GB2312, 仿宋, serif" font-size="22" font-weight="500" dominant-baseline="middle" text-anchor="middle">境</text>
+</svg>

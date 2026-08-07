@@ -40,18 +40,17 @@ button { font: inherit; }
   z-index: 50;
 }
 .brand { display: inline-flex; align-items: center; gap: 14px; width: fit-content; text-transform: uppercase; font-size: 11px; font-weight: 700; line-height: 1.1; letter-spacing: .06em; }
-.brand-mark { width: 56px; height: 56px; border: 1.5px solid var(--ink); display: block; position: relative; flex: 0 0 auto; border-radius: 50%; font-family: STFangsong, FangSong, FangSong_GB2312, "仿宋", serif; font-weight: 500; letter-spacing: 0; }
-.brand-symbol { position: absolute; font-size: 19px; line-height: 1; text-transform: none; }
-.brand-symbol-north { left: 11px; top: 10px; }
-.brand-symbol-south { right: 11px; bottom: 10px; }
+.northline-logo { display: block; flex: 0 0 auto; overflow: visible; }
+.northline-logo-ring { fill: none; stroke: currentColor; stroke-width: 2.4; vector-effect: non-scaling-stroke; }
+.northline-logo-text { fill: currentColor; font-family: STFangsong, FangSong, FangSong_GB2312, "仿宋", serif; font-size: 22px; font-weight: 500; line-height: 1; dominant-baseline: middle; text-anchor: middle; }
+.brand-logo { width: 66px; height: 66px; color: var(--ink); }
 .brand-name { display: block; }
 .desktop-nav { display: flex; align-items: center; gap: clamp(24px, 3vw, 48px); font-size: 13px; font-weight: 600; }
 .desktop-nav a { position: relative; }
 .desktop-nav a::after { content: ""; height: 1px; position: absolute; left: 0; right: 100%; bottom: -5px; background: var(--ink); transition: right .25s ease; }
 .desktop-nav a:hover::after { right: 0; }
-.header-cta { justify-self: end; background: var(--ink); color: white; border-radius: 999px; padding: 13px 18px 13px 20px; font-size: 12px; font-weight: 700; transition: transform .2s, background .2s; }
+.header-cta { justify-self: end; background: var(--ink); color: white; border-radius: 999px; padding: 13px 20px; font-size: 12px; font-weight: 700; transition: transform .2s, background .2s; }
 .header-cta:hover { transform: translateY(-2px); background: var(--blue); }
-.header-cta span { margin-left: 12px; }
 .mobile-menu { display: none; justify-self: end; position: relative; }
 .mobile-menu summary { list-style: none; cursor: pointer; font-size: 13px; font-weight: 700; }
 .mobile-menu summary::-webkit-details-marker { display: none; }
@@ -68,7 +67,6 @@ h1 em, h2 em { color: var(--blue); font-family: Georgia, 'Times New Roman', seri
 .hero-actions { margin-top: 38px; display: flex; align-items: center; gap: 30px; flex-wrap: wrap; }
 .button { display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 24px; border-radius: 999px; font-size: 13px; font-weight: 750; transition: transform .2s, background .2s, color .2s; }
 .button:hover { transform: translateY(-3px); }
-.button span { margin-left: 24px; font-size: 16px; }
 .button-primary { background: var(--blue); color: white; }
 .button-primary:hover { background: var(--blue-dark); }
 .text-link { font-size: 13px; font-weight: 720; border-bottom: 1px solid var(--ink); padding: 10px 0 6px; }
@@ -125,8 +123,6 @@ h1 em, h2 em { color: var(--blue); font-family: Georgia, 'Times New Roman', seri
 .project-screen { width: 100%; max-width: 660px; aspect-ratio: 1.65; position: relative; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,.25); }
 .project-info h3 { margin: 0 0 18px; font-size: clamp(32px, 3.8vw, 54px); line-height: 1.08; letter-spacing: 0; }
 .project-info p { color: rgba(255,255,255,.58); line-height: 1.6; font-size: 14px; }
-.project-arrow { display: grid; place-items: center; width: 44px; height: 44px; margin-top: 38px; border: 1px solid rgba(255,255,255,.4); border-radius: 50%; font-size: 18px; transition: background .2s, color .2s; }
-.project:hover .project-arrow { background: var(--lime); color: var(--ink); border-color: var(--lime); }
 .project-aster .project-visual { background: #ccd7fb; }
 .aster-screen { background: #f3eee4; color: #203151; padding: 24px; transform: rotate(-1.5deg); }
 .screen-nav { display: flex; justify-content: space-between; font-size: clamp(6px, .7vw, 10px); letter-spacing: .05em; }
@@ -174,10 +170,7 @@ h1 em, h2 em { color: var(--blue); font-family: Georgia, 'Times New Roman', seri
 
 .about-section { background: var(--paper-bright); display: grid; grid-template-columns: minmax(300px,.75fr) minmax(450px,1.25fr); gap: clamp(70px,10vw,170px); align-items: center; }
 .about-card { aspect-ratio: .88; max-width: 530px; background: var(--lime); position: relative; overflow: hidden; border-radius: 2px; }
-.about-logo { position: absolute; top: 8%; left: 9%; width: clamp(170px,22vw,280px); aspect-ratio: 1; border: 3px solid var(--blue); border-radius: 50%; font-family: STFangsong, FangSong, FangSong_GB2312, "仿宋", serif; color: var(--blue); }
-.about-symbol { position: absolute; font-size: clamp(48px,7vw,86px); line-height: 1; }
-.about-symbol-north { left: 19%; top: 17%; }
-.about-symbol-south { right: 19%; bottom: 17%; }
+.about-logo { position: absolute; top: 8%; left: 9%; width: clamp(190px,24vw,300px); color: var(--blue); }
 .about-lines { position: absolute; width: 68%; aspect-ratio: 1; border: 1px solid var(--blue); border-radius: 50%; right: -29%; bottom: -5%; }
 .about-lines i { position: absolute; border: 1px solid var(--blue); border-radius: 50%; inset: 14%; }
 .about-lines i:nth-child(2) { inset: 29%; }
@@ -235,10 +228,7 @@ footer > p { margin: 0; font-size: 14px; line-height: 1.55; color: #555651; }
   .site-header { height: 76px; grid-template-columns: 1fr auto; padding: 0 20px; }
   .desktop-nav, .header-cta { display: none; }
   .mobile-menu { display: block; }
-  .brand-mark { width: 48px; height: 48px; }
-  .brand-symbol { font-size: 17px; }
-  .brand-symbol-north { left: 9px; top: 8px; }
-  .brand-symbol-south { right: 9px; bottom: 8px; }
+  .brand-logo { width: 56px; height: 56px; }
   .hero { min-height: auto; }
   .hero-copy { padding: 70px 22px 108px; }
   .hero h1 { font-size: clamp(48px,14vw,76px); }

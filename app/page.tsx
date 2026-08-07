@@ -14,7 +14,7 @@ const projects = [
         <div className="aster-copy">
           <span>THOUGHTFUL ADVICE. LASTING VALUE.</span>
           <strong>Clarity for every<br />turn ahead.</strong>
-          <i>Explore our approach →</i>
+          <i>Explore our approach</i>
         </div>
         <div className="aster-orbit" />
       </div>
@@ -32,7 +32,7 @@ const projects = [
         <span className="common-note">COFFEE · COMMUNITY · EVERY DAY</span>
         <strong>GOOD DAYS<br />START HERE.</strong>
         <div className="coffee-cup"><span /></div>
-        <i>VIEW THE MENU ↗</i>
+        <i>VIEW THE MENU</i>
       </div>
     ),
   },
@@ -47,7 +47,7 @@ const projects = [
         <div className="northline-nav"><b>SUMMIT / BUILD</b><span>PROJECTS&nbsp;&nbsp; PROCESS&nbsp;&nbsp; CONTACT</span></div>
         <div className="northline-shape" />
         <strong>BUILT RIGHT.<br />BUILT TO LAST.</strong>
-        <i>START A PROJECT →</i>
+        <i>START A PROJECT</i>
       </div>
     ),
   },
@@ -93,12 +93,22 @@ const faqs = [
   },
 ];
 
+function NorthlineLogo({ className = "" }: { className?: string }) {
+  return (
+    <svg className={`northline-logo ${className}`} viewBox="0 0 100 100" role="img" aria-label="北境 logo">
+      <circle className="northline-logo-ring" cx="50" cy="50" r="46" />
+      <text className="northline-logo-text northline-logo-north" x="30" y="31">北</text>
+      <text className="northline-logo-text northline-logo-south" x="70" y="70">境</text>
+    </svg>
+  );
+}
+
 export default function Home() {
   return (
     <main>
       <header className="site-header">
         <a className="brand" href="#top" aria-label="Northline Studio, home">
-          <span className="brand-mark" aria-hidden="true"><span className="brand-symbol brand-symbol-north">北</span><span className="brand-symbol brand-symbol-south">境</span></span>
+          <NorthlineLogo className="brand-logo" />
           <span className="brand-name">Northline<br />Studio</span>
         </a>
         <nav className="desktop-nav" aria-label="Primary navigation">
@@ -107,7 +117,7 @@ export default function Home() {
           <a href="#process">Process</a>
           <a href="#about">About</a>
         </nav>
-        <a className="header-cta" href="#contact">Start a project <span>↗</span></a>
+        <a className="header-cta" href="#contact">Start a project</a>
         <details className="mobile-menu">
           <summary aria-label="Open navigation">Menu</summary>
           <nav aria-label="Mobile navigation">
@@ -126,7 +136,7 @@ export default function Home() {
           <h1>Websites that make your business look <em>as good as it is.</em></h1>
           <p className="hero-intro">Custom design, reliable hosting, and ongoing support—all handled for you, so you can focus on running your business.</p>
           <div className="hero-actions">
-            <a className="button button-primary" href="#contact">Let&apos;s work together <span>↗</span></a>
+            <a className="button button-primary" href="#contact">Let&apos;s work together</a>
             <a className="text-link" href="#work">See selected work <span>↓</span></a>
           </div>
         </div>
@@ -142,7 +152,7 @@ export default function Home() {
               <div className="mini-nav"><b>THE GOOD CO.</b><span>ABOUT&nbsp;&nbsp; SERVICES&nbsp;&nbsp; CONTACT</span></div>
               <p>LOCAL EXPERTISE · PERSONAL SERVICE</p>
               <h2>Great work<br />deserves a<br /><em>great website.</em></h2>
-              <button type="button" tabIndex={-1}>WORK WITH US&nbsp;&nbsp; ↗</button>
+              <button type="button" tabIndex={-1}>WORK WITH US</button>
               <div className="mini-art"><span className="mini-arch" /><span className="mini-circle" /></div>
             </div>
           </div>
@@ -183,7 +193,6 @@ export default function Home() {
               <div className="project-info">
                 <h3>{project.name}</h3>
                 <p>{project.description}</p>
-                <span className="project-arrow" aria-hidden="true">↗</span>
               </div>
             </article>
           ))}
@@ -225,7 +234,7 @@ export default function Home() {
 
       <section className="about-section section-pad" id="about">
         <div className="about-card" aria-hidden="true">
-          <span className="about-logo"><span className="about-symbol about-symbol-north">北</span><span className="about-symbol about-symbol-south">境</span></span>
+          <NorthlineLogo className="about-logo" />
           <div className="about-lines"><i /><i /><i /></div>
           <span className="about-caption">INDEPENDENT<br />DESIGN STUDIO</span>
         </div>
@@ -234,7 +243,7 @@ export default function Home() {
           <h2>Big-agency thinking.<br /><em>One-to-one attention.</em></h2>
           <p>Northline Studio helps small businesses show up online with the same care and quality they bring to their own work.</p>
           <p>You&apos;ll work directly with one dedicated maker from our first conversation through launch. That means fewer handoffs, clearer communication, and a website built by someone who knows your story.</p>
-          <a className="text-link" href="#contact">Tell me about your business <span>↗</span></a>
+          <a className="text-link" href="#contact">Tell me about your business</a>
         </div>
       </section>
 
@@ -255,12 +264,12 @@ export default function Home() {
         <p className="section-kicker light">Have a project in mind?</p>
         <h2>Let&apos;s make your website<br /><em>work harder.</em></h2>
         <p>Tell me a little about your business and where you want to go next. The first conversation is free, friendly, and pressure-free.</p>
-        <a className="button button-light" href="mailto:hello@yourstudio.com?subject=New%20website%20project">Start the conversation <span>↗</span></a>
+        <a className="button button-light" href="mailto:hello@yourstudio.com?subject=New%20website%20project">Start the conversation</a>
         <small>Currently accepting new projects</small>
       </section>
 
       <footer>
-        <a className="brand footer-brand" href="#top" aria-label="Back to top"><span className="brand-mark" aria-hidden="true"><span className="brand-symbol brand-symbol-north">北</span><span className="brand-symbol brand-symbol-south">境</span></span><span className="brand-name">Northline<br />Studio</span></a>
+        <a className="brand footer-brand" href="#top" aria-label="Back to top"><NorthlineLogo className="brand-logo" /><span className="brand-name">Northline<br />Studio</span></a>
         <p>Web design, development & ongoing care<br />for small businesses that care about their work.</p>
         <div className="footer-links"><a href="#work">Work</a><a href="#services">Services</a><a href="#about">About</a><a href="#contact">Contact</a></div>
         <div className="footer-bottom"><span>© {new Date().getFullYear()} Northline Studio</span><span>Designed with care. Built to last.</span><a href="#top">Back to top ↑</a></div>
