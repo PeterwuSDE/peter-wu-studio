@@ -1,3 +1,5 @@
+import { MobileMenu } from "./MobileMenu";
+
 const projects = [
   {
     number: "01",
@@ -122,16 +124,7 @@ export default function Home() {
           <a href="#about">About</a>
         </nav>
         <a className="header-cta" href="#contact">Start a project</a>
-        <details className="mobile-menu">
-          <summary aria-label="Open navigation">Menu</summary>
-          <nav aria-label="Mobile navigation">
-            <a href="#work">Work</a>
-            <a href="#services">Services</a>
-            <a href="#process">Process</a>
-            <a href="#about">About</a>
-            <a href="#contact">Start a project</a>
-          </nav>
-        </details>
+        <MobileMenu />
       </header>
 
       <section className="hero" id="top">
