@@ -13,19 +13,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Northline Studio | Websites for Small Businesses",
-  description: "Custom website design, development, hosting, and ongoing support for small businesses that care about their work.",
+  title: "Northline Studio | Design-Led Websites & Digital Systems",
+  description: "Elevated website design, precise development, secure hosting, and managed care for brands that need to look exceptional and perform reliably.",
   metadataBase: new URL("https://peterwusde.github.io/peter-wu-studio/"),
   openGraph: {
-    title: "Northline Studio | Websites for Small Businesses",
-    description: "Custom website design, reliable hosting, and ongoing support—all handled for you.",
+    title: "Northline Studio | Design-Led Websites & Digital Systems",
+    description: "Elevated website design, precise development, secure hosting, and managed care for brands with high standards.",
     type: "website",
-    images: [{ url: "/peter-wu-studio/og.png", width: 1658, height: 949, alt: "Northline Studio — websites for small businesses" }],
+    images: [{ url: "/peter-wu-studio/og.png", width: 1658, height: 949, alt: "Northline Studio — design-led websites and digital systems" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Northline Studio | Websites for Small Businesses",
-    description: "Custom website design, reliable hosting, and ongoing support—all handled for you.",
+    title: "Northline Studio | Design-Led Websites & Digital Systems",
+    description: "Elevated website design, precise development, secure hosting, and managed care for brands with high standards.",
     images: ["/peter-wu-studio/og.png"],
   },
   icons: {

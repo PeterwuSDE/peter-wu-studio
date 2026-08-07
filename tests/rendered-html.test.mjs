@@ -20,15 +20,16 @@ test("renders the finished studio homepage", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /Northline Studio \| Websites for Small Businesses/);
+  assert.match(html, /Northline Studio \| Design-Led Websites &amp; Digital Systems/);
   assert.match(html, /aria-label="北境 logo"/);
   assert.match(html, /northline-logo-north/);
   assert.match(html, /northline-logo-south/);
   assert.doesNotMatch(html, /↗/);
-  assert.match(html, /Websites that make your business look/);
+  assert.match(html, /A digital studio for brands/);
   assert.match(html, /Selected concepts/);
-  assert.match(html, /Everything you need/);
-  assert.match(html, /make your website/);
+  assert.match(html, /Sharp creative/);
+  assert.match(html, /secure hosting/i);
+  assert.doesNotMatch(html, /small business|small-business|local business/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
 

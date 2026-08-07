@@ -1,20 +1,20 @@
 const projects = [
   {
     number: "01",
-    type: "Professional Services",
-    name: "Aster & Co.",
-    description: "A calm, confident digital home for an advisory firm built on trust.",
+    type: "Editorial Identity",
+    name: "Aster Atelier",
+    description: "A refined digital presence for a visual brand with a sharp point of view.",
     className: "project-aster",
     mockup: (
       <div className="project-screen aster-screen" aria-hidden="true">
         <div className="screen-nav">
-          <span>ASTER & CO.</span>
-          <span>Services&nbsp;&nbsp; About&nbsp;&nbsp; Contact</span>
+          <span>ASTER ATELIER</span>
+          <span>Work&nbsp;&nbsp; Journal&nbsp;&nbsp; Contact</span>
         </div>
         <div className="aster-copy">
-          <span>THOUGHTFUL ADVICE. LASTING VALUE.</span>
-          <strong>Clarity for every<br />turn ahead.</strong>
-          <i>Explore our approach</i>
+          <span>VISUAL IDENTITY · DIGITAL SYSTEM</span>
+          <strong>Presence with<br />quiet authority.</strong>
+          <i>Enter the studio</i>
         </div>
         <div className="aster-orbit" />
       </div>
@@ -22,32 +22,32 @@ const projects = [
   },
   {
     number: "02",
-    type: "Local Business",
-    name: "Common Ground",
-    description: "A warm, neighborhood-first website designed to turn visits into regulars.",
+    type: "Premium Portfolio",
+    name: "Lucent House",
+    description: "A cinematic portfolio system built for high-impact launches and inquiries.",
     className: "project-common",
     mockup: (
       <div className="project-screen common-screen" aria-hidden="true">
-        <div className="common-stamp">CG<br /><small>EST. 2019</small></div>
-        <span className="common-note">COFFEE · COMMUNITY · EVERY DAY</span>
-        <strong>GOOD DAYS<br />START HERE.</strong>
-        <div className="coffee-cup"><span /></div>
-        <i>VIEW THE MENU</i>
+        <div className="common-stamp">LH<br /><small>INDEX</small></div>
+        <span className="common-note">SELECTED WORK · PRESS · BOOKING</span>
+        <strong>THE IMAGE<br />LEADS.</strong>
+        <div className="portfolio-orb"><span /></div>
+        <i>VIEW THE INDEX</i>
       </div>
     ),
   },
   {
     number: "03",
-    type: "Home Services",
-    name: "Summit Build",
-    description: "A bold, direct site that makes quality craftsmanship easy to trust.",
+    type: "Secure Platform",
+    name: "Meridian One",
+    description: "A polished web platform engineered for speed, stability, and trust.",
     className: "project-northline",
     mockup: (
       <div className="project-screen northline-screen" aria-hidden="true">
-        <div className="northline-nav"><b>SUMMIT / BUILD</b><span>PROJECTS&nbsp;&nbsp; PROCESS&nbsp;&nbsp; CONTACT</span></div>
+        <div className="northline-nav"><b>MERIDIAN / ONE</b><span>SYSTEM&nbsp;&nbsp; SECURITY&nbsp;&nbsp; ACCESS</span></div>
         <div className="northline-shape" />
-        <strong>BUILT RIGHT.<br />BUILT TO LAST.</strong>
-        <i>START A PROJECT</i>
+        <strong>DESIGNED SHARP.<br />BUILT SECURE.</strong>
+        <i>OPEN THE SYSTEM</i>
       </div>
     ),
   },
@@ -56,40 +56,40 @@ const projects = [
 const services = [
   {
     number: "01",
-    title: "Strategy & Design",
-    text: "A clear plan, purposeful structure, and a custom visual direction shaped around your business—not a recycled template.",
-    tags: ["Discovery", "UX direction", "Visual design"],
+    title: "Creative Direction",
+    text: "A distinct visual system, refined content structure, and interaction direction shaped around the way your brand should be perceived.",
+    tags: ["Identity direction", "UX architecture", "Artful interface"],
   },
   {
     number: "02",
-    title: "Development",
-    text: "Fast, responsive pages built with care so your site feels effortless on every screen and is easy to find online.",
-    tags: ["Responsive build", "SEO foundations", "Performance"],
+    title: "Technical Build",
+    text: "Clean, modern development with fast load times, responsive behavior, strong accessibility, and the technical foundation to scale with confidence.",
+    tags: ["Frontend engineering", "Performance", "SEO structure"],
   },
   {
     number: "03",
-    title: "Hosting & Care",
-    text: "Reliable hosting, updates, backups, and a real person to call when you need help after your new site goes live.",
-    tags: ["Managed hosting", "Maintenance", "Ongoing support"],
+    title: "Secure Hosting & Care",
+    text: "Managed deployment, monitoring, updates, and practical safeguards so the site stays stable, protected, and ready when your audience arrives.",
+    tags: ["Managed hosting", "Security care", "Ongoing support"],
   },
 ];
 
 const faqs = [
   {
-    question: "How much does a website cost?",
-    answer: "Every project is a little different. After a short conversation, you’ll receive a clear proposal based on the pages, features, and support your business actually needs.",
+    question: "What kind of projects do you take on?",
+    answer: "Northline Studio is best suited for brands that care about perception, polish, and long-term reliability—whether the project is a focused portfolio, a launch site, or a more complete digital presence.",
   },
   {
-    question: "How long does it take?",
-    answer: "Most small-business websites take a few weeks from kickoff to launch. The exact timeline depends on scope and how quickly content and feedback come together.",
+    question: "How long does a project take?",
+    answer: "Most focused sites take a few weeks from direction to launch. More layered builds with custom structure, content, or technical requirements are planned around a clear production schedule.",
   },
   {
-    question: "Can you redesign my current website?",
-    answer: "Absolutely. We can keep what is working, rethink what is not, and create a more modern, focused experience around your current business goals.",
+    question: "Can you elevate an existing site?",
+    answer: "Yes. We can preserve what is useful, sharpen the visual system, improve performance, and rebuild the experience so it feels more current, premium, and credible.",
   },
   {
     question: "What happens after launch?",
-    answer: "You won’t be left on your own. Ongoing hosting, maintenance, backups, and content updates can all be handled for you.",
+    answer: "The site can stay under managed care with hosting, updates, security-minded maintenance, backups, and thoughtful support when new content or changes are needed.",
   },
 ];
 
@@ -136,12 +136,12 @@ export default function Home() {
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow"><span /> Independent web design & development</p>
-          <h1>Websites that make your business look <em>as good as it is.</em></h1>
-          <p className="hero-intro">Custom design, reliable hosting, and ongoing support—all handled for you, so you can focus on running your business.</p>
+          <p className="eyebrow"><span /> Design-led websites & digital systems</p>
+          <h1>A digital studio for brands that need to look <em>exceptional.</em></h1>
+          <p className="hero-intro">Northline Studio creates elevated web experiences with strong visual direction, precise engineering, secure hosting, and the kind of polish that makes a brand feel established from the first click.</p>
           <div className="hero-actions">
-            <a className="button button-primary" href="#contact">Let&apos;s work together</a>
-            <a className="text-link" href="#work">See selected work <span>↓</span></a>
+            <a className="button button-primary" href="#contact">Build your presence</a>
+            <a className="text-link" href="#work">See studio concepts <span>↓</span></a>
           </div>
         </div>
 
@@ -150,40 +150,40 @@ export default function Home() {
           <div className="browser-card">
             <div className="browser-bar">
               <span className="browser-dots"><i /><i /><i /></span>
-              <span className="browser-address">yourbusiness.com</span>
+              <span className="browser-address">yourbrand.com</span>
             </div>
             <div className="browser-site">
-              <div className="mini-nav"><b>THE GOOD CO.</b><span>ABOUT&nbsp;&nbsp; SERVICES&nbsp;&nbsp; CONTACT</span></div>
-              <p>LOCAL EXPERTISE · PERSONAL SERVICE</p>
-              <h2>Great work<br />deserves a<br /><em>great website.</em></h2>
-              <button type="button" tabIndex={-1}>WORK WITH US</button>
+              <div className="mini-nav"><b>NORTHLINE / STUDIO</b><span>WORK&nbsp;&nbsp; METHOD&nbsp;&nbsp; CONTACT</span></div>
+              <p>VISUAL DIRECTION · SECURE BUILD</p>
+              <h2>Your brand<br />should feel<br /><em>impossible to ignore.</em></h2>
+              <button type="button" tabIndex={-1}>BEGIN THE BUILD</button>
               <div className="mini-art"><span className="mini-arch" /><span className="mini-circle" /></div>
             </div>
           </div>
-          <div className="launch-badge"><span>✓</span><div><small>YOUR SITE</small><strong>Ready to launch</strong></div></div>
-          <p className="visual-note">Designed to be clear.<br />Built to work hard.</p>
+          <div className="launch-badge"><span>✓</span><div><small>SYSTEM STATUS</small><strong>Launch-ready</strong></div></div>
+          <p className="visual-note">Designed with taste.<br />Built for trust.</p>
         </div>
 
         <div className="hero-proof" aria-label="Service highlights">
-          <span>Custom-built</span><i>✦</i><span>Mobile-first</span><i>✦</i><span>Fully managed</span><i>✦</i><span>Human support</span>
+          <span>Design-led</span><i>✦</i><span>High-performance</span><i>✦</i><span>Secure hosting</span><i>✦</i><span>Managed care</span>
         </div>
       </section>
 
       <section className="intro-section section-pad">
-        <p className="section-kicker">What your website should do</p>
+        <p className="section-kicker">What a premium site should do</p>
         <div className="intro-grid">
-          <h2>Make a strong first impression—and make the next step <em>obvious.</em></h2>
+          <h2>Create desire, build trust, and make the brand feel <em>inevitable.</em></h2>
           <div className="intro-copy">
-            <p>Your website should build trust, explain your value, and help the right people choose you. It shouldn&apos;t become one more technical problem on your list.</p>
-            <p>I take care of the whole process—from the first idea to launch and ongoing care—so you get a site that looks sharp and earns its place in your business.</p>
+            <p>Your website is often the first serious proof of your taste, credibility, and ambition. It should feel considered at every detail: layout, motion, typography, performance, and the path toward inquiry.</p>
+            <p>Northline Studio brings design sensibility and technical discipline together, creating digital homes that look refined, load quickly, stay dependable, and support the next stage of your brand.</p>
           </div>
         </div>
       </section>
 
       <section className="work-section section-pad" id="work">
         <div className="section-heading">
-          <div><p className="section-kicker light">Selected concepts</p><h2>Work with<br /><em>purpose.</em></h2></div>
-          <p>Each site starts with a different business problem—and ends with a clear, considered digital experience.</p>
+          <div><p className="section-kicker light">Selected concepts</p><h2>Designed for<br /><em>presence.</em></h2></div>
+          <p>Each concept explores a different kind of digital authority: editorial, visual, technical, and commercial.</p>
         </div>
         <div className="project-list">
           {projects.map((project) => (
@@ -205,8 +205,8 @@ export default function Home() {
 
       <section className="services-section section-pad" id="services">
         <div className="services-heading">
-          <p className="section-kicker">How I can help</p>
-          <h2>Everything you need.<br /><em>None of the runaround.</em></h2>
+          <p className="section-kicker">Studio capabilities</p>
+          <h2>Sharp creative.<br /><em>Serious engineering.</em></h2>
         </div>
         <div className="service-list">
           {services.map((service) => (
@@ -224,15 +224,15 @@ export default function Home() {
 
       <section className="process-section section-pad" id="process">
         <div className="process-intro">
-          <p className="section-kicker light">A simple process</p>
-          <h2>From first hello<br />to <em>launch day.</em></h2>
-          <p>Clear steps, honest communication, and no disappearing into a black box.</p>
+          <p className="section-kicker light">A focused process</p>
+          <h2>From direction<br />to <em>deployment.</em></h2>
+          <p>A clear creative path, disciplined technical execution, and a polished launch without unnecessary noise.</p>
         </div>
         <ol className="process-list">
-          <li><span>01</span><div><h3>Discover</h3><p>We talk about your business, your customers, and what the website needs to accomplish.</p></div></li>
-          <li><span>02</span><div><h3>Design</h3><p>I shape the strategy, content flow, and visual direction into a site that feels distinctly yours.</p></div></li>
-          <li><span>03</span><div><h3>Build</h3><p>The approved design becomes a fast, responsive website, tested across devices.</p></div></li>
-          <li><span>04</span><div><h3>Launch & care</h3><p>We go live with confidence, then I stay available for hosting, updates, and support.</p></div></li>
+          <li><span>01</span><div><h3>Direction</h3><p>We define the brand position, audience expectations, content priorities, and the feeling the site needs to create.</p></div></li>
+          <li><span>02</span><div><h3>Design system</h3><p>The visual language, page rhythm, and interaction details are shaped into a refined experience that feels unmistakably intentional.</p></div></li>
+          <li><span>03</span><div><h3>Engineering</h3><p>The approved direction becomes a fast, responsive, accessible site built with clean code and a stable technical foundation.</p></div></li>
+          <li><span>04</span><div><h3>Launch & protect</h3><p>Deployment, hosting, updates, and ongoing care are handled so the finished site remains secure, reliable, and ready to perform.</p></div></li>
         </ol>
       </section>
 
@@ -243,16 +243,16 @@ export default function Home() {
           <span className="about-caption">INDEPENDENT<br />DESIGN STUDIO</span>
         </div>
         <div className="about-copy">
-          <p className="section-kicker">The person behind the pixels</p>
-          <h2>Big-agency thinking.<br /><em>One-to-one attention.</em></h2>
-          <p>Northline Studio helps small businesses show up online with the same care and quality they bring to their own work.</p>
-          <p>You&apos;ll work directly with one dedicated maker from our first conversation through launch. That means fewer handoffs, clearer communication, and a website built by someone who knows your story.</p>
-          <a className="text-link" href="#contact">Tell me about your business</a>
+          <p className="section-kicker">The studio approach</p>
+          <h2>Boutique attention.<br /><em>Production-grade craft.</em></h2>
+          <p>Northline Studio is built for brands that want more than a pleasant template. The work sits at the intersection of taste, clarity, engineering, and long-term reliability.</p>
+          <p>You work directly with a dedicated maker from direction through launch, which keeps the process precise, personal, and focused on creating a digital presence that feels premium from the outside and dependable underneath.</p>
+          <a className="text-link" href="#contact">Tell me about your vision</a>
         </div>
       </section>
 
       <section className="faq-section section-pad">
-        <div className="faq-heading"><p className="section-kicker">Good to know</p><h2>A few common<br /><em>questions.</em></h2></div>
+        <div className="faq-heading"><p className="section-kicker">Good to know</p><h2>Before we<br /><em>begin.</em></h2></div>
         <div className="faq-list">
           {faqs.map((faq) => (
             <details key={faq.question}>
@@ -265,16 +265,16 @@ export default function Home() {
 
       <section className="contact-section" id="contact">
         <div className="contact-star" aria-hidden="true">✦</div>
-        <p className="section-kicker light">Have a project in mind?</p>
-        <h2>Let&apos;s make your website<br /><em>work harder.</em></h2>
-        <p>Tell me a little about your business and where you want to go next. The first conversation is free, friendly, and pressure-free.</p>
-        <a className="button button-light" href="mailto:hello@yourstudio.com?subject=New%20website%20project">Start the conversation</a>
-        <small>Currently accepting new projects</small>
+        <p className="section-kicker light">Ready for a sharper presence?</p>
+        <h2>Let&apos;s build the site your brand<br /><em>deserves.</em></h2>
+        <p>Tell me what you are building, what needs to feel elevated, and where the website needs to perform. The first conversation is focused, thoughtful, and pressure-free.</p>
+        <a className="button button-light" href="mailto:hello@yourstudio.com?subject=New%20Northline%20Studio%20project">Start the conversation</a>
+        <small>Selective new projects now open</small>
       </section>
 
       <footer>
         <a className="brand footer-brand" href="#top" aria-label="Back to top"><NorthlineLogo className="brand-logo" /><span className="brand-name">Northline<br />Studio</span></a>
-        <p>Web design, development & ongoing care<br />for small businesses that care about their work.</p>
+        <p>Design-led web experiences, secure hosting,<br />and managed care for brands with high standards.</p>
         <div className="footer-links"><a href="#work">Work</a><a href="#services">Services</a><a href="#about">About</a><a href="#contact">Contact</a></div>
         <div className="footer-bottom"><span>© {new Date().getFullYear()} Northline Studio</span><span>Designed with care. Built to last.</span><a href="#top">Back to top ↑</a></div>
       </footer>
