@@ -22,7 +22,8 @@ test("renders the finished studio homepage", async () => {
   const html = await response.text();
   assert.match(html, /Northline Studio \| Design-Led Websites &amp; Digital Systems/);
   assert.match(html, /aria-label="北境 logo"/);
-  assert.match(html, /aria-label="Mobile navigation"/);
+  assert.match(html, /aria-controls="mobile-navigation"/);
+  assert.doesNotMatch(html, /<details class="mobile-menu"/);
   assert.match(html, /northline-logo-north/);
   assert.match(html, /northline-logo-south/);
   assert.doesNotMatch(html, /↗/);
