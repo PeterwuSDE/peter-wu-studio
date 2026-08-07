@@ -42,7 +42,7 @@ button { font: inherit; }
 .brand { display: inline-flex; align-items: center; gap: 14px; width: fit-content; text-transform: uppercase; font-size: 11px; font-weight: 700; line-height: 1.1; letter-spacing: .06em; }
 .northline-logo { display: block; flex: 0 0 auto; overflow: visible; }
 .northline-logo-ring { fill: none; stroke: currentColor; stroke-width: 2.4; vector-effect: non-scaling-stroke; }
-.northline-logo-text { fill: currentColor; font-family: STFangsong, FangSong, FangSong_GB2312, "仿宋", serif; font-size: 22px; font-weight: 500; line-height: 1; dominant-baseline: middle; text-anchor: middle; }
+.northline-logo-text { fill: currentColor; font-family: FangSong, "仿宋", STFangsong, FangSong_GB2312, SimFang, serif; font-size: 23px; font-weight: 500; line-height: 1; dominant-baseline: middle; text-anchor: middle; font-synthesis: none; }
 .brand-logo { width: 66px; height: 66px; color: var(--ink); }
 .brand-name { display: block; }
 .desktop-nav { display: flex; align-items: center; gap: clamp(24px, 3vw, 48px); font-size: 13px; font-weight: 600; }

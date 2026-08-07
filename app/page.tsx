@@ -97,8 +97,8 @@ function NorthlineLogo({ className = "" }: { className?: string }) {
   return (
     <svg className={`northline-logo ${className}`} viewBox="0 0 100 100" role="img" aria-label="北境 logo">
       <circle className="northline-logo-ring" cx="50" cy="50" r="46" />
-      <text className="northline-logo-text northline-logo-north" x="30" y="31">北</text>
-      <text className="northline-logo-text northline-logo-south" x="70" y="70">境</text>
+      <text className="northline-logo-text northline-logo-north" x="34" y="35">北</text>
+      <text className="northline-logo-text northline-logo-south" x="66" y="66">境</text>
     </svg>
   );
 }
