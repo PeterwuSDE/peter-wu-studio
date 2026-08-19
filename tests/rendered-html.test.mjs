@@ -31,6 +31,8 @@ test("renders the finished studio homepage", async () => {
   assert.match(html, /Selected concepts/);
   assert.match(html, /Sharp creative/);
   assert.match(html, /secure hosting/i);
+  assert.match(html, /mailto:northlinestudio425@gmail\.com/);
+  assert.doesNotMatch(html, /hello@yourstudio\.com/);
   assert.doesNotMatch(html, /small business|small-business|local business/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });

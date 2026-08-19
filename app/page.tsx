@@ -261,7 +261,7 @@ export default function Home() {
         <p className="section-kicker light">Ready for a sharper presence?</p>
         <h2>Let&apos;s build the site your brand<br /><em>deserves.</em></h2>
         <p>Tell me what you are building, what needs to feel elevated, and where the website needs to perform. The first conversation is focused, thoughtful, and pressure-free.</p>
-        <a className="button button-light" href="mailto:hello@yourstudio.com?subject=New%20Northline%20Studio%20project">Start the conversation</a>
+        <a className="button button-light" href="mailto:northlinestudio425@gmail.com?subject=New%20Northline%20Studio%20project" aria-label="Email Northline Studio at northlinestudio425@gmail.com">Start the conversation</a>
         <small>Selective new projects now open</small>
       </section>
 
