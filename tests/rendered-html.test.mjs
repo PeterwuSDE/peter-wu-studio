@@ -38,15 +38,18 @@ test("renders the finished studio homepage", async () => {
 });
 
 test("ships project-specific metadata and assets", async () => {
-  const [layout, page, packageJson] = await Promise.all([
+  const [layout, page, mobileMenu, packageJson] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/MobileMenu.tsx", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
   assert.match(layout, /og\.png/);
   assert.match(layout, /favicon\.png/);
   assert.match(page, /CONCEPT PROJECT/);
+  assert.match(mobileMenu, /event\.preventDefault\(\)/);
+  assert.match(mobileMenu, /window\.scrollTo\(\{ top: targetTop, behavior: "auto" \}\)/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await access(new URL("../public/og.png", import.meta.url));
   await access(new URL("../public/favicon.png", import.meta.url));
