@@ -179,6 +179,7 @@ Stage 2 依赖渲染器存在 → **区块库 + token 系统必须先于向导 U
 ## 仍待细化（下一轮）
 
 1. ~~spec schema 的具体形状~~ —— 已完成，见 [`wizard-spec-schema.md`](./wizard-spec-schema.md)
-2. 六种气质预设各自的 token 值 —— 这是设计活，不是编码活，需要 Peter 定调
+2. 六种气质预设各自的 token 值 —— 提案已出，见 [`wizard-tone-anchors.md`](./wizard-tone-anchors.md)；
+   其中名字、柔光/器物的主色、宣言是否保留三项仍待 Peter 定夺
 3. `worker/index.ts` 现在只做图片优化 + 委托给 vinext，加 `/api/*` 的具体接法
 4. 主站从 GH Pages 迁到 Workers 的切换步骤与回滚方案
