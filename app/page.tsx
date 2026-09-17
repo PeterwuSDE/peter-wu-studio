@@ -261,10 +261,24 @@ export default function Home() {
         <div className="contact-star" aria-hidden="true">✦</div>
         <p className="section-kicker light">Ready for a sharper presence?</p>
         <h2>Let&apos;s build the site your brand<br /><em>deserves.</em></h2>
-        <p>For project inquiries and collaborations, reach us at the address below. Tell us about your vision, your ambitions, and what comes next for your brand.</p>
+        <p>For project inquiries and collaborations, email us directly at the address below. Tell us about your vision, your ambitions, and what comes next for your brand.</p>
         <div className="contact-details">
           <span className="contact-label">Project inquiries</span>
           <span className="contact-email">northlinestudio425@gmail.com</span>
+        </div>
+        <div className="contact-brief">
+          <h3>A thoughtful introduction.</h3>
+          <p>To help us understand your project, include a few details in your email:</p>
+          <ul>
+            <li>Your name or brand</li>
+            <li>Your country or location</li>
+            <li>Social profile or handle, if applicable</li>
+            <li>Current website, if you have one</li>
+            <li>The service or project you have in mind</li>
+            <li>How you found Northline Studio</li>
+            <li>Your vision, questions, or anything else you would like us to know</li>
+          </ul>
+          <p className="contact-brief-note">An early idea is enough. We can shape the details together.</p>
         </div>
         <small>Selective new projects now open</small>
       </section>

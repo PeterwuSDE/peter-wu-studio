@@ -200,6 +200,14 @@ h1 em, h2 em { color: var(--blue); font-family: Georgia, 'Times New Roman', seri
 .contact-details { position: relative; z-index: 1; margin: 44px auto 0; width: fit-content; max-width: 100%; }
 .contact-label { display: block; margin-bottom: 16px; font: 10px var(--font-geist-mono); text-transform: uppercase; letter-spacing: .12em; color: rgba(255,255,255,.55); }
 .contact-email { display: block; color: var(--lime); font-size: clamp(18px, 3vw, 42px); font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; user-select: text; }
+.contact-brief { position: relative; z-index: 1; max-width: 680px; margin: 56px auto 0; padding-top: 32px; border-top: 1px solid rgba(255,255,255,.2); text-align: left; }
+.contact-brief h3 { margin: 0 0 12px; font-size: 22px; line-height: 1.3; font-weight: 500; }
+.contact-brief p { margin: 0; color: rgba(255,255,255,.62); font-size: 14px; line-height: 1.7; }
+.contact-brief ul { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 32px; margin: 28px 0; padding: 0; }
+.contact-brief li { position: relative; padding-left: 16px; font-size: 14px; line-height: 1.6; color: rgba(255,255,255,.85); }
+.contact-brief li::before { content: ""; position: absolute; left: 0; top: .65em; width: 4px; height: 4px; border-radius: 50%; background: var(--lime); }
+.contact-brief li:last-child { grid-column: 1 / -1; }
+.contact-brief .contact-brief-note { color: rgba(255,255,255,.48); font-size: 13px; }
 .contact-section > small { display: block; margin-top: 28px; font: 8px var(--font-geist-mono); text-transform: uppercase; letter-spacing: .12em; color: rgba(255,255,255,.45); }
 .contact-star { position: absolute; top: 12%; left: 9%; color: var(--blue); font-size: 78px; transform: rotate(12deg); }
 
@@ -228,6 +236,7 @@ footer > p { margin: 0; font-size: 14px; line-height: 1.55; color: #555651; }
 
 @media (max-width: 760px) {
   html { scroll-padding-top: 76px; }
+  .contact-brief ul { grid-template-columns: 1fr; gap: 16px; }
   .site-header { height: 76px; grid-template-columns: 1fr auto; padding: 0 20px; }
   .desktop-nav, .header-cta { display: none; }
   .mobile-menu { display: block; }
