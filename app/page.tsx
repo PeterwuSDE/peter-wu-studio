@@ -1,4 +1,5 @@
 import { MobileMenu } from "./MobileMenu";
+import { SectionLink } from "./SectionLink";
 
 const projects = [
   {
@@ -113,17 +114,17 @@ export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="Northline Studio, home">
+        <SectionLink className="brand" href="#top" aria-label="Northline Studio, home">
           <NorthlineLogo className="brand-logo" />
           <span className="brand-name">Northline<br />Studio</span>
-        </a>
+        </SectionLink>
         <nav className="desktop-nav" aria-label="Primary navigation">
-          <a href="#work">Work</a>
-          <a href="#services">Services</a>
-          <a href="#process">Process</a>
-          <a href="#about">About</a>
+          <SectionLink href="#work">Work</SectionLink>
+          <SectionLink href="#services">Services</SectionLink>
+          <SectionLink href="#process">Process</SectionLink>
+          <SectionLink href="#about">About</SectionLink>
         </nav>
-        <a className="header-cta" href="#contact">Start a project</a>
+        <SectionLink className="header-cta" href="#contact">Start a project</SectionLink>
         <MobileMenu />
       </header>
 
@@ -133,8 +134,8 @@ export default function Home() {
           <h1>A digital studio for brands that need to look <em>exceptional.</em></h1>
           <p className="hero-intro">Northline Studio creates elevated web experiences with strong visual direction, precise engineering, secure hosting, and the kind of polish that makes a brand feel established from the first click.</p>
           <div className="hero-actions">
-            <a className="button button-primary" href="#contact">Build your presence</a>
-            <a className="text-link" href="#work">See studio concepts <span>↓</span></a>
+            <SectionLink className="button button-primary" href="#contact">Build your presence</SectionLink>
+            <SectionLink className="text-link" href="#work">See studio concepts <span>↓</span></SectionLink>
           </div>
         </div>
 
@@ -240,7 +241,7 @@ export default function Home() {
           <h2>Boutique attention.<br /><em>Production-grade craft.</em></h2>
           <p>Northline Studio is built for brands that want more than a pleasant template. The work sits at the intersection of taste, clarity, engineering, and long-term reliability.</p>
           <p>You work directly with a dedicated maker from direction through launch, which keeps the process precise, personal, and focused on creating a digital presence that feels premium from the outside and dependable underneath.</p>
-          <a className="text-link" href="#contact">Tell me about your vision</a>
+          <SectionLink className="text-link" href="#contact">Tell me about your vision</SectionLink>
         </div>
       </section>
 
@@ -266,10 +267,10 @@ export default function Home() {
       </section>
 
       <footer>
-        <a className="brand footer-brand" href="#top" aria-label="Back to top"><NorthlineLogo className="brand-logo" /><span className="brand-name">Northline<br />Studio</span></a>
+        <SectionLink className="brand footer-brand" href="#top" aria-label="Back to top"><NorthlineLogo className="brand-logo" /><span className="brand-name">Northline<br />Studio</span></SectionLink>
         <p>Design-led web experiences, secure hosting,<br />and managed care for brands with high standards.</p>
-        <div className="footer-links"><a href="#work">Work</a><a href="#services">Services</a><a href="#about">About</a><a href="#contact">Contact</a></div>
-        <div className="footer-bottom"><span>© {new Date().getFullYear()} Northline Studio</span><span>Designed with care. Built to last.</span><a href="#top">Back to top ↑</a></div>
+        <div className="footer-links"><SectionLink href="#work">Work</SectionLink><SectionLink href="#services">Services</SectionLink><SectionLink href="#about">About</SectionLink><SectionLink href="#contact">Contact</SectionLink></div>
+        <div className="footer-bottom"><span>© {new Date().getFullYear()} Northline Studio</span><span>Designed with care. Built to last.</span><SectionLink href="#top">Back to top ↑</SectionLink></div>
       </footer>
     </main>
   );

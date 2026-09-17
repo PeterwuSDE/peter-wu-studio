@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { MouseEvent } from "react";
+import { navigateToSection } from "./SectionLink";
 
 const mobileLinks = [
   { href: "#work", label: "Work" },
@@ -52,22 +53,9 @@ export function MobileMenu() {
   }, []);
 
   const closeForNavigation = (event: MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-
-    const hash = event.currentTarget.hash;
-    const target = hash ? document.getElementById(hash.slice(1)) : null;
-
     setIsOpen(false);
     buttonRef.current?.blur();
-    event.currentTarget.blur();
-
-    if (!target) return;
-
-    const headerHeight = document.querySelector(".site-header")?.getBoundingClientRect().height ?? 0;
-    const targetTop = target.getBoundingClientRect().top + window.scrollY - headerHeight;
-
-    window.scrollTo({ top: targetTop, behavior: "auto" });
-    window.history.pushState(null, "", hash);
+    navigateToSection(event);
   };
 
   return (
