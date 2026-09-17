@@ -15,7 +15,7 @@ npm run dev
 npm run build
 ```
 
-The contact button opens an email to `northlinestudio425@gmail.com`.
+The contact section displays `northlinestudio425@gmail.com` as selectable text.
 
 ## Vercel deployment
 

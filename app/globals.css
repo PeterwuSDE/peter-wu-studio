@@ -197,8 +197,9 @@ h1 em, h2 em { color: var(--blue); font-family: Georgia, 'Times New Roman', seri
 .contact-section h2 { position: relative; z-index: 1; margin: 0; font-size: clamp(50px,7.6vw,116px); line-height: .98; letter-spacing: 0; font-weight: 600; }
 .contact-section h2 em { color: var(--lime); }
 .contact-section > p:not(.section-kicker) { max-width: 630px; margin: 42px auto 30px; line-height: 1.65; color: rgba(255,255,255,.62); }
-.button-light { background: white; color: var(--ink); }
-.button-light:hover { background: var(--lime); }
+.contact-details { position: relative; z-index: 1; margin: 44px auto 0; width: fit-content; max-width: 100%; }
+.contact-label { display: block; margin-bottom: 16px; font: 10px var(--font-geist-mono); text-transform: uppercase; letter-spacing: .12em; color: rgba(255,255,255,.55); }
+.contact-email { display: block; color: var(--lime); font-size: clamp(18px, 3vw, 42px); font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; user-select: text; }
 .contact-section > small { display: block; margin-top: 28px; font: 8px var(--font-geist-mono); text-transform: uppercase; letter-spacing: .12em; color: rgba(255,255,255,.45); }
 .contact-star { position: absolute; top: 12%; left: 9%; color: var(--blue); font-size: 78px; transform: rotate(12deg); }
 
