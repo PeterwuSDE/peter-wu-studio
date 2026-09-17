@@ -15,4 +15,21 @@ npm run dev
 npm run build
 ```
 
-Before using the site publicly, replace the placeholder contact email in `app/page.tsx` with the preferred business address.
+The contact button opens an email to `northlinestudio425@gmail.com`.
+
+## Vercel deployment
+
+Import `PeterwuSDE/peter-wu-studio` into Vercel and deploy the `main` branch.
+The checked-in `vercel.json` configures the framework preset as Other, builds
+with `npm run export:static`, and serves `dist/client`. No environment variables
+are required. Do not set `GITHUB_PAGES_BASE` on Vercel: its deployment serves
+the site from `/`.
+
+Alternatively, after signing in with `vercel login`, run:
+
+```bash
+vercel --prod
+```
+
+GitHub Pages remains available through its existing workflow. Connecting the
+GitHub repository in Vercel enables deployments for future pushes to `main`.
