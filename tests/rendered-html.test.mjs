@@ -28,7 +28,7 @@ test("renders the finished studio homepage", async () => {
   assert.match(html, /northline-logo-south/);
   assert.doesNotMatch(html, /↗/);
   assert.match(html, /A digital studio for brands/);
-  assert.match(html, /Selected concepts/);
+  assert.doesNotMatch(html, /id="work"|href="#work"|Selected concepts|CONCEPT PROJECT|Aster Atelier|Lucent House|Meridian One/);
   assert.match(html, /Sharp creative/);
   assert.match(html, /secure hosting/i);
   assert.match(html, /<span class="contact-email">northlinestudio425@gmail\.com<\/span>/);
@@ -39,15 +39,13 @@ test("renders the finished studio homepage", async () => {
 });
 
 test("ships project-specific metadata and assets", async () => {
-  const [layout, page, packageJson] = await Promise.all([
+  const [layout, packageJson] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
   assert.match(layout, /og\.png/);
   assert.match(layout, /favicon\.png/);
-  assert.match(page, /CONCEPT PROJECT/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await access(new URL("../public/og.png", import.meta.url));
   await access(new URL("../public/favicon.png", import.meta.url));

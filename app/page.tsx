@@ -1,61 +1,6 @@
 import { MobileMenu } from "./MobileMenu";
 import { SectionLink } from "./SectionLink";
 
-const projects = [
-  {
-    number: "01",
-    type: "Editorial Identity",
-    name: "Aster Atelier",
-    description: "A refined digital presence for a visual brand with a sharp point of view.",
-    className: "project-aster",
-    mockup: (
-      <div className="project-screen aster-screen" aria-hidden="true">
-        <div className="screen-nav">
-          <span>ASTER ATELIER</span>
-          <span>Work&nbsp;&nbsp; Journal&nbsp;&nbsp; Contact</span>
-        </div>
-        <div className="aster-copy">
-          <span>VISUAL IDENTITY · DIGITAL SYSTEM</span>
-          <strong>Presence with<br />quiet authority.</strong>
-          <i>Enter the studio</i>
-        </div>
-        <div className="aster-orbit" />
-      </div>
-    ),
-  },
-  {
-    number: "02",
-    type: "Premium Portfolio",
-    name: "Lucent House",
-    description: "A cinematic portfolio system built for high-impact launches and inquiries.",
-    className: "project-common",
-    mockup: (
-      <div className="project-screen common-screen" aria-hidden="true">
-        <div className="common-stamp">LH<br /><small>INDEX</small></div>
-        <span className="common-note">SELECTED WORK · PRESS · BOOKING</span>
-        <strong>THE IMAGE<br />LEADS.</strong>
-        <div className="portfolio-orb"><span /></div>
-        <i>VIEW THE INDEX</i>
-      </div>
-    ),
-  },
-  {
-    number: "03",
-    type: "Secure Platform",
-    name: "Meridian One",
-    description: "A polished web platform engineered for speed, stability, and trust.",
-    className: "project-northline",
-    mockup: (
-      <div className="project-screen northline-screen" aria-hidden="true">
-        <div className="northline-nav"><b>MERIDIAN / ONE</b><span>SYSTEM&nbsp;&nbsp; SECURITY&nbsp;&nbsp; ACCESS</span></div>
-        <div className="northline-shape" />
-        <strong>DESIGNED SHARP.<br />BUILT SECURE.</strong>
-        <i>OPEN THE SYSTEM</i>
-      </div>
-    ),
-  },
-];
-
 const services = [
   {
     number: "01",
@@ -119,7 +64,6 @@ export default function Home() {
           <span className="brand-name">Northline<br />Studio</span>
         </SectionLink>
         <nav className="desktop-nav" aria-label="Primary navigation">
-          <SectionLink href="#work">Work</SectionLink>
           <SectionLink href="#services">Services</SectionLink>
           <SectionLink href="#process">Process</SectionLink>
           <SectionLink href="#about">About</SectionLink>
@@ -135,7 +79,6 @@ export default function Home() {
           <p className="hero-intro">Northline Studio creates elevated web experiences with strong visual direction, precise engineering, secure hosting, and the kind of polish that makes a brand feel established from the first click.</p>
           <div className="hero-actions">
             <SectionLink className="button button-primary" href="#contact">Build your presence</SectionLink>
-            <SectionLink className="text-link" href="#work">See studio concepts <span>↓</span></SectionLink>
           </div>
         </div>
 
@@ -171,29 +114,6 @@ export default function Home() {
             <p>Your website is often the first serious proof of your taste, credibility, and ambition. It should feel considered at every detail: layout, motion, typography, performance, and the path toward inquiry.</p>
             <p>Northline Studio brings design sensibility and technical discipline together, creating digital homes that look refined, load quickly, stay dependable, and support the next stage of your brand.</p>
           </div>
-        </div>
-      </section>
-
-      <section className="work-section section-pad" id="work">
-        <div className="section-heading">
-          <div><p className="section-kicker light">Selected concepts</p><h2>Designed for<br /><em>presence.</em></h2></div>
-          <p>Each concept explores a different kind of digital authority: editorial, visual, technical, and commercial.</p>
-        </div>
-        <div className="project-list">
-          {projects.map((project) => (
-            <article className={`project ${project.className}`} key={project.name}>
-              <div className="project-meta">
-                <span>{project.number}</span>
-                <p>{project.type}</p>
-                <small>CONCEPT PROJECT</small>
-              </div>
-              <div className="project-visual">{project.mockup}</div>
-              <div className="project-info">
-                <h3>{project.name}</h3>
-                <p>{project.description}</p>
-              </div>
-            </article>
-          ))}
         </div>
       </section>
 
@@ -286,7 +206,7 @@ export default function Home() {
       <footer>
         <SectionLink className="brand footer-brand" href="#top" aria-label="Back to top"><NorthlineLogo className="brand-logo" /><span className="brand-name">Northline<br />Studio</span></SectionLink>
         <p>Design-led web experiences, secure hosting,<br />and managed care for brands with high standards.</p>
-        <div className="footer-links"><SectionLink href="#work">Work</SectionLink><SectionLink href="#services">Services</SectionLink><SectionLink href="#about">About</SectionLink><SectionLink href="#contact">Contact</SectionLink></div>
+        <div className="footer-links"><SectionLink href="#services">Services</SectionLink><SectionLink href="#about">About</SectionLink><SectionLink href="#contact">Contact</SectionLink></div>
         <div className="footer-bottom"><span>© {new Date().getFullYear()} Northline Studio</span><span>Designed with care. Built to last.</span><SectionLink href="#top">Back to top ↑</SectionLink></div>
       </footer>
     </main>

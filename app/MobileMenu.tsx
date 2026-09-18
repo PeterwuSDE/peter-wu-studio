@@ -5,7 +5,6 @@ import type { MouseEvent } from "react";
 import { navigateToSection } from "./SectionLink";
 
 const mobileLinks = [
-  { href: "#work", label: "Work" },
   { href: "#services", label: "Services" },
   { href: "#process", label: "Process" },
   { href: "#about", label: "About" },
