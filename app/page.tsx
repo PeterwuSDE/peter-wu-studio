@@ -4,21 +4,27 @@ import { SectionLink } from "./SectionLink";
 const services = [
   {
     number: "01",
-    title: "Creative Direction",
-    text: "A distinct visual system, refined content structure, and interaction direction shaped around the way your brand should be perceived.",
-    tags: ["Identity direction", "UX architecture", "Artful interface"],
+    title: "Signature Websites",
+    text: "A distinctive digital home for your brand. Custom visual direction, carefully structured pages, and considered interactions bring your identity into focus. Built responsively, with performance, accessibility, and SEO foundations in place.",
+    tags: ["Custom visual design", "Content architecture", "Responsive development", "SEO foundations"],
   },
   {
     number: "02",
-    title: "Technical Build",
-    text: "Clean, modern development with fast load times, responsive behavior, strong accessibility, and the technical foundation to scale with confidence.",
-    tags: ["Frontend engineering", "Performance", "SEO structure"],
+    title: "Portfolio Websites",
+    text: "An editorial approach to presenting your work, story, and presence. We shape image-led layouts, project galleries, profile pages, and clear inquiry paths into a cohesive experience that feels unmistakably yours.",
+    tags: ["Image-led layouts", "Portfolio galleries", "Profile & story", "Inquiry pathways"],
   },
   {
     number: "03",
-    title: "Secure Hosting & Care",
-    text: "Managed deployment, monitoring, updates, and practical safeguards so the site stays stable, protected, and ready when your audience arrives.",
-    tags: ["Managed hosting", "Security care", "Ongoing support"],
+    title: "Website Redesign",
+    text: "A considered new direction for an existing website. We refine the visual language, rethink the content structure, and improve navigation, mobile usability, and loading speed, creating a stronger expression of where your brand is today.",
+    tags: ["Visual refinement", "Content restructuring", "Mobile experience", "Performance tuning"],
+  },
+  {
+    number: "04",
+    title: "Hosting & Ongoing Care",
+    text: "A dependable foundation beyond launch. We handle deployment, domain configuration, managed hosting, and agreed maintenance, with updates, backups, and practical security care to keep your site supported as your needs evolve.",
+    tags: ["Deployment & domains", "Managed hosting", "Updates & backups", "Security care"],
   },
 ];
 
@@ -119,7 +125,7 @@ export default function Home() {
 
       <section className="services-section section-pad" id="services">
         <div className="services-heading">
-          <p className="section-kicker">Studio capabilities</p>
+          <p className="section-kicker">Our services</p>
           <h2>Sharp creative.<br /><em>Serious engineering.</em></h2>
         </div>
         <div className="service-list">
@@ -134,6 +140,7 @@ export default function Home() {
             </article>
           ))}
         </div>
+        <p className="services-note">Every project is individually scoped. We define the deliverables, timeline, and investment around your goals, with a clear proposal before work begins.</p>
       </section>
 
       <section className="process-section section-pad" id="process">
