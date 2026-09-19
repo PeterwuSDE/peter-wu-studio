@@ -41,6 +41,20 @@ test("renders the finished studio homepage", async () => {
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
 
+test("renders pricing navigation and investment options", async () => {
+  const response = await render();
+  const html = await response.text();
+
+  assert.match(html, /href="#pricing"/);
+  assert.match(html, /<section[^>]+id="pricing"/);
+  assert.match(html, /The Essential/);
+  assert.match(html, /Starting from \$1,500/);
+  assert.match(html, /The Signature/);
+  assert.match(html, /Starting from \$3,500/);
+  assert.match(html, /Business Tools &amp; Integrations/);
+  assert.match(html, /Starting from \$150\/month/);
+});
+
 test("ships project-specific metadata and assets", async () => {
   const [layout, packageJson] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),

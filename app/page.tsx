@@ -34,6 +34,59 @@ const services = [
   },
 ];
 
+const pricingTiers = [
+  {
+    number: "01",
+    name: "The Essential",
+    price: "Starting from $1,500",
+    description: "A focused, beautifully considered website for an independent professional, emerging brand, or service-led business that needs a polished home online.",
+    features: [
+      "Up to 3 thoughtfully designed pages",
+      "Custom visual direction",
+      "Responsive development",
+      "Contact or inquiry setup",
+      "Foundational SEO and accessibility",
+      "Performance optimization",
+      "Domain and launch configuration",
+      "Two rounds of revisions",
+    ],
+  },
+  {
+    number: "02",
+    name: "The Signature",
+    price: "Starting from $3,500",
+    description: "A more complete digital presence with greater space for your story, work, services, and brand personality to unfold.",
+    featured: true,
+    features: [
+      "Everything in The Essential",
+      "Up to 7 custom-designed pages",
+      "Deeper content architecture",
+      "Enhanced galleries and visual storytelling",
+      "Refined interactions and motion",
+      "Selected third-party integrations",
+      "Expanded SEO foundations",
+      "Three rounds of revisions",
+      "Post-launch handover and guidance",
+    ],
+  },
+  {
+    number: "03",
+    name: "Business Tools & Integrations",
+    price: "Custom quote",
+    description: "A tailored suite of digital tools designed around the way your business operates. Commission it alongside a website or add it to an existing digital presence.",
+    features: [
+      "Booking and scheduling systems",
+      "Client intake and custom forms",
+      "Payments and deposits",
+      "Email and CRM integrations",
+      "Client onboarding workflows",
+      "Content management systems",
+      "Lightweight client portals",
+      "Custom business tools",
+    ],
+  },
+];
+
 const faqs = [
   {
     question: "What kind of projects do you take on?",
@@ -77,6 +130,7 @@ export default function Home() {
         </SectionLink>
         <nav className="desktop-nav" aria-label="Primary navigation">
           <SectionLink href="#services">Services</SectionLink>
+          <SectionLink href="#pricing">Pricing</SectionLink>
           <SectionLink href="#process">Process</SectionLink>
           <SectionLink href="#about">About</SectionLink>
         </nav>
@@ -149,6 +203,51 @@ export default function Home() {
         <p className="services-note">Built for service-led businesses, independent professionals, and growing teams. Every project is individually scoped, with deliverables, timeline, and investment defined in a clear proposal before work begins.</p>
       </section>
 
+      <section className="pricing-section section-pad" id="pricing">
+        <div className="pricing-heading">
+          <div>
+            <p className="section-kicker">Website investment</p>
+            <h2>Clear starting points.<br /><em>Thoughtfully tailored.</em></h2>
+          </div>
+          <p>Every Northline Studio project begins with a defined foundation, then evolves around your brand, content, and technical requirements. Following an initial conversation, you will receive a clear proposal outlining the scope, timeline, and investment.</p>
+        </div>
+
+        <div className="pricing-grid">
+          {pricingTiers.map((tier) => (
+            <article className={`pricing-card${tier.featured ? " pricing-card-featured" : ""}`} key={tier.name}>
+              <div className="pricing-card-topline"><span>{tier.number}</span>{tier.featured ? <small>Most popular</small> : null}</div>
+              <h3>{tier.name}</h3>
+              <p className="pricing-price">{tier.price}</p>
+              <p className="pricing-description">{tier.description}</p>
+              <h4>Includes</h4>
+              <ul>
+                {tier.features.map((feature) => <li key={feature}>{feature}</li>)}
+              </ul>
+            </article>
+          ))}
+        </div>
+
+        <div className="pricing-support">
+          <article className="care-panel">
+            <p className="pricing-label">Hosting & ongoing care</p>
+            <h3>Starting from $150/month</h3>
+            <p>A dependable technical foundation after launch. Managed care can include hosting, deployment, backups, software updates, security-minded maintenance, performance monitoring, and agreed content support.</p>
+          </article>
+          <article className="enhancements-panel">
+            <p className="pricing-label">Optional enhancements</p>
+            <dl>
+              <div><dt>Additional custom page</dt><dd>From $300</dd></div>
+              <div><dt>Website copywriting</dt><dd>From $600</dd></div>
+              <div><dt>Brand direction</dt><dd>From $850</dd></div>
+              <div><dt>Advanced SEO</dt><dd>From $500</dd></div>
+              <div><dt>Priority production timeline</dt><dd>Subject to availability</dd></div>
+            </dl>
+          </article>
+        </div>
+
+        <p className="pricing-terms">Every project is individually scoped. Third-party platform fees, subscriptions, paid fonts, and transaction fees are quoted separately when applicable. You retain ownership of the completed website and its original content upon final payment.</p>
+      </section>
+
       <section className="process-section section-pad" id="process">
         <div className="process-intro">
           <p className="section-kicker light">A focused process</p>
@@ -219,7 +318,7 @@ export default function Home() {
       <footer>
         <SectionLink className="brand footer-brand" href="#top" aria-label="Back to top"><NorthlineLogo className="brand-logo" /><span className="brand-name">Northline<br />Studio</span></SectionLink>
         <p>Design-led web experiences, secure hosting,<br />and managed care for brands with high standards.</p>
-        <div className="footer-links"><SectionLink href="#services">Services</SectionLink><SectionLink href="#about">About</SectionLink><SectionLink href="#contact">Contact</SectionLink></div>
+        <div className="footer-links"><SectionLink href="#services">Services</SectionLink><SectionLink href="#pricing">Pricing</SectionLink><SectionLink href="#about">About</SectionLink><SectionLink href="#contact">Contact</SectionLink></div>
         <div className="footer-bottom"><span>© {new Date().getFullYear()} Northline Studio</span><span>Designed with care. Built to last.</span><SectionLink href="#top">Back to top ↑</SectionLink></div>
       </footer>
     </main>

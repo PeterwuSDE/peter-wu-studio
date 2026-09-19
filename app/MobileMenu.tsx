@@ -6,6 +6,7 @@ import { navigateToSection } from "./SectionLink";
 
 const mobileLinks = [
   { href: "#services", label: "Services" },
+  { href: "#pricing", label: "Pricing" },
   { href: "#process", label: "Process" },
   { href: "#about", label: "About" },
   { href: "#contact", label: "Start a project" },
