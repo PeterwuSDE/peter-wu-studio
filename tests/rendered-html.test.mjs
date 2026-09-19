@@ -30,6 +30,9 @@ test("renders the finished studio homepage", async () => {
   assert.match(html, /A digital studio for brands/);
   assert.doesNotMatch(html, /id="work"|href="#work"|Selected concepts|CONCEPT PROJECT|Aster Atelier|Lucent House|Meridian One/);
   assert.match(html, /Sharp creative/);
+  assert.equal((html.match(/<article class="service">/g) ?? []).length, 5);
+  assert.match(html, /Business Tools &amp; Integrations/);
+  assert.match(html, /Booking &amp; scheduling/);
   assert.match(html, /secure hosting/i);
   assert.match(html, /<span class="contact-email">northlinestudio425@gmail\.com<\/span>/);
   assert.doesNotMatch(html, /mailto:|Start the conversation/);

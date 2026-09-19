@@ -26,6 +26,12 @@ const services = [
     text: "A dependable foundation beyond launch. We handle deployment, domain configuration, managed hosting, and agreed maintenance, with updates, backups, and practical security care to keep your site supported as your needs evolve.",
     tags: ["Deployment & domains", "Managed hosting", "Updates & backups", "Security care"],
   },
+  {
+    number: "05",
+    title: "Business Tools & Integrations",
+    text: "A tailored suite of digital tools designed around the way your business works. From bookings and client intake to payments, content management, onboarding, and workflow integrations, we connect the systems that help you operate with greater clarity and efficiency.",
+    tags: ["Booking & scheduling", "Forms & client intake", "Payments & deposits", "Workflow integrations"],
+  },
 ];
 
 const faqs = [
@@ -140,7 +146,7 @@ export default function Home() {
             </article>
           ))}
         </div>
-        <p className="services-note">Every project is individually scoped. We define the deliverables, timeline, and investment around your goals, with a clear proposal before work begins.</p>
+        <p className="services-note">Built for service-led businesses, independent professionals, and growing teams. Every project is individually scoped, with deliverables, timeline, and investment defined in a clear proposal before work begins.</p>
       </section>
 
       <section className="process-section section-pad" id="process">
