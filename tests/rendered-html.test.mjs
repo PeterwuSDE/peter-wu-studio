@@ -122,3 +122,28 @@ test("ships project-specific metadata and assets", async () => {
   await access(new URL("../public/northline-logo.svg", import.meta.url));
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
 });
+
+test("keeps section navigation aligned without locking document scroll", async () => {
+  const response = await render();
+  const html = await response.text();
+  const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]));
+  const hashTargets = new Set([...html.matchAll(/href="#([^"]+)"/g)].map((match) => match[1]));
+
+  for (const target of hashTargets) {
+    assert.ok(ids.has(target), `missing section target #${target}`);
+  }
+
+  const [mobileMenu, sectionLink] = await Promise.all([
+    readFile(new URL("../app/MobileMenu.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/SectionLink.tsx", import.meta.url), "utf8"),
+  ]);
+
+  for (const target of ["services", "pricing", "process", "about", "contact"]) {
+    assert.equal((mobileMenu.match(new RegExp(`href: "#${target}"`, "g")) ?? []).length, 1);
+  }
+
+  assert.match(sectionLink, /querySelector\("\.site-header"\)/);
+  assert.match(sectionLink, /window\.scrollTo/);
+  assert.match(sectionLink, /window\.history\.pushState/);
+  assert.doesNotMatch(sectionLink, /document\.(?:body|documentElement)\.style\.overflow/);
+});
