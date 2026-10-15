@@ -57,15 +57,37 @@ test("renders the finished studio homepage", async () => {
 test("renders pricing navigation and investment options", async () => {
   const response = await render();
   const html = await response.text();
+  const pricingHtml = html.match(/<section class="pricing-section[\s\S]*?<section class="process-section/)?.[0] ?? "";
 
   assert.match(html, /href="#pricing"/);
   assert.match(html, /<section[^>]+id="pricing"/);
-  assert.match(html, /The Essential/);
-  assert.match(html, /Starting from \$1,500/);
-  assert.match(html, /The Signature/);
-  assert.match(html, /Starting from \$3,500/);
-  assert.match(html, /Business Tools &amp; Integrations/);
-  assert.match(html, /Starting from \$150\/month/);
+  assert.equal((pricingHtml.match(/<article class="pricing-card(?: pricing-card-featured)?">/g) ?? []).length, 4);
+  assert.match(pricingHtml, /The Essential Website/);
+  assert.match(pricingHtml, /Starting from \$1,500/);
+  assert.match(pricingHtml, /The Signature Website/);
+  assert.match(pricingHtml, /Starting from \$3,500/);
+  assert.match(pricingHtml, /<h3>Commerce<\/h3>/);
+  assert.match(pricingHtml, /<h3>Business Systems<\/h3>/);
+  assert.equal((pricingHtml.match(/Custom proposal/g) ?? []).length, 2);
+  assert.match(pricingHtml, /Starting from \$150\/month/);
+  assert.match(pricingHtml, /Ongoing Partnership/);
+  assert.match(pricingHtml, /limited availability/i);
+  assert.doesNotMatch(pricingHtml, /Optional enhancements|Additional custom page|Priority production timeline/);
+  assert.doesNotMatch(pricingHtml, /Business Tools &amp; Integrations/);
+  assert.match(pricingHtml, /third-party[\s\S]{0,180}separately/i);
+
+  const pricingCards = [...pricingHtml.matchAll(/<article class="pricing-card(?: pricing-card-featured)?">([\s\S]*?)<\/article>/g)].map((match) => match[1]);
+  for (const title of ["Commerce", "Business Systems"]) {
+    const card = pricingCards.find((candidate) => candidate.includes(`<h3>${title}</h3>`)) ?? "";
+    assert.match(card, /Custom proposal/);
+    assert.match(card, /tailored|scoped|proposal/i);
+    assert.doesNotMatch(card, /up to \d+ products|included products|unlimited/i);
+  }
+
+  const partnership = pricingHtml.match(/<article class="partnership-panel">([\s\S]*?)<\/article>/)?.[1] ?? "";
+  assert.match(partnership, /Tailored engagement/);
+  assert.match(partnership, /Limited availability/);
+  assert.doesNotMatch(partnership, /\$\d/);
 });
 
 test("ships project-specific metadata and assets", async () => {

@@ -31,7 +31,7 @@ const services = [
 const pricingTiers = [
   {
     number: "01",
-    name: "The Essential",
+    name: "The Essential Website",
     price: "Starting from $1,500",
     description: "A focused, beautifully considered website for an independent professional, emerging brand, or service-led business that needs a polished home online.",
     features: [
@@ -47,7 +47,7 @@ const pricingTiers = [
   },
   {
     number: "02",
-    name: "The Signature",
+    name: "The Signature Website",
     price: "Starting from $3,500",
     description: "A more complete digital presence with greater space for your story, work, services, and brand personality to unfold.",
     featured: true,
@@ -65,18 +65,32 @@ const pricingTiers = [
   },
   {
     number: "03",
-    name: "Business Tools & Integrations",
-    price: "Custom quote",
-    description: "A tailored suite of digital tools designed around the way your business operates. Commission it alongside a website or add it to an existing digital presence.",
+    name: "Commerce",
+    price: "Custom proposal",
+    description: "A tailored storefront for a new or evolving product business. Every Commerce proposal is shaped around your catalogue, content, customer journey, integrations, and launch requirements.",
+    featureLabel: "Possible scope",
     features: [
-      "Booking and scheduling systems",
-      "Client intake and custom forms",
+      "Shopify setup or redesign",
+      "Storefront and product experience",
+      "Collections and merchandising",
+      "Payments and subscriptions",
+      "Selected commerce integrations",
+      "Launch testing and guidance",
+    ],
+  },
+  {
+    number: "04",
+    name: "Business Systems",
+    price: "Custom proposal",
+    description: "A focused system for a real operational need. Every Business Systems proposal is scoped around your workflows, users, existing tools, integrations, and the outcome the business needs.",
+    featureLabel: "Possible scope",
+    features: [
+      "Booking and scheduling",
+      "Client intake and onboarding",
       "Payments and deposits",
-      "Email and CRM integrations",
-      "Client onboarding workflows",
-      "Content management systems",
-      "Lightweight client portals",
-      "Custom business tools",
+      "CRM and email workflows",
+      "Automation and memberships",
+      "Multi-tool business suites",
     ],
   },
 ];
@@ -227,7 +241,7 @@ export default function Home() {
               <h3>{tier.name}</h3>
               <p className="pricing-price">{tier.price}</p>
               <p className="pricing-description">{tier.description}</p>
-              <h4>Includes</h4>
+              <h4>{tier.featureLabel ?? "Includes"}</h4>
               <ul>
                 {tier.features.map((feature) => <li key={feature}>{feature}</li>)}
               </ul>
@@ -237,23 +251,18 @@ export default function Home() {
 
         <div className="pricing-support">
           <article className="care-panel">
-            <p className="pricing-label">Hosting & ongoing care</p>
+            <p className="pricing-label">Ongoing Care</p>
             <h3>Starting from $150/month</h3>
             <p>A dependable technical foundation after launch. Managed care can include hosting, deployment, backups, software updates, security-minded maintenance, performance monitoring, and agreed content support.</p>
           </article>
-          <article className="enhancements-panel">
-            <p className="pricing-label">Optional enhancements</p>
-            <dl>
-              <div><dt>Additional custom page</dt><dd>From $300</dd></div>
-              <div><dt>Website copywriting</dt><dd>From $600</dd></div>
-              <div><dt>Brand direction</dt><dd>From $850</dd></div>
-              <div><dt>Advanced SEO</dt><dd>From $500</dd></div>
-              <div><dt>Priority production timeline</dt><dd>Subject to availability</dd></div>
-            </dl>
+          <article className="partnership-panel">
+            <p className="pricing-label">Ongoing Partnership</p>
+            <h3>Tailored engagement</h3>
+            <p><strong>Limited availability.</strong> For select clients who need continuous design, development, and digital support. Priorities, capacity, response expectations, and scope are agreed before work begins.</p>
           </article>
         </div>
 
-        <p className="pricing-terms">Every project is individually scoped. Third-party platform fees, subscriptions, paid fonts, and transaction fees are quoted separately when applicable. You retain ownership of the completed website and its original content upon final payment.</p>
+        <p className="pricing-terms">Every project is individually scoped. Third-party platform fees, subscriptions, paid themes, paid fonts, applications, and transaction fees are quoted separately when applicable. You retain ownership of the completed project work and its original content upon final payment.</p>
       </section>
 
       <section className="process-section section-pad" id="process">
