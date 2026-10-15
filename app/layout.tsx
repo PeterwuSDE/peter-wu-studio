@@ -12,20 +12,23 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteTitle = "Northline Studio | Design, Commerce & Digital Systems";
+const siteDescription = "Northline Studio is a design-led digital partner that designs, builds, launches, and manages websites, commerce experiences, and business systems for ambitious founders and owner-led businesses.";
+
 export const metadata: Metadata = {
-  title: "Northline Studio | Design-Led Websites & Digital Systems",
-  description: "Elevated website design, precise development, secure hosting, and managed care for brands that need to look exceptional and perform reliably.",
+  title: siteTitle,
+  description: siteDescription,
   metadataBase: new URL("https://peterwusde.github.io/peter-wu-studio/"),
   openGraph: {
-    title: "Northline Studio | Design-Led Websites & Digital Systems",
-    description: "Elevated website design, precise development, secure hosting, and managed care for brands with high standards.",
+    title: siteTitle,
+    description: siteDescription,
     type: "website",
     images: [{ url: "/peter-wu-studio/og.png", width: 1658, height: 949, alt: "Northline Studio — design-led websites and digital systems" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Northline Studio | Design-Led Websites & Digital Systems",
-    description: "Elevated website design, precise development, secure hosting, and managed care for brands with high standards.",
+    title: siteTitle,
+    description: siteDescription,
     images: ["/peter-wu-studio/og.png"],
   },
   icons: {

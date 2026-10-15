@@ -140,11 +140,11 @@ export default function Home() {
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow"><span /> Design-led websites & digital systems</p>
-          <h1>A digital studio for brands that need to look <em>exceptional.</em></h1>
-          <p className="hero-intro">Northline Studio creates elevated web experiences with strong visual direction, precise engineering, secure hosting, and the kind of polish that makes a brand feel established from the first click.</p>
+          <p className="eyebrow"><span /> Design, commerce & digital systems</p>
+          <h1>We build the digital side of ambitious businesses.</h1>
+          <p className="hero-intro">Northline Studio partners with founders and owner-led businesses to design, build, launch, and manage the websites, commerce experiences, and digital systems behind their growth.</p>
           <div className="hero-actions">
-            <SectionLink className="button button-primary" href="#contact">Build your presence</SectionLink>
+            <SectionLink className="button button-primary" href="#contact">Start a project</SectionLink>
           </div>
         </div>
 
@@ -168,18 +168,32 @@ export default function Home() {
         </div>
 
         <div className="hero-proof" aria-label="Service highlights">
-          <span>Design-led</span><i>✦</i><span>High-performance</span><i>✦</i><span>Secure hosting</span><i>✦</i><span>Managed care</span>
+          <span>Design-led</span><i>✦</i><span>Commerce-ready</span><i>✦</i><span>Systems-minded</span><i>✦</i><span>Managed care</span>
         </div>
       </section>
 
       <section className="intro-section section-pad">
-        <p className="section-kicker">What a premium site should do</p>
-        <div className="intro-grid">
-          <h2>Create desire, build trust, and make the brand feel <em>inevitable.</em></h2>
-          <div className="intro-copy">
-            <p>Your website is often the first serious proof of your taste, credibility, and ambition. It should feel considered at every detail: layout, motion, typography, performance, and the path toward inquiry.</p>
-            <p>Northline Studio brings design sensibility and technical discipline together, creating digital homes that look refined, load quickly, stay dependable, and support the next stage of your brand.</p>
-          </div>
+        <p className="section-kicker">How we can help</p>
+        <div className="intro-heading">
+          <h2>One partner for<br />what comes <em>next.</em></h2>
+          <p>Whether the idea is new, the current experience needs work, or the day-to-day management is taking too much attention, Northline brings design judgment and technical execution together under one roof.</p>
+        </div>
+        <div className="engagement-paths">
+          <article className="engagement-path">
+            <span>01</span>
+            <h3>Build something new.</h3>
+            <p>Turn a business, brand, offer, website, store, or system into a polished digital experience ready for the real world.</p>
+          </article>
+          <article className="engagement-path">
+            <span>02</span>
+            <h3>Improve what already exists.</h3>
+            <p>Strengthen the design, structure, performance, and functionality of an existing digital presence without discarding what still works.</p>
+          </article>
+          <article className="engagement-path">
+            <span>03</span>
+            <h3>Let us manage it for you.</h3>
+            <p>Keep the digital side dependable, current, and moving forward while you stay focused on running the business.</p>
+          </article>
         </div>
       </section>
 

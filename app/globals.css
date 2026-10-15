@@ -103,11 +103,14 @@ h1 em, h2 em { color: var(--blue); font-family: Georgia, 'Times New Roman', seri
 .section-kicker::before { content: ""; width: 28px; height: 1px; background: currentColor; }
 .section-kicker.light { color: rgba(255,255,255,.64); }
 .intro-section { background: var(--paper-bright); }
-.intro-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr); gap: clamp(60px, 10vw, 160px); align-items: end; }
-.intro-grid h2, .services-heading h2, .process-intro h2, .about-copy h2, .faq-heading h2 { margin: 0; font-size: clamp(45px, 5.6vw, 88px); line-height: 1.08; letter-spacing: 0; font-weight: 600; }
-.intro-copy { border-left: 1px solid var(--line); padding-left: clamp(28px, 4vw, 64px); }
-.intro-copy p { font-size: 16px; line-height: 1.7; color: #4f504c; }
-.intro-copy p:first-child { margin-top: 0; color: var(--ink); font-size: 19px; }
+.intro-heading { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr); gap: clamp(60px, 10vw, 160px); align-items: end; }
+.intro-heading h2, .services-heading h2, .process-intro h2, .about-copy h2, .faq-heading h2 { margin: 0; font-size: clamp(45px, 5.6vw, 88px); line-height: 1.08; letter-spacing: 0; font-weight: 600; }
+.intro-heading > p { margin: 0 0 7px; border-left: 1px solid var(--line); padding-left: clamp(28px, 4vw, 64px); color: #4f504c; font-size: 17px; line-height: 1.75; }
+.engagement-paths { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 88px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.engagement-path { min-width: 0; padding: clamp(30px, 3.4vw, 52px); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.engagement-path > span { font: 9px var(--font-geist-mono); letter-spacing: .11em; color: var(--blue); }
+.engagement-path h3 { margin: 42px 0 24px; font-size: clamp(28px, 3vw, 43px); line-height: 1.08; letter-spacing: 0; }
+.engagement-path p { margin: 0; color: #555651; font-size: 14px; line-height: 1.75; }
 
 .process-intro h2 em { color: var(--lime); }
 
@@ -247,9 +250,10 @@ footer > p { margin: 0; font-size: 14px; line-height: 1.55; color: #555651; }
   .hero-proof { top: auto; bottom: 0; height: 52px; padding: 0 20px; }
   .hero-proof span:nth-of-type(even), .hero-proof i:nth-of-type(n+3) { display: none; }
   .section-pad { padding: 90px 22px; }
-  .intro-grid, .process-section, .about-section, .faq-section { grid-template-columns: 1fr; }
-  .intro-grid { gap: 50px; }
-  .intro-copy { padding: 28px 0 0; border-left: 0; border-top: 1px solid var(--line); }
+  .intro-heading, .process-section, .about-section, .faq-section { grid-template-columns: 1fr; }
+  .intro-heading { gap: 50px; }
+  .intro-heading > p { margin: 0; padding: 28px 0 0; border-left: 0; border-top: 1px solid var(--line); }
+  .engagement-paths { grid-template-columns: 1fr; margin-top: 60px; }
   .services-heading { margin-bottom: 60px; }
   .service { grid-template-columns: 36px 1fr; gap: 24px; padding: 40px 0; }
   .service > p, .service ul { grid-column: 2; }

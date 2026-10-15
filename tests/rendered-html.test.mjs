@@ -20,14 +20,20 @@ test("renders the finished studio homepage", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /Northline Studio \| Design-Led Websites &amp; Digital Systems/);
+  assert.match(html, /Northline Studio \| Design, Commerce &amp; Digital Systems/);
   assert.match(html, /aria-label="北境 logo"/);
   assert.match(html, /aria-controls="mobile-navigation"/);
   assert.doesNotMatch(html, /<details class="mobile-menu"/);
   assert.match(html, /northline-logo-north/);
   assert.match(html, /northline-logo-south/);
   assert.doesNotMatch(html, /↗/);
-  assert.match(html, /A digital studio for brands/);
+  assert.match(html, /We build the digital side of ambitious businesses/);
+  assert.match(html, /founders and owner-led businesses/i);
+  assert.match(html, /Build something new/);
+  assert.match(html, /Improve what already exists/);
+  assert.match(html, /Let us manage it for you/);
+  assert.equal((html.match(/<article class="engagement-path"/g) ?? []).length, 3);
+  assert.doesNotMatch(html, /A digital studio for brands that need to look/);
   assert.doesNotMatch(html, /id="work"|href="#work"|Selected concepts|CONCEPT PROJECT|Aster Atelier|Lucent House|Meridian One/);
   assert.match(html, /Sharp creative/);
   assert.equal((html.match(/<article class="service">/g) ?? []).length, 5);
@@ -63,6 +69,9 @@ test("ships project-specific metadata and assets", async () => {
 
   assert.match(layout, /og\.png/);
   assert.match(layout, /favicon\.png/);
+  assert.match(layout, /Northline Studio \| Design, Commerce & Digital Systems/);
+  assert.match(layout, /websites, commerce experiences, and business systems/i);
+  assert.match(layout, /designs, builds, launches, and manages/i);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await access(new URL("../public/og.png", import.meta.url));
   await access(new URL("../public/favicon.png", import.meta.url));
