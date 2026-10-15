@@ -4,33 +4,27 @@ import { SectionLink } from "./SectionLink";
 const services = [
   {
     number: "01",
-    title: "Signature Websites",
-    text: "A distinctive digital home for your brand. Custom visual direction, carefully structured pages, and considered interactions bring your identity into focus. Built responsively, with performance, accessibility, and SEO foundations in place.",
-    tags: ["Custom visual design", "Content architecture", "Responsive development", "SEO foundations"],
+    title: "Websites & Brand Presence",
+    text: "A distinctive digital home for the business behind it. We shape brand websites, portfolios, redesigns, and content-rich experiences with strong visual direction, clear structure, responsive engineering, and the foundations to stay useful as you grow.",
+    tags: ["Custom brand sites", "Portfolio & editorial", "CMS & multilingual", "Redesigns & migrations"],
   },
   {
     number: "02",
-    title: "Portfolio Websites",
-    text: "An editorial approach to presenting your work, story, and presence. We shape image-led layouts, project galleries, profile pages, and clear inquiry paths into a cohesive experience that feels unmistakably yours.",
-    tags: ["Image-led layouts", "Portfolio galleries", "Profile & story", "Inquiry pathways"],
+    title: "Commerce",
+    text: "Online stores that feel considered at every step, from first impression to checkout. We design and build Shopify experiences, refine existing storefronts, and connect the product, payment, and subscription flows a growing brand needs to sell with confidence.",
+    tags: ["Shopify stores", "Storefront design", "Products & subscriptions", "Payments & launch"],
   },
   {
     number: "03",
-    title: "Website Redesign",
-    text: "A considered new direction for an existing website. We refine the visual language, rethink the content structure, and improve navigation, mobile usability, and loading speed, creating a stronger expression of where your brand is today.",
-    tags: ["Visual refinement", "Content restructuring", "Mobile experience", "Performance tuning"],
+    title: "Business Systems",
+    text: "Practical digital systems shaped around the way your business actually works. We connect bookings, client intake, payments, CRM, onboarding, automation, memberships, and tailored multi-tool suites into a clearer day-to-day operation.",
+    tags: ["Booking & scheduling", "Forms & client intake", "CRM & automation", "Multi-tool suites"],
   },
   {
     number: "04",
-    title: "Hosting & Ongoing Care",
-    text: "A dependable foundation beyond launch. We handle deployment, domain configuration, managed hosting, and agreed maintenance, with updates, backups, and practical security care to keep your site supported as your needs evolve.",
-    tags: ["Deployment & domains", "Managed hosting", "Updates & backups", "Security care"],
-  },
-  {
-    number: "05",
-    title: "Business Tools & Integrations",
-    text: "A tailored suite of digital tools designed around the way your business works. From bookings and client intake to payments, content management, onboarding, and workflow integrations, we connect the systems that help you operate with greater clarity and efficiency.",
-    tags: ["Booking & scheduling", "Forms & client intake", "Payments & deposits", "Workflow integrations"],
+    title: "Ongoing Care",
+    text: "A dependable foundation after launch. We manage hosting, deployment, monitoring, backups, updates, security-minded maintenance, agreed content support, and ongoing improvements so the digital side stays current and reliable.",
+    tags: ["Managed hosting", "Monitoring & backups", "Updates & security care", "Content & optimization"],
   },
 ];
 
@@ -200,7 +194,7 @@ export default function Home() {
       <section className="services-section section-pad" id="services">
         <div className="services-heading">
           <p className="section-kicker">Our services</p>
-          <h2>Sharp creative.<br /><em>Serious engineering.</em></h2>
+          <h2>One studio.<br /><em>Four ways forward.</em></h2>
         </div>
         <div className="service-list">
           {services.map((service) => (
@@ -214,7 +208,7 @@ export default function Home() {
             </article>
           ))}
         </div>
-        <p className="services-note">Built for service-led businesses, independent professionals, and growing teams. Every project is individually scoped, with deliverables, timeline, and investment defined in a clear proposal before work begins.</p>
+        <p className="services-note">Designed for founders and owner-led businesses that want one accountable partner across design, technology, launch, and what comes after. Every engagement is individually scoped, with deliverables, timeline, and investment defined before work begins.</p>
       </section>
 
       <section className="pricing-section section-pad" id="pricing">
