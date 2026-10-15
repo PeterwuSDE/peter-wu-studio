@@ -49,9 +49,24 @@ test("renders the finished studio homepage", async () => {
   assert.match(html, /secure hosting/i);
   assert.match(html, /<span class="contact-email">northlinestudio425@gmail\.com<\/span>/);
   assert.doesNotMatch(html, /mailto:|Start the conversation/);
+  assert.doesNotMatch(html, /<form\b/i);
   assert.doesNotMatch(html, /hello@yourstudio\.com/);
   assert.doesNotMatch(html, /small business|small-business|local business/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
+
+  assert.match(html, /<h3>Direction<\/h3>/);
+  assert.match(html, /<h3>Design<\/h3>/);
+  assert.match(html, /<h3>Build<\/h3>/);
+  assert.match(html, /<h3>Launch &amp; Care<\/h3>/);
+  assert.match(html, /design-led digital studio/i);
+  assert.match(html, /website, store, or system/i);
+  assert.match(html, /what you are building or operating/i);
+  assert.match(html, /new build, an improvement, or ongoing management/i);
+  assert.match(html, /websites, commerce, digital systems, and ongoing care/i);
+
+  const faqHtml = html.match(/<section class="faq-section[\s\S]*?<section class="contact-section/)?.[0] ?? "";
+  assert.equal((faqHtml.match(/<details>/g) ?? []).length, 5);
+  assert.match(faqHtml, /third-party/i);
 });
 
 test("renders pricing navigation and investment options", async () => {
