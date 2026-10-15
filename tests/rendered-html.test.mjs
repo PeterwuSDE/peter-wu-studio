@@ -106,9 +106,10 @@ test("renders pricing navigation and investment options", async () => {
 });
 
 test("ships project-specific metadata and assets", async () => {
-  const [layout, packageJson] = await Promise.all([
+  const [layout, packageJson, styles] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
 
   assert.match(layout, /og\.png/);
@@ -117,6 +118,7 @@ test("ships project-specific metadata and assets", async () => {
   assert.match(layout, /websites, commerce experiences, and business systems/i);
   assert.match(layout, /designs, builds, launches, and manages/i);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
+  assert.doesNotMatch(styles, /enhancements-panel/);
   await access(new URL("../public/og.png", import.meta.url));
   await access(new URL("../public/favicon.png", import.meta.url));
   await access(new URL("../public/northline-logo.svg", import.meta.url));
