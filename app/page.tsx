@@ -5,26 +5,26 @@ const services = [
   {
     number: "01",
     title: "Websites & Brand Presence",
-    text: "A distinctive digital home for the business behind it. We shape brand websites, portfolios, redesigns, and content-rich experiences with strong visual direction, clear structure, responsive engineering, and the foundations to stay useful as you grow.",
-    tags: ["Custom brand sites", "Portfolio & editorial", "CMS & multilingual", "Redesigns & migrations"],
+    text: "Distinctive, carefully built websites that give your work, idea, or organization a credible and memorable home online.",
+    tags: ["Custom websites", "Portfolios & editorial", "Redesigns & migrations"],
   },
   {
     number: "02",
     title: "Commerce",
-    text: "Online stores that feel considered at every step, from first impression to checkout. We design and build Shopify experiences, refine existing storefronts, and connect the product, payment, and subscription flows a growing brand needs to sell with confidence.",
-    tags: ["Shopify stores", "Storefront design", "Products & subscriptions", "Payments & launch"],
+    text: "Considered Shopify experiences designed to present products clearly and make buying feel effortless.",
+    tags: ["Shopify stores", "Storefront redesign", "Payments & subscriptions"],
   },
   {
     number: "03",
     title: "Business Systems",
-    text: "Practical digital systems shaped around the way your business actually works. We connect bookings, client intake, payments, CRM, onboarding, automation, memberships, and tailored multi-tool suites into a clearer day-to-day operation.",
-    tags: ["Booking & scheduling", "Forms & client intake", "CRM & automation", "Multi-tool suites"],
+    text: "Practical digital systems that simplify bookings, client intake, payments, communication, and everyday operations.",
+    tags: ["Booking & scheduling", "CRM & automation", "Multi-tool suites"],
   },
   {
     number: "04",
     title: "Ongoing Care",
-    text: "A dependable foundation after launch. We manage secure hosting, deployment, monitoring, backups, updates, security-minded maintenance, agreed content support, and ongoing improvements so the digital side stays current and reliable.",
-    tags: ["Secure hosting", "Monitoring & backups", "Updates & security care", "Content & optimization"],
+    text: "Reliable hosting, maintenance, monitoring, and improvements that keep your digital presence secure and current.",
+    tags: ["Hosting & deployment", "Monitoring & maintenance", "Content & optimization"],
   },
 ];
 
@@ -33,64 +33,51 @@ const pricingTiers = [
     number: "01",
     name: "The Essential Website",
     price: "Starting from $1,500",
-    description: "A focused, beautifully considered website for an independent professional, emerging brand, or service-led business that needs a polished home online.",
+    description: "A focused digital home for an independent professional, emerging brand, or service-led venture.",
     features: [
-      "Up to 3 thoughtfully designed pages",
-      "Custom visual direction",
+      "Up to 3 custom-designed pages",
       "Responsive development",
-      "Contact or inquiry setup",
       "Foundational SEO and accessibility",
-      "Performance optimization",
       "Domain and launch configuration",
-      "Two rounds of revisions",
     ],
   },
   {
     number: "02",
     name: "The Signature Website",
     price: "Starting from $3,500",
-    description: "A more complete digital presence with greater space for your story, work, services, and brand personality to unfold.",
+    description: "A more complete digital presence with greater room for content, storytelling, and refined interaction.",
     featured: true,
     features: [
-      "Everything in The Essential",
       "Up to 7 custom-designed pages",
       "Deeper content architecture",
-      "Enhanced galleries and visual storytelling",
-      "Refined interactions and motion",
-      "Selected third-party integrations",
-      "Expanded SEO foundations",
-      "Three rounds of revisions",
-      "Post-launch handover and guidance",
+      "Galleries, motion, and selected integrations",
+      "Expanded SEO and launch support",
     ],
   },
   {
     number: "03",
     name: "Commerce",
     price: "Custom proposal",
-    description: "A tailored storefront for a new or evolving product business. Every Commerce proposal is shaped around your catalogue, content, customer journey, integrations, and launch requirements.",
+    description: "A new or redesigned Shopify storefront shaped around your products and customer journey.",
     featureLabel: "Possible scope",
     features: [
-      "Shopify setup or redesign",
-      "Storefront and product experience",
-      "Collections and merchandising",
+      "Store setup or redesign",
+      "Product and collection experience",
       "Payments and subscriptions",
-      "Selected commerce integrations",
-      "Launch testing and guidance",
+      "Testing and launch support",
     ],
   },
   {
     number: "04",
     name: "Business Systems",
     price: "Custom proposal",
-    description: "A focused system for a real operational need. Every Business Systems proposal is scoped around your workflows, users, existing tools, integrations, and the outcome the business needs.",
+    description: "A tailored digital system built around a clear operational need.",
     featureLabel: "Possible scope",
     features: [
-      "Booking and scheduling",
-      "Client intake and onboarding",
+      "Booking and client intake",
       "Payments and deposits",
-      "CRM and email workflows",
-      "Automation and memberships",
-      "Multi-tool business suites",
+      "CRM and automation",
+      "Connected business tools",
     ],
   },
 ];
@@ -98,23 +85,15 @@ const pricingTiers = [
 const faqs = [
   {
     question: "What kind of projects do you take on?",
-    answer: "Northline Studio works across websites and brand presence, commerce, business systems, and ongoing care. The best fit is a founder or owner-led business that values thoughtful design, dependable execution, and one accountable partner from direction through launch.",
+    answer: "We work across websites and brand presence, commerce, digital systems, and ongoing care. The best fit is someone who values thoughtful design, dependable execution, and a clear working relationship.",
   },
   {
     question: "Can you improve something that already exists?",
-    answer: "Yes. We can assess an existing website, store, or system, preserve what is useful, and improve its design, structure, performance, integrations, or day-to-day usability.",
-  },
-  {
-    question: "How are scope and timing determined?",
-    answer: "A focused website may take a few weeks, while commerce and systems work depends on content, workflows, integrations, and testing. Every engagement begins with a clear proposal covering deliverables, schedule, responsibilities, and investment.",
+    answer: "Yes. We can redesign, restructure, optimize, or extend an existing website, store, or digital system while preserving what still works.",
   },
   {
     question: "What happens after launch?",
-    answer: "You can take over the finished work, continue with Ongoing Care, or discuss a tailored partnership. Support can cover hosting, updates, monitoring, agreed content work, and ongoing improvements.",
-  },
-  {
-    question: "Are third-party costs included?",
-    answer: "No. Platform subscriptions, paid themes, fonts, applications, transaction fees, and other third-party services are separate from Northline Studio fees and are identified in the proposal when applicable.",
+    answer: "You can take over the finished work or continue with Ongoing Care for hosting, monitoring, maintenance, content support, and future improvements.",
   },
 ];
 
@@ -152,15 +131,15 @@ export default function Home() {
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow"><span /> Design, commerce & digital systems</p>
-          <h1>We build the digital side of ambitious businesses.</h1>
-          <p className="hero-intro">Northline Studio partners with founders and owner-led businesses to design, build, launch, and manage the websites, commerce experiences, and digital systems behind their growth.</p>
+          <p className="eyebrow"><span /> Design, development & digital systems</p>
+          <h1>We bring ambitious ideas to life online.</h1>
+          <p className="hero-intro">Northline Studio works with people building something of their own—from personal brands and independent practices to new ventures and growing companies—to create distinctive websites, commerce experiences, and digital systems.</p>
           <div className="hero-actions">
             <SectionLink className="button button-primary" href="#contact">Start a project</SectionLink>
           </div>
         </div>
 
-        <div className="hero-visual" aria-label="Preview of a custom business website">
+        <div className="hero-visual" aria-label="Preview of a custom digital experience">
           <div className="visual-sun" />
           <div className="browser-card">
             <div className="browser-bar">
@@ -170,7 +149,7 @@ export default function Home() {
             <div className="browser-site">
               <div className="mini-nav"><b>NORTHLINE / STUDIO</b><span>WORK&nbsp;&nbsp; METHOD&nbsp;&nbsp; CONTACT</span></div>
               <p>VISUAL DIRECTION · SECURE BUILD</p>
-              <h2>Your brand<br />should feel<br /><em>impossible to ignore.</em></h2>
+              <h2>Your idea<br />should feel<br /><em>impossible to ignore.</em></h2>
               <button type="button" tabIndex={-1}>BEGIN THE BUILD</button>
               <div className="mini-art"><span className="mini-arch" /><span className="mini-circle" /></div>
             </div>
@@ -184,35 +163,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="intro-section section-pad">
-        <p className="section-kicker">How we can help</p>
-        <div className="intro-heading">
-          <h2>One partner for<br />what comes <em>next.</em></h2>
-          <p>Whether the idea is new, the current experience needs work, or the day-to-day management is taking too much attention, Northline brings design judgment and technical execution together under one roof.</p>
-        </div>
-        <div className="engagement-paths">
-          <article className="engagement-path">
-            <span>01</span>
-            <h3>Build something new.</h3>
-            <p>Turn a business, brand, offer, website, store, or system into a polished digital experience ready for the real world.</p>
-          </article>
-          <article className="engagement-path">
-            <span>02</span>
-            <h3>Improve what already exists.</h3>
-            <p>Strengthen the design, structure, performance, and functionality of an existing digital presence without discarding what still works.</p>
-          </article>
-          <article className="engagement-path">
-            <span>03</span>
-            <h3>Let us manage it for you.</h3>
-            <p>Keep the digital side dependable, current, and moving forward while you stay focused on running the business.</p>
-          </article>
-        </div>
-      </section>
-
       <section className="services-section section-pad" id="services">
         <div className="services-heading">
           <p className="section-kicker">Our services</p>
           <h2>One studio.<br /><em>Four ways forward.</em></h2>
+          <p className="services-intro">Whether you are shaping a personal presence, launching a new venture, or improving something already in motion, we bring design and technical execution together.</p>
         </div>
         <div className="service-list">
           {services.map((service) => (
@@ -226,16 +181,16 @@ export default function Home() {
             </article>
           ))}
         </div>
-        <p className="services-note">Designed for founders and owner-led businesses that want one accountable partner across design, technology, launch, and what comes after. Every engagement is individually scoped, with deliverables, timeline, and investment defined before work begins.</p>
+        <p className="services-note">Every engagement is individually scoped, with deliverables, timing, and investment defined before work begins.</p>
       </section>
 
       <section className="pricing-section section-pad" id="pricing">
         <div className="pricing-heading">
           <div>
-            <p className="section-kicker">Website investment</p>
+            <p className="section-kicker">Investment</p>
             <h2>Clear starting points.<br /><em>Thoughtfully tailored.</em></h2>
           </div>
-          <p>Every Northline Studio project begins with a defined foundation, then evolves around your brand, content, and technical requirements. Following an initial conversation, you will receive a clear proposal outlining the scope, timeline, and investment.</p>
+          <p>Choose the closest starting point. We will shape the final scope around your identity, content, and technical requirements.</p>
         </div>
 
         <div className="pricing-grid">
@@ -257,29 +212,23 @@ export default function Home() {
           <article className="care-panel">
             <p className="pricing-label">Ongoing Care</p>
             <h3>Starting from $150/month</h3>
-            <p>A dependable technical foundation after launch. Managed care can include hosting, deployment, backups, software updates, security-minded maintenance, performance monitoring, and agreed content support.</p>
-          </article>
-          <article className="partnership-panel">
-            <p className="pricing-label">Ongoing Partnership</p>
-            <h3>Tailored engagement</h3>
-            <p><strong>Limited availability.</strong> For select clients who need continuous design, development, and digital support. Priorities, capacity, response expectations, and scope are agreed before work begins.</p>
+            <p>Hosting, monitoring, updates, security-minded maintenance, and agreed content support. Tailored ongoing partnerships are available for select clients who need regular design and development capacity.</p>
           </article>
         </div>
 
-        <p className="pricing-terms">Every project is individually scoped. Third-party platform fees, subscriptions, paid themes, paid fonts, applications, and transaction fees are quoted separately when applicable. You retain ownership of the completed project work and its original content upon final payment.</p>
+        <p className="pricing-terms">Third-party platforms, applications, themes, fonts, subscriptions, and transaction fees are quoted separately when applicable.</p>
       </section>
 
       <section className="process-section section-pad" id="process">
         <div className="process-intro">
-          <p className="section-kicker light">A complete process</p>
-          <h2>From first idea<br />to <em>what comes next.</em></h2>
-          <p>Clear direction, considered design, disciplined implementation, and a dependable path beyond launch.</p>
+          <p className="section-kicker light">Our process</p>
+          <h2>From direction<br />to <em>dependable delivery.</em></h2>
         </div>
         <ol className="process-list">
-          <li><span>01</span><div><h3>Direction</h3><p>We clarify the business, audience, goals, content, constraints, and the outcome the work needs to create.</p></div></li>
-          <li><span>02</span><div><h3>Design</h3><p>Structure, visual language, experience, and interaction are shaped into a clear direction that feels intentional and distinctly yours.</p></div></li>
-          <li><span>03</span><div><h3>Build</h3><p>The approved direction is implemented, integrated, tested, and refined into a responsive, accessible, dependable digital experience.</p></div></li>
-          <li><span>04</span><div><h3>Launch & Care</h3><p>We deploy, configure domains and connected services, verify the live result, and establish ongoing support when selected.</p></div></li>
+          <li><span>01</span><div><h3>Direction</h3><p>We define the goals, audience, content, requirements, and measures of success.</p></div></li>
+          <li><span>02</span><div><h3>Design</h3><p>We shape the structure, visual language, and experience into one clear direction.</p></div></li>
+          <li><span>03</span><div><h3>Build</h3><p>We implement, integrate, test, and refine the approved solution.</p></div></li>
+          <li><span>04</span><div><h3>Launch & Care</h3><p>We deploy the finished work and establish ongoing support when needed.</p></div></li>
         </ol>
       </section>
 
@@ -292,8 +241,7 @@ export default function Home() {
         <div className="about-copy">
           <p className="section-kicker">The studio approach</p>
           <h2>Boutique attention.<br /><em>Production-grade craft.</em></h2>
-          <p>Northline Studio is a design-led digital studio for businesses that need more than an attractive surface. The work brings visual judgment, technical implementation, deployment, and long-term responsibility into one considered process.</p>
-          <p>You work directly with the person shaping and building the solution, keeping decisions clear and the result cohesive from first direction through launch and ongoing care.</p>
+          <p>Northline Studio is a design-led digital studio for people and teams building something meaningful online. You work directly with the person shaping and building the solution, keeping the process clear and the result cohesive from first direction through launch.</p>
           <SectionLink className="text-link" href="#contact">Tell us what you are building</SectionLink>
         </div>
       </section>
@@ -314,7 +262,7 @@ export default function Home() {
         <div className="contact-star" aria-hidden="true">✦</div>
         <p className="section-kicker light">Have something in mind?</p>
         <h2>Build it well.<br /><em>Run it with confidence.</em></h2>
-        <p>For new projects, improvements, and ongoing support, email us directly at the address below. Tell us what you are building or operating, where things stand, and what you want the digital side to make possible.</p>
+        <p>For new projects, improvements, or ongoing support, email us directly:</p>
         <div className="contact-details">
           <span className="contact-label">Project inquiries</span>
           <span className="contact-email">northlinestudio425@gmail.com</span>
@@ -324,12 +272,9 @@ export default function Home() {
           <p>To help us understand your project, include a few details in your email:</p>
           <ul>
             <li>Your name or brand</li>
-            <li>Your country or location</li>
-            <li>Social profile or handle, if applicable</li>
             <li>Your current website, store, or system, if one exists</li>
-            <li>What is not working or what you want to improve</li>
-            <li>Whether you need a new build, an improvement, or ongoing management</li>
-            <li>Your goals, timing, questions, and any useful context</li>
+            <li>What you want to build or improve</li>
+            <li>Your goals, timing, and any useful context</li>
           </ul>
           <p className="contact-brief-note">An early idea is enough. We can shape the details together.</p>
         </div>
@@ -338,7 +283,7 @@ export default function Home() {
 
       <footer>
         <SectionLink className="brand footer-brand" href="#top" aria-label="Back to top"><NorthlineLogo className="brand-logo" /><span className="brand-name">Northline<br />Studio</span></SectionLink>
-        <p>Websites, commerce, digital systems, and ongoing care<br />for founders building ambitious businesses.</p>
+        <p>Websites, commerce, and digital systems<br />for people building something of their own.</p>
         <div className="footer-links"><SectionLink href="#services">Services</SectionLink><SectionLink href="#pricing">Pricing</SectionLink><SectionLink href="#process">Process</SectionLink><SectionLink href="#about">About</SectionLink><SectionLink href="#contact">Contact</SectionLink></div>
         <div className="footer-bottom"><span>© {new Date().getFullYear()} Northline Studio</span><span>Designed with care. Built to last.</span><SectionLink href="#top">Back to top ↑</SectionLink></div>
       </footer>

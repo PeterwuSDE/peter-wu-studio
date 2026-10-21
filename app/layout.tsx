@@ -12,8 +12,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteTitle = "Northline Studio | Design, Commerce & Digital Systems";
-const siteDescription = "Northline Studio is a design-led digital partner that designs, builds, launches, and manages websites, commerce experiences, and business systems for ambitious founders and owner-led businesses.";
+const siteTitle = "Northline Studio | Design, Development & Digital Systems";
+const siteDescription = "Northline Studio designs and builds distinctive websites, commerce experiences, and digital systems for people and teams building something of their own.";
 
 export const metadata: Metadata = {
   title: siteTitle,
