@@ -2,6 +2,7 @@
 
 **Date:** 2026-10-15
 **Status:** Approved in conversation; ready for implementation planning
+**Pricing revision:** 2026-10-26. Essential is starting from $2,500. Signature stays starting from $3,500 until case studies are added. The single Ongoing Care price is replaced by Care (starting from $199/month) and Care Plus (starting from $399/month).
 
 ## 1. Purpose
 
@@ -69,9 +70,11 @@ Clients may end the relationship after launch. The homepage should nevertheless 
 
 ### Ongoing service levels
 
-- **Northline Care** covers stability and administration: hosting, monitoring, backups, security-minded maintenance, software updates, agreed content changes, and technical support.
-- **Northline Growth** includes Care plus active improvements such as new pages, campaign work, analytics, conversion improvements, SEO work, and third-party system configuration.
+- **Care** — starting from $199/month. Hosting, uptime monitoring, security and dependency updates, backups, and up to 1 hour of small content changes per month.
+- **Care Plus** — starting from $399/month. Everything in Care, plus up to 3 hours of changes per month, priority response, and a monthly site report.
 - **Ongoing Partnership** is a selective, tailored engagement for clients who need continuous design, development, and digital support.
+
+Care and Care Plus are bounded monthly plans. Additional work is billed at $125/hour, unused hours do not roll over, and the minimum term is 3 months. The public copy must not describe the allowance as open-ended or “agreed content support.” Work beyond those hours—new pages, campaigns, and similar improvements—is either billed at the hourly rate or scoped as a separate project or Ongoing Partnership.
 
 Ongoing Partnership is not a fixed public package. The website may present it as limited-availability work, but it must not promise unlimited work, fixed response at all hours, or a public monthly price. Each engagement must define capacity, priorities, response expectations, minimum term, and out-of-scope billing before work begins.
 
@@ -93,7 +96,7 @@ Booking and calendar systems, client intake, forms, payments and deposits, CRM c
 
 ### 5.4 Ongoing Care
 
-Managed hosting, deployment, backups, updates, security-minded maintenance, performance monitoring, agreed content support, and ongoing optimization. This service family also contains the understated invitation to discuss an Ongoing Partnership.
+Managed hosting, deployment, backups, security and dependency updates, uptime monitoring, and a defined monthly allowance for content changes, published as Care and Care Plus. This service family also contains the understated invitation to discuss an Ongoing Partnership. It does not promise open-ended content support.
 
 ## 6. Pricing Presentation
 
@@ -101,9 +104,12 @@ The pricing section should be framed as **Starting Points**, not as a complete m
 
 ### Public starting prices
 
-- **The Essential Website** — Starting from $1,500
-- **The Signature Website** — Starting from $3,500
-- **Ongoing Care** — Starting from $150/month
+- **The Essential Website** — Starting from $2,500. Scope stays a focused site of up to 3 custom-designed pages, with responsive development, foundational SEO and accessibility, and domain and launch configuration.
+- **The Signature Website** — Starting from $3,500. This price stays in place until case studies are added; a later increase is expected and is not part of this revision.
+- **Care** — Starting from $199/month
+- **Care Plus** — Starting from $399/month
+
+Shared terms, shown with the Care tiers: additional work is billed at $125/hour, unused hours do not roll over, and a 3-month minimum term applies.
 
 ### Proposal-based services
 
@@ -155,7 +161,7 @@ Render the four approved service families. Each service should have a short outc
 
 ### 7.5 Pricing
 
-Present The Essential Website, The Signature Website, Commerce, and Business Systems as starting points. Ongoing Care should remain a distinct support panel with its public monthly starting price. Ongoing Partnership should appear as a restrained, limited-availability invitation rather than a fifth standardized pricing card.
+Present The Essential Website, The Signature Website, Commerce, and Business Systems as starting points. Ongoing Care should remain a distinct support area with two public monthly tiers, Care and Care Plus, plus the shared hourly, rollover, and minimum-term terms. Ongoing Partnership should appear as a restrained, limited-availability invitation rather than another standardized pricing card.
 
 ### 7.6 Process
 
@@ -232,9 +238,9 @@ Implementation is accepted when fresh verification confirms all of the following
 1. The hero presents Northline as a digital partner for founders and owner-led businesses.
 2. The page includes the Build, Improve, and Manage engagement paths.
 3. Exactly four public service families render: Websites and Brand Presence, Commerce, Business Systems, and Ongoing Care.
-4. Website starting prices remain $1,500 and $3,500.
+4. Website starting prices are $2,500 for The Essential Website and $3,500 for The Signature Website. Essential still covers up to 3 custom-designed pages.
 5. Commerce and Business Systems display proposal-based pricing.
-6. Ongoing Care retains a $150/month starting price.
+6. Ongoing care is published as Care from $199/month and Care Plus from $399/month. Shared terms state additional work at $125/hour, no rollover of unused hours, and a 3-month minimum term. Open-ended “agreed content support” wording is absent.
 7. Ongoing Partnership is presented as tailored and limited availability without a fixed public price or unlimited-work promise.
 8. The itemized Optional Enhancements price list is absent.
 9. The contact section displays `northlinestudio425@gmail.com` without a contact form or `mailto:` link.

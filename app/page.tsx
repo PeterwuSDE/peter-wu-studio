@@ -32,7 +32,7 @@ const pricingTiers = [
   {
     number: "01",
     name: "The Essential Website",
-    price: "Starting from $1,500",
+    price: "Starting from $2,500",
     description: "A focused digital home for an independent professional, emerging brand, or service-led venture.",
     features: [
       "Up to 3 custom-designed pages",
@@ -82,6 +82,30 @@ const pricingTiers = [
   },
 ];
 
+const careTiers = [
+  {
+    name: "Care",
+    price: "Starting from $199/month",
+    features: [
+      "Hosting",
+      "Uptime monitoring",
+      "Security and dependency updates",
+      "Backups",
+      "Up to 1 hour of small content changes per month",
+    ],
+  },
+  {
+    name: "Care Plus",
+    price: "Starting from $399/month",
+    features: [
+      "Everything in Care",
+      "Up to 3 hours of changes per month",
+      "Priority response",
+      "Monthly site report",
+    ],
+  },
+];
+
 const faqs = [
   {
     question: "What kind of projects do you take on?",
@@ -93,7 +117,7 @@ const faqs = [
   },
   {
     question: "What happens after launch?",
-    answer: "You can take over the finished work or continue with Ongoing Care for hosting, monitoring, maintenance, content support, and future improvements.",
+    answer: "You can take over the finished work or continue with Care or Care Plus for hosting, monitoring, maintenance, and a defined number of content changes each month.",
   },
 ];
 
@@ -209,11 +233,21 @@ export default function Home() {
         </div>
 
         <div className="pricing-support">
-          <article className="care-panel">
-            <p className="pricing-label">Ongoing Care</p>
-            <h3>Starting from $150/month</h3>
-            <p>Hosting, monitoring, updates, security-minded maintenance, and agreed content support. Tailored ongoing partnerships are available for select clients who need regular design and development capacity.</p>
-          </article>
+          <p className="pricing-label">Ongoing Care</p>
+          <div className="care-grid">
+            {careTiers.map((tier) => (
+              <article className="care-tier" key={tier.name}>
+                <h3>{tier.name}</h3>
+                <p className="pricing-price">{tier.price}</p>
+                <h4>Includes</h4>
+                <ul>
+                  {tier.features.map((feature) => <li key={feature}>{feature}</li>)}
+                </ul>
+              </article>
+            ))}
+          </div>
+          <p className="care-terms">Additional work is billed at $125/hour. Unused hours do not roll over. A 3-month minimum term applies.</p>
+          <p className="care-partnership">Tailored ongoing partnerships are available for select clients who need regular design and development capacity.</p>
         </div>
 
         <p className="pricing-terms">Third-party platforms, applications, themes, fonts, subscriptions, and transaction fees are quoted separately when applicable.</p>

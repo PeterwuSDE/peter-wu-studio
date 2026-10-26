@@ -72,13 +72,29 @@ test("renders pricing navigation and investment options", async () => {
   assert.match(html, /<section[^>]+id="pricing"/);
   assert.equal((pricingHtml.match(/<article class="pricing-card(?: pricing-card-featured)?">/g) ?? []).length, 4);
   assert.match(pricingHtml, /The Essential Website/);
-  assert.match(pricingHtml, /Starting from \$1,500/);
+  assert.match(pricingHtml, /Starting from \$2,500/);
+  assert.doesNotMatch(pricingHtml, /Starting from \$1,500/);
+  assert.match(pricingHtml, /Up to 3 custom-designed pages/);
   assert.match(pricingHtml, /The Signature Website/);
   assert.match(pricingHtml, /Starting from \$3,500/);
+  assert.match(pricingHtml, /Up to 7 custom-designed pages/);
   assert.match(pricingHtml, /<h3>Commerce<\/h3>/);
   assert.match(pricingHtml, /<h3>Business Systems<\/h3>/);
   assert.equal((pricingHtml.match(/Custom proposal/g) ?? []).length, 2);
-  assert.match(pricingHtml, /Starting from \$150\/month/);
+  assert.doesNotMatch(pricingHtml, /\$150\/month/);
+  assert.doesNotMatch(pricingHtml, /agreed content support/);
+  assert.match(pricingHtml, /<h3>Care<\/h3>/);
+  assert.match(pricingHtml, /Starting from \$199\/month/);
+  assert.match(pricingHtml, /Up to 1 hour of small content changes per month/);
+  assert.match(pricingHtml, /<h3>Care Plus<\/h3>/);
+  assert.match(pricingHtml, /Starting from \$399\/month/);
+  assert.match(pricingHtml, /Up to 3 hours of changes per month/);
+  assert.match(pricingHtml, /Priority response/);
+  assert.match(pricingHtml, /Monthly site report/);
+  assert.match(pricingHtml, /Additional work is billed at \$125\/hour/);
+  assert.match(pricingHtml, /Unused hours do not roll over/);
+  assert.match(pricingHtml, /3-month minimum term/);
+  assert.match(pricingHtml, /Tailored ongoing partnerships are available for select clients who need regular design and development capacity/);
   assert.doesNotMatch(pricingHtml, /Optional enhancements|Additional custom page|Priority production timeline/);
   assert.doesNotMatch(pricingHtml, /Business Tools &amp; Integrations/);
   assert.match(pricingHtml, /third-party[\s\S]{0,180}separately/i);
@@ -96,7 +112,9 @@ test("renders pricing navigation and investment options", async () => {
   }
 
   assert.equal((pricingHtml.match(/<div class="pricing-support">/g) ?? []).length, 1);
+  assert.equal((pricingHtml.match(/<article class="care-tier">/g) ?? []).length, 2);
   assert.doesNotMatch(pricingHtml, /partnership-panel/);
+  assert.doesNotMatch(html, /agreed content support/);
 });
 
 test("ships project-specific metadata and assets", async () => {

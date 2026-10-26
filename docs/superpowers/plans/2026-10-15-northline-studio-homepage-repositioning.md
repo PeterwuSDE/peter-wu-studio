@@ -10,6 +10,8 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-15-northline-studio-positioning-and-homepage-design.md`
 
+> **Pricing note (2026-10-26):** This plan records the 2026-10-15 implementation. Published prices have since changed. Essential is starting from $2,500. Signature remains starting from $3,500. The single $150/month Ongoing Care line is now Care (starting from $199/month) and Care Plus (starting from $399/month), with additional work at $125/hour, no rollover of unused hours, and a 3-month minimum term. The positioning spec is the current pricing source. Steps below still quote the 2026-10-15 figures.
+
 ## Global Constraints
 
 - Keep the site static: no backend, database, authentication, form handler, CMS, or new product dependency.
@@ -17,7 +19,7 @@
 - Keep contact as a static display of `northlinestudio425@gmail.com`; do not add a form or `mailto:` link.
 - Keep public navigation as Services, Pricing, Process, About, and Start a project.
 - Do not reintroduce Previous Work, upper-right arrow glyphs, or small/local-business targeting.
-- Public prices remain exactly `$1,500`, `$3,500`, and `$150/month`; Commerce and Business Systems use `Custom proposal`; Ongoing Partnership has no fixed public price.
+- The 2026-10-15 targets in the steps below used `$1,500`, `$3,500`, and `$150/month`. Current published prices are in the positioning spec (see the pricing note above). Commerce and Business Systems use `Custom proposal`; Ongoing Partnership has no fixed public price.
 - Treat third-party platform, subscription, theme, font, application, and transaction charges as separate from Northline's service fees.
 - Make no deployment-platform changes; GitHub `main`, Vercel, and `nlstudio.io` remain the production path.
 
