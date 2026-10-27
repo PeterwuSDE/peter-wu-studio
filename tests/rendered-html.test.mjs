@@ -2,13 +2,15 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
-async function render() {
+let renderCount = 0;
+
+async function render(pathname = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
+  workerUrl.searchParams.set("test", `${process.pid}-${++renderCount}`);
   const { default: worker } = await import(workerUrl.href);
 
   return worker.fetch(
-    new Request("http://localhost/", { headers: { accept: "text/html" } }),
+    new Request(`http://localhost${pathname}`, { headers: { accept: "text/html" } }),
     { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
     { waitUntil() {}, passThroughOnException() {} },
   );
@@ -118,8 +120,9 @@ test("renders pricing navigation and investment options", async () => {
 });
 
 test("ships project-specific metadata and assets", async () => {
-  const [layout, packageJson, styles] = await Promise.all([
+  const [layout, site, packageJson, styles] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/site.ts", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
@@ -128,6 +131,11 @@ test("ships project-specific metadata and assets", async () => {
   assert.match(layout, /favicon\.png/);
   assert.match(layout, /Northline Studio \| Design, Development & Digital Systems/);
   assert.match(layout, /websites, commerce experiences, and digital systems/i);
+  assert.match(layout, /metadataBase: new URL\(siteOrigin\)/);
+  assert.match(layout, /canonical: "\/"/);
+  assert.match(site, /https:\/\/www\.nlstudio\.io/);
+  assert.doesNotMatch(layout, /github\.io|peter-wu-studio/);
+  assert.doesNotMatch(site, /github\.io/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   assert.doesNotMatch(styles, /enhancements-panel/);
   await access(new URL("../public/og.png", import.meta.url));
@@ -159,4 +167,107 @@ test("keeps section navigation aligned without locking document scroll", async (
   assert.match(sectionLink, /window\.scrollTo/);
   assert.match(sectionLink, /window\.history\.pushState/);
   assert.doesNotMatch(sectionLink, /document\.(?:body|documentElement)\.style\.overflow/);
+});
+
+test("publishes the production canonical, share images, and studio structured data", async () => {
+  const response = await render();
+  const html = await response.text();
+
+  assert.match(html, /<link rel="canonical" href="https:\/\/www\.nlstudio\.io\/"\/>/);
+  assert.match(html, /property="og:url" content="https:\/\/www\.nlstudio\.io\/"/);
+  assert.match(html, /property="og:image" content="https:\/\/www\.nlstudio\.io\/og\.png"/);
+  assert.match(html, /property="og:image:width" content="1658"/);
+  assert.match(html, /property="og:image:height" content="949"/);
+  assert.match(html, /name="twitter:card" content="summary_large_image"/);
+  assert.match(html, /name="twitter:image" content="https:\/\/www\.nlstudio\.io\/og\.png"/);
+  assert.match(html, /rel="icon" href="https:\/\/www\.nlstudio\.io\/favicon\.png"/);
+  assert.match(html, /rel="apple-touch-icon" href="https:\/\/www\.nlstudio\.io\/favicon\.png"/);
+  assert.doesNotMatch(html, /github\.io|peter-wu-studio/);
+
+  const jsonLd = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(jsonLd, "missing JSON-LD");
+  const data = JSON.parse(jsonLd);
+  assert.equal(data["@context"], "https://schema.org");
+  assert.equal(data["@type"], "ProfessionalService");
+  assert.equal(data.name, "Northline Studio");
+  assert.equal(data.url, "https://www.nlstudio.io/");
+  assert.equal(data.email, "northlinestudio425@gmail.com");
+  assert.equal(data.logo.url, "https://www.nlstudio.io/favicon.png");
+  assert.equal(data.image.url, "https://www.nlstudio.io/og.png");
+  const serialized = JSON.stringify(data);
+  for (const name of [
+    "Websites & Brand Presence",
+    "Commerce",
+    "Business Systems",
+    "Ongoing Care",
+    "The Essential Website",
+    "The Signature Website",
+    "Care Plus",
+    "Starting from $2,500",
+    "Starting from $199/month",
+    "Custom proposal",
+  ]) {
+    assert.match(serialized, new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  }
+  assert.doesNotMatch(serialized, /streetAddress|addressLocality|postalCode|telephone|aggregateRating|"review"/i);
+});
+
+test("serves robots.txt and sitemap.xml for the production host", async () => {
+  const robots = await render("/robots.txt");
+  assert.equal(robots.status, 200);
+  assert.match(robots.headers.get("content-type") ?? "", /text\/plain/i);
+  const robotsText = await robots.text();
+  assert.match(robotsText, /User-Agent:\s*\*/);
+  assert.match(robotsText, /Allow:\s*\//);
+  assert.match(robotsText, /Sitemap:\s*https:\/\/www\.nlstudio\.io\/sitemap\.xml/);
+  assert.doesNotMatch(robotsText, /github\.io/);
+
+  const sitemap = await render("/sitemap.xml");
+  assert.equal(sitemap.status, 200);
+  assert.match(sitemap.headers.get("content-type") ?? "", /xml/i);
+  const xml = await sitemap.text();
+  const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+  assert.deepEqual(locs, ["https://www.nlstudio.io/"]);
+  assert.doesNotMatch(xml, /github\.io|mac-mini/);
+
+  const [exportedRobots, exportedSitemap, exportedHtml] = await Promise.all([
+    readFile(new URL("../dist/client/robots.txt", import.meta.url), "utf8"),
+    readFile(new URL("../dist/client/sitemap.xml", import.meta.url), "utf8"),
+    readFile(new URL("../dist/client/index.html", import.meta.url), "utf8"),
+  ]);
+  assert.match(exportedRobots, /Sitemap:\s*https:\/\/www\.nlstudio\.io\/sitemap\.xml/);
+  assert.match(exportedSitemap, /<loc>https:\/\/www\.nlstudio\.io\/<\/loc>/);
+  assert.match(exportedHtml, /rel="canonical" href="https:\/\/www\.nlstudio\.io\/"/);
+  assert.match(exportedHtml, /property="og:image" content="https:\/\/www\.nlstudio\.io\/og\.png"/);
+  assert.match(exportedHtml, /type="application\/ld\+json"/);
+  assert.doesNotMatch(exportedHtml, /github\.io/);
+});
+
+test("permanently redirects /mac-mini to the homepage", async () => {
+  const response = await render("/mac-mini");
+  assert.equal(response.status, 308);
+  assert.equal(response.headers.get("location"), "/");
+
+  const slashed = await render("/mac-mini/");
+  assert.equal(slashed.status, 308);
+  assert.ok(["/", "/mac-mini"].includes(slashed.headers.get("location")));
+
+  const vercel = JSON.parse(await readFile(new URL("../vercel.json", import.meta.url), "utf8"));
+  for (const source of ["/mac-mini", "/mac-mini/"]) {
+    const rule = vercel.redirects.find((entry) => entry.source === source);
+    assert.ok(rule, `missing Vercel redirect for ${source}`);
+    assert.equal(rule.destination, "/");
+    assert.equal(rule.permanent, true);
+  }
+});
+
+test("points the legacy GitHub Pages output at the production origin", async () => {
+  const html = await readFile(new URL("../github-pages/index.html", import.meta.url), "utf8");
+  const workflow = await readFile(new URL("../.github/workflows/pages.yml", import.meta.url), "utf8");
+
+  assert.match(html, /rel="canonical" href="https:\/\/www\.nlstudio\.io\/"/);
+  assert.match(html, /http-equiv="refresh" content="0; url=https:\/\/www\.nlstudio\.io\/"/);
+  assert.match(html, /location\.replace\("https:\/\/www\.nlstudio\.io\/"/);
+  assert.doesNotMatch(workflow, /export:static|GITHUB_PAGES_BASE|npm run build/);
+  assert.match(workflow, /path: github-pages/);
 });

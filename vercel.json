@@ -3,5 +3,17 @@
   "framework": null,
   "buildCommand": "npm run export:static",
   "outputDirectory": "dist/client",
-  "installCommand": "npm ci"
+  "installCommand": "npm ci",
+  "redirects": [
+    {
+      "source": "/mac-mini",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/mac-mini/",
+      "destination": "/",
+      "permanent": true
+    }
+  ]
 }

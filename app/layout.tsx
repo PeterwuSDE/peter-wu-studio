@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { siteOrigin } from "./site";
+import { studioJsonLd } from "./structured-data";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,32 +17,43 @@ const geistMono = Geist_Mono({
 const siteTitle = "Northline Studio | Design, Development & Digital Systems";
 const siteDescription = "Northline Studio designs and builds distinctive websites, commerce experiences, and digital systems for people and teams building something of their own.";
 
+const jsonLd = JSON.stringify(studioJsonLd).replace(/</g, "\\u003c");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteOrigin),
   title: siteTitle,
   description: siteDescription,
-  metadataBase: new URL("https://peterwusde.github.io/peter-wu-studio/"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: siteTitle,
     description: siteDescription,
     type: "website",
-    images: [{ url: "/peter-wu-studio/og.png", width: 1658, height: 949, alt: "Northline Studio — design-led websites and digital systems" }],
+    url: "/",
+    siteName: "Northline Studio",
+    images: [{ url: "/og.png", width: 1658, height: 949, alt: "Northline Studio — design-led websites and digital systems" }],
   },
   twitter: {
     card: "summary_large_image",
     title: siteTitle,
     description: siteDescription,
-    images: ["/peter-wu-studio/og.png"],
+    images: ["/og.png"],
   },
   icons: {
-    icon: "/peter-wu-studio/favicon.png",
-    shortcut: "/peter-wu-studio/favicon.png",
+    icon: [{ url: "/favicon.png", sizes: "512x512", type: "image/png" }],
+    shortcut: "/favicon.png",
+    apple: [{ url: "/favicon.png", sizes: "512x512", type: "image/png" }],
   },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>{children}</body>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+        {children}
+      </body>
     </html>
   );
 }

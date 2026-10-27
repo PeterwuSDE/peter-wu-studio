@@ -5,29 +5,37 @@ const workerUrl = new URL("../dist/server/index.js", import.meta.url);
 workerUrl.searchParams.set("static-export", Date.now().toString());
 
 const { default: worker } = await import(workerUrl.href);
-const response = await worker.fetch(
-  new Request("http://localhost/", { headers: { accept: "text/html" } }),
-  { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
-  { waitUntil() {}, passThroughOnException() {} },
-);
+const env = { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } };
+const ctx = { waitUntil() {}, passThroughOnException() {} };
 
-if (!response.ok) {
-  throw new Error(`Static render failed with status ${response.status}`);
+async function render(pathname, accept) {
+  const response = await worker.fetch(
+    new Request(`http://localhost${pathname}`, { headers: { accept } }),
+    env,
+    ctx,
+  );
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Static render failed for ${pathname} with status ${response.status}: ${body.slice(0, 180)}`);
+  }
+
+  return response.text();
 }
 
-const basePath = process.env.GITHUB_PAGES_BASE ?? "/";
-const normalizedBase = `/${basePath.split("/").filter(Boolean).join("/")}${basePath === "/" ? "" : "/"}`;
-let html = await response.text();
-
-if (normalizedBase !== "/") {
-  html = html.replaceAll('"/assets/', `"${normalizedBase}assets/`);
-}
+const [html, robots, sitemap] = await Promise.all([
+  render("/", "text/html"),
+  render("/robots.txt", "text/plain"),
+  render("/sitemap.xml", "application/xml"),
+]);
 
 await mkdir(outputDirectory, { recursive: true });
 await Promise.all([
   writeFile(new URL("index.html", outputDirectory), html),
   writeFile(new URL("404.html", outputDirectory), html),
+  writeFile(new URL("robots.txt", outputDirectory), robots),
+  writeFile(new URL("sitemap.xml", outputDirectory), sitemap),
   writeFile(new URL(".nojekyll", outputDirectory), ""),
 ]);
 
-console.log(`Static site exported to dist/client${normalizedBase === "/" ? "" : ` for ${normalizedBase}`}`);
+console.log("Static site exported to dist/client");

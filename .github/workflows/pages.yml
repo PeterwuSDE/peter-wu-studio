@@ -1,4 +1,11 @@
-name: Deploy to GitHub Pages
+# The production site is https://www.nlstudio.io on Vercel.
+# This workflow only publishes a redirect so the legacy GitHub Pages URL
+# does not stay online as a duplicate. It does not build the studio site.
+# Turning the github.io host off completely is a repository setting
+# (Settings → Pages) and cannot be done from this workflow. After Pages is
+# disabled, delete this workflow so later pushes do not try to deploy it.
+
+name: Redirect GitHub Pages to production
 
 on:
   push:
@@ -19,19 +26,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - name: Build static site
-        run: npm run export:static
-        env:
-          GITHUB_PAGES_BASE: /${{ github.event.repository.name }}/
+      - name: Add a Pages 404 that uses the same redirect
+        run: cp github-pages/index.html github-pages/404.html
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: dist/client
+          path: github-pages
 
   deploy:
     environment:
@@ -40,6 +40,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy redirect to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
