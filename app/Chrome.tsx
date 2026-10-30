@@ -33,9 +33,11 @@ export function SiteFooter() {
         <NorthlineLogo className="brand-logo" />
         <span className="brand-name">Northline<br />Studio</span>
       </a>
-      <p>Websites, search, and ongoing care<br />for people building something of their own.<a className="footer-email" href={mailtoHref}>{siteEmail}</a></p>
+      <p>Websites, commerce, business tools, and search.<br />Thoughtfully built. Cared for beyond launch.<a className="footer-email" href={mailtoHref}>{siteEmail}</a></p>
       <div className="footer-links">
         <a href="/websites">Websites</a>
+        <a href="/tools">Business tools</a>
+        <a href="/shopify">Shopify</a>
         <a href="/seo">SEO</a>
         <a href="/care">Care</a>
         <a href="/contact">Contact</a>

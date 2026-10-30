@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 
 const mobileLinks = [
   { href: "/websites", label: "Websites" },
+  { href: "/tools", label: "Business tools" },
+  { href: "/shopify", label: "Shopify" },
   { href: "/seo", label: "SEO" },
   { href: "/care", label: "Care" },
   { href: "/contact", label: "Contact" },

@@ -26,6 +26,8 @@ async function render(pathname, accept) {
 const pages = [
   ["/", "index.html"],
   ["/websites", "websites/index.html"],
+  ["/tools", "tools/index.html"],
+  ["/shopify", "shopify/index.html"],
   ["/seo", "seo/index.html"],
   ["/care", "care/index.html"],
   ["/contact", "contact/index.html"],

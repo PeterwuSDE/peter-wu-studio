@@ -133,6 +133,7 @@ export default function WebsitesPage() {
         <p className="section-kicker">Shopify</p>
         <h2>Commerce, considered.</h2>
         <p>A new or redesigned Shopify storefront shaped around your products and customer journey.</p>
+        <p><a href="/shopify">Explore our dedicated Shopify service</a>.</p>
         <p className="pricing-price">Custom proposal</p>
         <h3>Possible scope</h3>
         <ul className="scope-list">
@@ -147,6 +148,7 @@ export default function WebsitesPage() {
         <p className="section-kicker">Business systems</p>
         <h2>Business Systems</h2>
         <p>Practical digital systems that simplify bookings, client intake, payments, communication, and everyday operations. A tailored digital system built around a clear operational need.</p>
+        <p><a href="/tools">Explore business tools and workflow systems</a>.</p>
         <ul className="tag-list">
           <li>Booking & scheduling</li>
           <li>CRM & automation</li>

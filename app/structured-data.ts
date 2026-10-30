@@ -63,6 +63,8 @@ function packageOffer(
 const websitesUrl = `${siteOrigin}/websites`;
 const seoUrl = `${siteOrigin}/seo`;
 const careUrl = `${siteOrigin}/care`;
+const toolsUrl = `${siteOrigin}/tools`;
+const shopifyUrl = `${siteOrigin}/shopify`;
 
 const essentialDescription =
   "Starting from $2,500. A focused digital home for an independent professional, emerging brand, or service-led venture. Includes: Up to 3 custom-designed pages; Responsive development; Foundational SEO and accessibility; Domain and launch configuration.";
@@ -131,6 +133,10 @@ export const websitesServiceJsonLd = serviceNode(
 
 export const seoServiceJsonLd = serviceNode("/seo", "Search optimization", "SEO", seoDescription);
 
+export const toolsServiceJsonLd = serviceNode("/tools", "Business tools and workflow systems", "Business software development", systemsDescription, [packageOffer("Business Systems", systemsDescription, toolsUrl)]);
+
+export const shopifyServiceJsonLd = serviceNode("/shopify", "Shopify stores and commerce", "E-commerce website development", commerceDescription, [packageOffer("Commerce", commerceDescription, shopifyUrl)]);
+
 export const careServiceJsonLd = serviceNode("/care", "Ongoing care", "Website maintenance", careServiceDescription, [
   packageOffer("Care", careDescription, careUrl, monthlyPrice(199)),
   packageOffer("Care Plus", carePlusDescription, careUrl, monthlyPrice(399)),
@@ -151,7 +157,7 @@ export const studioJsonLd = {
   name: "Northline Studio",
   url: siteUrl,
   description: siteDescription,
-  slogan: "We bring ambitious ideas to life online.",
+  slogan: "Built to stand out. Made to work.",
   email: siteEmail,
   logo: {
     "@type": "ImageObject",
@@ -195,8 +201,8 @@ export const studioJsonLd = {
       ),
       packageOffer("The Essential Website", essentialDescription, websitesUrl, startingPrice(2500)),
       packageOffer("The Signature Website", signatureDescription, websitesUrl, startingPrice(3500)),
-      packageOffer("Commerce", commerceDescription, websitesUrl),
-      packageOffer("Business Systems", systemsDescription, websitesUrl),
+      packageOffer("Commerce", commerceDescription, shopifyUrl),
+      packageOffer("Business Systems", systemsDescription, toolsUrl),
       packageOffer("Care", careDescription, careUrl, monthlyPrice(199)),
       packageOffer("Care Plus", carePlusDescription, careUrl, monthlyPrice(399)),
       packageOffer("Additional work", hourlyDescription, careUrl, {

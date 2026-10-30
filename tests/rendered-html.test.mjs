@@ -20,6 +20,20 @@ const pages = [
     description: "Content sites, Shopify storefronts, and redesigns by Northline Studio. Essential websites from $2,500. Signature websites from $3,500.",
   },
   {
+    path: "/tools",
+    file: "tools/index.html",
+    canonical: "https://www.nlstudio.io/tools",
+    title: "Business Tools & Workflow Systems | Northline Studio",
+    description: "Booking, scheduling, client intake, and practical internal tools. Northline Studio builds business systems around the way you work.",
+  },
+  {
+    path: "/shopify",
+    file: "shopify/index.html",
+    canonical: "https://www.nlstudio.io/shopify",
+    title: "Shopify Stores & Commerce | Northline Studio",
+    description: "New Shopify stores and storefront redesigns, with considered product pages, collections, integrations, and launch support from Northline Studio.",
+  },
+  {
     path: "/seo",
     file: "seo/index.html",
     canonical: "https://www.nlstudio.io/seo",
@@ -83,23 +97,42 @@ async function pageHtml(pathname) {
   return response.text();
 }
 
-test("renders a short homepage with one card per business line", async () => {
+test("offers four distinct services and a separate ongoing-care path", async () => {
   const html = await pageHtml("/");
   assert.equal((html.match(/<h1[\s>]/g) ?? []).length, 1);
-  assert.match(html, /<h1>We bring ambitious ideas to life online\.<\/h1>/);
-  assert.match(html, /Northline Studio is a web design studio/);
-  assert.match(html, /commerce experiences, and digital systems/);
-  assert.equal((html.match(/<article class="line-card">/g) ?? []).length, 3);
-  assert.match(html, /<h2>Websites<\/h2>/);
-  assert.match(html, /<h2>SEO<\/h2>/);
-  assert.match(html, /<h2>Care<\/h2>/);
+  const visible = visibleHtml(html);
+  assert.match(visible, /Built to stand out\./);
+  assert.match(visible, /Made to work\./);
+  assert.match(visible, /Thoughtful websites, Shopify stores, and practical business tools/);
+  for (const label of ["Explore websites", "Explore business tools", "Explore Shopify", "Explore SEO", "Explore ongoing care"]) {
+    assert.match(visible, new RegExp(label));
+  }
+  assert.match(visible, /Interface studies illustrate our approach; they are not client case studies/);
   assert.match(html, /href="\/websites"/);
   assert.match(html, /href="\/seo"/);
+  assert.match(html, /href="\/tools"/);
+  assert.match(html, /href="\/shopify"/);
   assert.match(html, /href="\/care"/);
   assert.doesNotMatch(html, /<img\b/);
   assert.doesNotMatch(html, /id="work"|href="#work"|Selected concepts|CONCEPT PROJECT|Aster Atelier|Lucent House|Meridian One/);
   assert.doesNotMatch(html, /class="intro-section|class="engagement-path/);
   assert.doesNotMatch(visibleHtml(html), /Starting from \$2,500|Starting from \$199/);
+});
+
+test("gives tools and Shopify separate, honest service destinations", async () => {
+  for (const pathname of ["/tools", "/shopify"]) {
+    const visible = visibleHtml(await pageHtml(pathname));
+    assert.match(visible, /Custom proposal/);
+    assert.match(visible, /Illustrative/);
+    assert.match(visible, /third-party/i);
+    assert.doesNotMatch(visible, /aggregateRating|guaranteed|unlimited/i);
+  }
+  const tools = visibleHtml(await pageHtml("/tools"));
+  assert.match(tools, /Booking and scheduling/);
+  assert.match(tools, /Workflow automation/);
+  const shopify = visibleHtml(await pageHtml("/shopify"));
+  assert.match(shopify, /Product and collection pages/);
+  assert.match(shopify, /Payments and subscriptions/);
 });
 
 test("publishes website builds, packages, and business systems", async () => {
@@ -216,10 +249,10 @@ test("gives every page a first-screen mailto and cross-links", async () => {
       const button = contact.indexOf("contact-cta");
       assert.ok(sentence > -1 && button > sentence);
     } else {
-      const intro = html.match(/<section class="page-intro"[\s\S]*?<\/section>/)?.[0] ?? "";
+      const intro = html.match(/<section class="(?:page-intro|home-hero)[^"]*"[\s\S]*?<\/section>/)?.[0] ?? "";
       assert.match(intro, /contact-cta/);
       assert.doesNotMatch(intro, /<img\b/);
-      const sentence = intro.indexOf("page-lead");
+      const sentence = Math.max(intro.indexOf("page-lead"), intro.indexOf("home-hero-lead"));
       const button = intro.indexOf("contact-cta");
       assert.ok(sentence > -1 && button > sentence, page.path);
     }
@@ -299,7 +332,7 @@ test("keeps studio structured data and adds Service markup on service pages", as
   assert.equal(studio.email, "northlinestudio425@gmail.com");
   assert.equal(studio.logo.url, "https://www.nlstudio.io/favicon.png");
   assert.equal(studio.image.url, "https://www.nlstudio.io/og.png");
-  assert.equal(studio.slogan, "We bring ambitious ideas to life online.");
+  assert.equal(studio.slogan, "Built to stand out. Made to work.");
   const serialized = JSON.stringify(studio);
   for (const name of [
     "Website design and builds",
@@ -323,6 +356,8 @@ test("keeps studio structured data and adds Service markup on service pages", as
 
   const expectations = [
     ["/websites", "Website design and builds", "https://www.nlstudio.io/websites", true],
+    ["/tools", "Business tools and workflow systems", "https://www.nlstudio.io/tools", false],
+    ["/shopify", "Shopify stores and commerce", "https://www.nlstudio.io/shopify", false],
     ["/seo", "Search optimization", "https://www.nlstudio.io/seo", false],
     ["/care", "Ongoing care", "https://www.nlstudio.io/care", true],
   ];
@@ -339,7 +374,7 @@ test("keeps studio structured data and adds Service markup on service pages", as
     if (hasPrice) {
       assert.match(serviceJson, /minPrice/);
     } else {
-      assert.equal(service.offers, undefined);
+      if (pathname === "/seo") assert.equal(service.offers, undefined);
       assert.doesNotMatch(serviceJson, /minPrice|"price"|\$/);
     }
   }
