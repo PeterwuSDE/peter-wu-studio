@@ -1,6 +1,6 @@
 # Northline Studio
 
-A responsive one-page website for an independent web design, development, hosting, and support business.
+A responsive multi-page website for an independent web design, development, hosting, and support business. Pages: home, websites, SEO, care, and contact.
 
 ## Local development
 
@@ -15,7 +15,7 @@ npm run dev
 npm run build
 ```
 
-The contact section displays `northlinestudio425@gmail.com` as selectable text.
+Each page includes a visible email link to `northlinestudio425@gmail.com`. The contact page also lists what to include in an inquiry. There is no contact form.
 
 ## Vercel deployment
 

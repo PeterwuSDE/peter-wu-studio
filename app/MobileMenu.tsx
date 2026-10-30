@@ -1,18 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { MouseEvent } from "react";
-import { navigateToSection } from "./SectionLink";
+import { usePathname } from "next/navigation";
 
 const mobileLinks = [
-  { href: "#services", label: "Services" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#process", label: "Process" },
-  { href: "#about", label: "About" },
-  { href: "#contact", label: "Start a project" },
+  { href: "/websites", label: "Websites" },
+  { href: "/seo", label: "SEO" },
+  { href: "/care", label: "Care" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export function MobileMenu() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -36,26 +35,18 @@ export function MobileMenu() {
       }
     };
 
-    const closeOnHashChange = () => {
-      setIsOpen(false);
-      buttonRef.current?.blur();
-    };
-
     document.addEventListener("pointerdown", closeOnOutsidePointer);
     document.addEventListener("keydown", closeOnEscape);
-    window.addEventListener("hashchange", closeOnHashChange);
 
     return () => {
       document.removeEventListener("pointerdown", closeOnOutsidePointer);
       document.removeEventListener("keydown", closeOnEscape);
-      window.removeEventListener("hashchange", closeOnHashChange);
     };
   }, []);
 
-  const closeForNavigation = (event: MouseEvent<HTMLAnchorElement>) => {
+  const closeForNavigation = () => {
     setIsOpen(false);
     buttonRef.current?.blur();
-    navigateToSection(event);
   };
 
   return (
@@ -73,7 +64,12 @@ export function MobileMenu() {
       {isOpen ? (
         <nav aria-label="Mobile navigation" className="mobile-menu-panel" id="mobile-navigation">
           {mobileLinks.map((link) => (
-            <a key={link.href} href={link.href} onClick={closeForNavigation}>
+            <a
+              key={link.href}
+              href={link.href}
+              aria-current={pathname === link.href ? "page" : undefined}
+              onClick={closeForNavigation}
+            >
               {link.label}
             </a>
           ))}

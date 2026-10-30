@@ -23,16 +23,28 @@ async function render(pathname, accept) {
   return response.text();
 }
 
-const [html, robots, sitemap] = await Promise.all([
-  render("/", "text/html"),
+const pages = [
+  ["/", "index.html"],
+  ["/websites", "websites/index.html"],
+  ["/seo", "seo/index.html"],
+  ["/care", "care/index.html"],
+  ["/contact", "contact/index.html"],
+];
+
+const [renderedPages, robots, sitemap] = await Promise.all([
+  Promise.all(pages.map(async ([pathname, file]) => [file, await render(pathname, "text/html")])),
   render("/robots.txt", "text/plain"),
   render("/sitemap.xml", "application/xml"),
 ]);
 
 await mkdir(outputDirectory, { recursive: true });
 await Promise.all([
-  writeFile(new URL("index.html", outputDirectory), html),
-  writeFile(new URL("404.html", outputDirectory), html),
+  ...renderedPages.map(async ([file, html]) => {
+    const target = new URL(file, outputDirectory);
+    await mkdir(new URL("./", target), { recursive: true });
+    await writeFile(target, html);
+  }),
+  writeFile(new URL("404.html", outputDirectory), renderedPages[0][1]),
   writeFile(new URL("robots.txt", outputDirectory), robots),
   writeFile(new URL("sitemap.xml", outputDirectory), sitemap),
   writeFile(new URL(".nojekyll", outputDirectory), ""),
