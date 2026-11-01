@@ -90,6 +90,10 @@ function visibleHtml(html) {
   return html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
 }
 
+function pageText(html) {
+  return decode(visibleHtml(html).replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ");
+}
+
 async function pageHtml(pathname) {
   const response = await render(pathname);
   assert.equal(response.status, 200, pathname);
@@ -135,29 +139,23 @@ test("gives tools and Shopify separate, honest service destinations", async () =
   assert.match(shopify, /Payments and subscriptions/);
 });
 
-test("publishes website builds, packages, and business systems", async () => {
+test("keeps website packages and migration information while linking specialist services", async () => {
   const html = await pageHtml("/websites");
   const visible = visibleHtml(html);
-  assert.match(html, /<h1>Website design and builds\.<\/h1>/);
-  assert.match(visible, /content-only sites, Shopify storefronts, and redesigns/);
+  const text = pageText(html);
+  assert.match(visible, /A better/);
+  assert.match(visible, /content-only sites/);
   assert.match(visible, /Wix or Squarespace/);
   assert.match(visible, /slow or outdated/);
   assert.match(visible, /The Essential Website/);
-  assert.match(visible, /Starting from \$2,500/);
+  assert.match(text, /Starting from \$2,500/);
   assert.doesNotMatch(visible, /Starting from \$1,500/);
   assert.match(visible, /Up to 3 custom-designed pages/);
   assert.match(visible, /The Signature Website/);
-  assert.match(visible, /Starting from \$3,500/);
+  assert.match(text, /Starting from \$3,500/);
   assert.match(visible, /Up to 7 custom-designed pages/);
-  assert.match(visible, /Custom proposal/);
-  assert.match(visible, /Store setup or redesign/);
-  assert.match(visible, /Payments and subscriptions/);
-  assert.match(visible, /<h2>Business Systems<\/h2>/);
-  assert.match(visible, /Booking &amp; scheduling/);
-  assert.match(visible, /CRM &amp; automation/);
-  assert.match(visible, /Multi-tool suites/);
-  assert.match(visible, /Booking and client intake/);
-  assert.match(visible, /Practical digital systems/);
+  assert.match(visible, /id="shopify" href="\/shopify"/);
+  assert.match(visible, /id="systems" href="\/tools"/);
   assert.match(visible, /<h3>Direction<\/h3>/);
   assert.match(visible, /<h3>Design<\/h3>/);
   assert.match(visible, /<h3>Build<\/h3>/);
@@ -172,7 +170,7 @@ test("publishes website builds, packages, and business systems", async () => {
 test("describes SEO without publishing a price", async () => {
   const html = await pageHtml("/seo");
   const visible = visibleHtml(html);
-  assert.match(html, /<h1>Search optimization\.<\/h1>/);
+  assert.match(visible, /Search optimization/);
   assert.match(visible, /Request a quote/);
   assert.match(visible, /SEO audit/);
   assert.match(visible, /90-day launch/);
@@ -194,12 +192,13 @@ test("describes SEO without publishing a price", async () => {
 test("moves Care and Care Plus terms onto the care page", async () => {
   const html = await pageHtml("/care");
   const visible = visibleHtml(html);
-  assert.match(html, /<h1>Ongoing care\.<\/h1>/);
+  const text = pageText(html);
+  assert.match(visible, /Ongoing care/);
   assert.match(visible, /<h3>Care<\/h3>/);
-  assert.match(visible, /Starting from \$199\/month/);
+  assert.match(text, /Starting from \$199\s*\/ month/);
   assert.match(visible, /Up to 1 hour of small content changes per month/);
   assert.match(visible, /<h3>Care Plus<\/h3>/);
-  assert.match(visible, /Starting from \$399\/month/);
+  assert.match(text, /Starting from \$399\s*\/ month/);
   assert.match(visible, /Up to 3 hours of changes per month/);
   assert.match(visible, /Priority response/);
   assert.match(visible, /Monthly site report/);
@@ -249,9 +248,8 @@ test("gives every page a first-screen mailto and cross-links", async () => {
       const button = contact.indexOf("contact-cta");
       assert.ok(sentence > -1 && button > sentence);
     } else {
-      const intro = html.match(/<section class="(?:page-intro|home-hero)[^"]*"[\s\S]*?<\/section>/)?.[0] ?? "";
+      const intro = html.match(/<section class="(?:page-intro|home-hero|service-hero)[^"]*"[\s\S]*?<\/section>/)?.[0] ?? "";
       assert.match(intro, /contact-cta/);
-      assert.doesNotMatch(intro, /<img\b/);
       const sentence = Math.max(intro.indexOf("page-lead"), intro.indexOf("home-hero-lead"));
       const button = intro.indexOf("contact-cta");
       assert.ok(sentence > -1 && button > sentence, page.path);
@@ -259,37 +257,40 @@ test("gives every page a first-screen mailto and cross-links", async () => {
   }
 });
 
-test("adds optimized diagram images below the fold on each service page", async () => {
-  const diagrams = {
-    "/websites": ["/diagrams/content-site.svg", "/diagrams/storefront.svg", "/diagrams/migration.svg"],
-    "/seo": ["/diagrams/search-check.svg", "/diagrams/search-checklist.svg", "/diagrams/search-presence.svg"],
-    "/care": ["/diagrams/care-layers.svg", "/diagrams/care-monitor.svg", "/diagrams/care-month.svg"],
-  };
-
-  for (const [pathname, sources] of Object.entries(diagrams)) {
-    const html = await pageHtml(pathname);
-    const imgs = [...html.matchAll(/<img\b[^>]*>/g)].map((match) => match[0]);
-    assert.equal(imgs.length, 3, pathname);
-    for (const [index, img] of imgs.entries()) {
-      assert.match(img, new RegExp(`src="${sources[index].replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
-      assert.match(img, /\balt="[^"]{20,}"/);
-      assert.match(img, /\bwidth="640"/);
-      assert.match(img, /\bheight="400"/);
-      assert.match(img, /\bloading="lazy"/);
-      assert.match(img, /\bdecoding="async"/);
-      assert.doesNotMatch(img, /portfolio|screenshot|client work|yourbrand/i);
+test("gives every service four clear chapters with valid jump links and honest visuals", async () => {
+  for (const pathname of ["/websites", "/tools", "/shopify", "/seo", "/care"]) {
+    const html = visibleHtml(await pageHtml(pathname));
+    const chapters = [...html.matchAll(/data-service-section="([^"]+)"/g)].map(match => match[1]);
+    assert.deepEqual(chapters, ["intro", "experience", "scope", "next"], pathname);
+    assert.match(html, /aria-label="On this page"/);
+    for (const id of ["overview", "experience", "scope", "next"]) {
+      assert.match(html, new RegExp(`href="#${id}"`));
+      assert.match(html, new RegExp(`id="${id}"`));
     }
-    const introEnd = html.indexOf("</section>");
-    assert.equal(html.slice(0, introEnd).includes("<img"), false);
+    assert.match(html, /<figure class="service-visual/);
+    assert.match(html, /<figcaption>Illustrative/);
+    assert.match(html, /not client work or live results/);
+    assert.match(html, /<details[\s>]/);
+    assert.doesNotMatch(html, /Most popular|guaranteed rankings/i);
   }
+});
 
-  for (const source of Object.values(diagrams).flat()) {
-    const file = new URL(`../public${source}`, import.meta.url);
-    const info = await stat(file);
-    assert.ok(info.size < 8000, source);
-    const svg = await readFile(file, "utf8");
-    assert.match(svg, /<svg/);
-    assert.doesNotMatch(svg, /<text\b|yourbrand|portfolio/i);
+test("ships bounded first-screen WebP artwork for websites and commerce", async () => {
+  for (const [pathname, asset] of [["/websites", "studio-materials"], ["/shopify", "ceramic-collection"]]) {
+    const html = await pageHtml(pathname);
+    const image = html.match(/<img\b[^>]*>/)?.[0] ?? "";
+    assert.ok(image.includes(`/visuals/${asset}.webp`));
+    assert.match(image, /width="1536"/);
+    assert.match(image, /height="1024"/);
+    assert.match(image, /alt=""/);
+    assert.match(image, /fetchPriority="high"/i);
+    assert.doesNotMatch(image, /loading="lazy"/);
+    const path = new URL(`../public/visuals/${asset}.webp`, import.meta.url);
+    assert.ok((await stat(path)).size < 1_500_000);
+    const bytes = await readFile(path);
+    assert.equal(bytes.subarray(0, 4).toString(), "RIFF");
+    assert.equal(bytes.subarray(8, 12).toString(), "WEBP");
+    await access(new URL(`../dist/client/visuals/${asset}.webp`, import.meta.url));
   }
 });
 

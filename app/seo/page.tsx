@@ -1,85 +1,27 @@
-import { Diagrams, JsonLd, RelatedLinks } from "../Chrome";
+import { JsonLd, RelatedLinks } from "../Chrome";
 import { pageMetadata } from "../page-metadata";
-import { mailtoHref } from "../site";
+import { ServiceHero, SectionHeading, ServiceNext } from "../ServicePage";
 import { seoServiceJsonLd } from "../structured-data";
 
-export const metadata = pageMetadata(
-  "Search Optimization | Northline Studio",
-  "An SEO health check, a 90-day launch, and monthly search work from Northline Studio, including Google Maps and AI assistants. Request a quote.",
-  "/seo",
-);
-
-const checklist = [
-  "Core Web Vitals",
-  "Indexing",
-  "Structured data",
-  "Titles and meta descriptions",
-  "Internal links",
-  "Google Business Profile",
-  "Local citations",
-];
+export const metadata = pageMetadata("Search Optimization | Northline Studio", "An SEO health check, a 90-day launch, and monthly search work from Northline Studio, including Google Maps and AI assistants. Request a quote.", "/seo");
 
 export default function SeoPage() {
-  return (
-    <main id="top">
-      <JsonLd data={seoServiceJsonLd} />
-      <section className="page-intro">
-        <p className="eyebrow"><span /> Search</p>
-        <h1>Search optimization.</h1>
-        <p className="page-lead">An audit, a 90-day launch, and ongoing monthly work for visibility in Google, Google Maps, and AI assistants such as ChatGPT and Gemini.</p>
-        <a className="button button-primary contact-cta" href={mailtoHref}>Request a quote</a>
-      </section>
-
-      <section className="section-pad offer-block">
-        <p className="section-kicker">Health check</p>
-        <h2>An SEO audit.</h2>
-        <p>An SEO audit is a health check of the current site: how it is indexed, how fast it feels, and whether titles, structure, and the local profile are in place. It is a review, not a ranking promise.</p>
-      </section>
-
-      <section className="section-pad offer-block" id="launch">
-        <p className="section-kicker">90-day launch</p>
-        <h2>A measurable checklist.</h2>
-        <p>The 90-day launch works through a set checklist. That list is the measure of the launch. Scope is confirmed before work begins.</p>
-        <ul className="scope-list">
-          {checklist.map((item) => <li key={item}>{item}</li>)}
-        </ul>
-      </section>
-
-      <section className="section-pad offer-block">
-        <p className="section-kicker">Monthly</p>
-        <h2>Ongoing monthly SEO.</h2>
-        <p>After the launch, monthly search work continues: monitoring, fixes, and further improvements as the site and search change. Part of the work is how the site is represented in Google Maps and in AI assistants such as ChatGPT and Gemini.</p>
-        <p>Monthly SEO is quoted on request. <a href={mailtoHref}>Request a quote</a> and we will confirm the scope before any work begins. Sites that need a rebuild can start with <a href="/websites">website design</a>. Hosting and updates live with <a href="/care">Care</a>.</p>
-      </section>
-
-      <Diagrams
-        title="At a glance"
-        items={[
-          {
-            src: "/diagrams/search-check.svg",
-            alt: "Abstract diagram of a page beside a short column of check marks, suggesting an SEO health check.",
-            caption: "An SEO audit as a health check against a short list.",
-          },
-          {
-            src: "/diagrams/search-checklist.svg",
-            alt: "Abstract diagram of seven horizontal steps in a row, suggesting the 90-day launch checklist.",
-            caption: "The 90-day launch, measured by a fixed checklist.",
-          },
-          {
-            src: "/diagrams/search-presence.svg",
-            alt: "Abstract diagram of a central site connected to three nodes, suggesting search, maps, and AI assistants.",
-            caption: "Visibility across search, maps, and AI assistants.",
-          },
-        ]}
-      />
-
-      <RelatedLinks
-        links={[
-          { href: "/websites", label: "Website design and builds" },
-          { href: "/care", label: "Ongoing care" },
-          { href: "/contact", label: "Contact the studio" },
-        ]}
-      />
-    </main>
-  );
+  return <main id="top" className="service-page">
+    <JsonLd data={seoServiceJsonLd} />
+    <ServiceHero kind="seo" eyebrow="Search optimization" title={<>Be easier<br /><em>to find.</em></>} description="Understand what is holding your website back, choose the improvements that matter, and build a clearer search presence over time." cta="Request a quote" />
+    <section className="service-experience" id="experience" data-service-section="experience">
+      <SectionHeading number="02" label="A clear way forward" title={<>Understand first.<br /><em>Improve with direction.</em></>} />
+      <div className="search-path"><article><span>01 / UNDERSTAND</span><div className="search-symbol symbol-audit" aria-hidden="true"><i /><i /><i /></div><h3>SEO audit</h3><p>A picture of your technical foundations, content, and page structure.</p></article><article id="launch"><span>02 / PRIORITIZE</span><div className="search-symbol symbol-plan" aria-hidden="true"><i /><i /><i /></div><h3>90-day launch</h3><p>A defined checklist and a focused sequence of improvements.</p></article><article><span>03 / KEEP IMPROVING</span><div className="search-symbol symbol-grow" aria-hidden="true"><i /><i /><i /></div><h3>Ongoing monthly SEO</h3><p>Monitoring, fixes, and new opportunities as your website evolves.</p></article></div>
+    </section>
+    <section className="service-scope" id="scope" data-service-section="scope">
+      <SectionHeading number="03" label="What we look at" title={<>Find the gaps.<br /><em>Know the next move.</em></>} text="Scope follows your website and business. A review is not a ranking promise." />
+      <div className="service-details">
+        <details open><summary>Technical foundations<span aria-hidden="true">+</span></summary><ul><li>Core Web Vitals</li><li>Indexing</li><li>Structured data</li></ul></details>
+        <details><summary>Content and page structure<span aria-hidden="true">+</span></summary><ul><li>Titles and meta descriptions</li><li>Internal links</li><li>Clear service information and content gaps</li></ul></details>
+        <details><summary>Search, maps, and AI visibility<span aria-hidden="true">+</span></summary><p>Google search, Google Maps, Google Business Profile, and Local citations where relevant. We also consider how a business is represented in AI assistants such as ChatGPT and Gemini.</p></details>
+      </div><p className="service-smallprint">Monthly work is scoped and quoted individually. Website changes and ongoing search results are reviewed against the agreed work and available evidence.</p>
+    </section>
+    <ServiceNext title={<>Start with<br /><em>a clearer picture.</em></>} text="Send your website and what you want it to achieve. We will confirm the review scope and the right next step." label="Request a quote" />
+    <RelatedLinks links={[{ href: "/websites", label: "Website design" }, { href: "/tools", label: "Business tools" }, { href: "/care", label: "Ongoing care" }]} />
+  </main>;
 }
