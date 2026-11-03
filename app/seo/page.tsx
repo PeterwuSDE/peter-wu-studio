@@ -24,6 +24,7 @@ export default function SeoPage() {
       </div><p className="service-smallprint">Monthly work is scoped and quoted individually. Website changes and ongoing search results are reviewed against the agreed work and available evidence.</p>
     </section>
     <ServiceNext title={<>Start with<br /><em>a clearer picture.</em></>} text="Send your website and what you want it to achieve. We will confirm the review scope and the right next step." label="Request a quote" />
+    <SeoInquiryForm />
     <RelatedLinks links={[{ href: "/websites", label: "Website design" }, { href: "/tools", label: "Business tools" }, { href: "/care", label: "Ongoing care" }]} />
   </main>;
 }

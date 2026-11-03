@@ -9,3 +9,7 @@ dist/
 .vercel
 .seo-check-store.json
 *.tsbuildinfo
+.env
+.env.*
+!.env.example
+.data/

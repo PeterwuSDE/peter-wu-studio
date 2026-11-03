@@ -7,8 +7,20 @@
   "functions": {
     "api/seo-check.ts": {
       "maxDuration": 15
+    },
+    "api/seo-inquiries.ts": {
+      "maxDuration": 15
+    },
+    "api/seo-inquiry-retries.ts": {
+      "maxDuration": 15
     }
   },
+  "crons": [
+    {
+      "path": "/api/seo-inquiry-retries",
+      "schedule": "0 15 * * *"
+    }
+  ],
   "redirects": [
     {
       "source": "/mac-mini",

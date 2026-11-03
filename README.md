@@ -43,8 +43,16 @@ The API is a Node function on the existing Vercel project (`api/seo-check.ts`), 
 
 Import `PeterwuSDE/peter-wu-studio` into Vercel and deploy the `main` branch.
 The checked-in `vercel.json` configures the framework preset as Other, builds
-with `npm run export:static`, and serves `dist/client`. No environment variables
-are required.
+with `npm run export:static`, and serves `dist/client`. The static pages still
+build with no environment variables.
+
+`POST /api/seo-inquiries` is a separate Node function. It saves a follow-up only
+when a private Vercel Blob store is connected, and it notifies Northline only
+when Resend credentials are set. With either missing, the API does not pretend
+that save or delivery succeeded. See `.env.example`. The form on `/seo` always
+shows `northlinestudio425@gmail.com` as the fallback. Scan verification stays
+behind `createScanDirectory()` until the homepage-check store from issue #3 is
+wired in.
 
 The production origin is [https://www.nlstudio.io](https://www.nlstudio.io).
 Canonical URLs, Open Graph and Twitter images, `robots.txt`, and `sitemap.xml`
