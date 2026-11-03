@@ -160,8 +160,8 @@ function failureHtml(value: Record<string, unknown>, error: InquiryErrorCode): s
   return pageShell("Request not submitted", `
 <h1>${escapeHtml(message)}</h1>
 <form action="/api/seo-inquiries" method="post">
-<input type="hidden" name="scanReference" value="${escapeHtml(field(value, "scanReference"))}">
-<input type="hidden" name="submissionId" value="${escapeHtml(field(value, "submissionId"))}">
+<input type="hidden" name="scanId" value="${escapeHtml(field(value, "scanId"))}">
+<input type="hidden" name="requestId" value="${escapeHtml(field(value, "requestId"))}">
 <input type="hidden" name="locale" value="${escapeHtml(localeOf(value))}">
 <label>Name<input name="name" value="${escapeHtml(field(value, "name"))}" required></label>
 <label>Email<input name="email" type="email" value="${escapeHtml(field(value, "email"))}" required></label>
@@ -242,11 +242,14 @@ export async function handleInquiryHttp(request: Request, deps: HttpDeps): Promi
     }
     const body = {
       inquiryId: result.inquiryId,
+      scanId: result.scanId,
+      requestId: result.requestId,
+      createdAt: result.createdAt,
+      notificationStatus: result.notification.status,
       received: true as const,
-      notification: result.notification,
     };
     if (!jsonResponse) {
-      return html(successHtml(payload.value, result.inquiryId, result.notification.delivered), result.created ? 201 : 200, request, deps);
+      return html(successHtml(payload.value, result.inquiryId, result.notification.status === "sent"), result.created ? 201 : 200, request, deps);
     }
     return json(body, result.created ? 201 : 200, request, deps);
   } catch (error) {

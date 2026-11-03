@@ -917,6 +917,18 @@ section[id] { scroll-margin-top: 110px; }
 .seo-check-inquiry-open dt { color: var(--lime); }
 .seo-check-inquiry-open a { color: var(--lime); font-weight: 700; border-bottom: 1px solid var(--lime); }
 .seo-check-inquiry-open p { line-height: 1.6; }
+.seo-check-inquiry-open .seo-inquiry-form { display: grid; gap: 14px; }
+.seo-check-inquiry-open .seo-inquiry-form label { display: grid; gap: 8px; color: white; font-size: 14px; font-weight: 650; }
+.seo-check-inquiry-open .seo-inquiry-form input,
+.seo-check-inquiry-open .seo-inquiry-form textarea { width: 100%; border: 1px solid rgba(255,255,255,.4); background: white; color: var(--ink); border-radius: 8px; padding: 14px 16px; font: inherit; font-size: 16px; line-height: 1.45; }
+.seo-check-inquiry-open .seo-inquiry-form textarea { min-height: 120px; resize: vertical; }
+.seo-check-inquiry-open .seo-inquiry-form .button { border: 0; width: fit-content; }
+.seo-check-inquiry-open .seo-inquiry-form .button:disabled { opacity: .72; transform: none; }
+.seo-check-inquiry-open .seo-inquiry-error,
+.seo-check-inquiry-open .seo-inquiry-success { margin: 0; padding: 14px 16px; border-radius: 8px; color: var(--ink); }
+.seo-check-inquiry-open .seo-inquiry-error { background: #fff1ea; }
+.seo-check-inquiry-open .seo-inquiry-success { background: #eef6d8; }
+.seo-check-inquiry-open .seo-inquiry-form :focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; }
 @media (max-width: 760px) {
   .seo-check { padding: 55px 22px; }
   .seo-check h2 { font-size: clamp(34px, 8vw, 48px); }
@@ -925,4 +937,5 @@ section[id] { scroll-margin-top: 110px; }
   .seo-check-controls .button { width: 100%; }
   .seo-check-examples li { min-height: 0; }
   .seo-check-inquiry-open { padding: 22px; }
+  .seo-check-inquiry-open .seo-inquiry-form .button { width: 100%; }
 }

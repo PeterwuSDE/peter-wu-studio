@@ -2,16 +2,19 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { seoInquiryHref } from "../lib/seo/inquiry-href.ts";
 import { createBlobInquiryStore, MapBlobClient } from "../lib/seo/blob-inquiry-store.ts";
-import type { ScanDirectory, ScanLookupResult, SeoScanSnapshot } from "../lib/seo/contract.ts";
-import { copyScanSnapshot } from "../lib/seo/contract.ts";
+import type { SeoScanSnapshot } from "../shared/seo-check/contract.ts";
+import { createMemoryStore } from "../shared/seo-check/store.ts";
+import { readStoredScan, runSeoCheck } from "../shared/seo-check/service.ts";
 import { handleInquiryHttp, type HttpDeps } from "../lib/seo/http.ts";
 import { MemoryInquiryStore } from "../lib/seo/inquiry-store.ts";
 import { createInquiry, deleteInquiry, fingerprintInquiry, sweepDueNotifications, type InquiryDeps } from "../lib/seo/inquiry-service.ts";
 import { createNotifierFromEnv, createResendNotifier, createUnconfiguredNotifier } from "../lib/seo/notifier.ts";
 import { blobCredentialsConfigured, inquirySettings } from "../lib/seo/production.ts";
+import { createScanDirectory, type ScanDirectory, type ScanLookupResult } from "../lib/seo/scan-directory.ts";
+import { clock, htmlResult, pageHtml, publicResolver, requestId, scriptedConnector } from "./seo-check/helpers.ts";
 
 const SCAN = "scan_home_01";
-const SUBMISSION = "submission-id-0001";
+const REQUEST = "inquiry-request-0001";
 const EMAIL = "ada@example.com";
 const NAME = "Ada North";
 const GOAL = "Fix the homepage title";
@@ -19,56 +22,67 @@ const PHONE = "555-0100";
 
 function snapshot(overrides: Partial<SeoScanSnapshot> = {}): SeoScanSnapshot {
   return {
-    reference: SCAN,
-    canonicalUrl: "https://example.com/",
+    scanId: SCAN,
+    requestId: "req_scan_0001",
+    normalizedUrl: "https://example.com/",
     finalUrl: "https://example.com/home",
-    checkedAt: "2025-12-31T12:00:00.000Z",
-    ruleVersion: "2026-10-29.1",
     locale: "en",
-    status: "completed",
-    cacheHit: false,
+    checkedAt: "2025-12-31T12:00:00.000Z",
+    ruleVersion: "homepage-2026-10-29.1",
+    cached: false,
     cacheExpiresAt: "2026-01-01T12:00:00.000Z",
-    coverage: { completed: 6, unknown: 1, notApplicable: 1 },
-    checks: [{
-      ruleId: "title",
-      ruleVersion: "2026-10-29.1",
-      state: "pass",
-      url: "https://example.com/",
-      observed: "Example",
-    }],
+    status: "completed",
+    code: "ok",
+    message: "The homepage check finished.",
+    scope: "One public homepage.",
+    coverage: { completed: 6, unknown: 1, notApplicable: 1, total: 8 },
     findings: [{
       ruleId: "description",
-      ruleVersion: "2026-10-29.1",
+      ruleVersion: "homepage-2026-10-29.1",
       url: "https://example.com/",
-      observed: "missing",
-      evidence: "<meta name=\"description\">",
+      evidence: "no meta description",
       checkedAt: "2025-12-31T12:00:00.000Z",
       reason: "A search engine may write its own snippet.",
-      suggestion: "Add a short description.",
+      condition: "If this homepage should describe itself.",
+      suggestions: ["Add a short description."],
+      signal: "missing",
     }],
+    rules: [{
+      ruleId: "title",
+      ruleVersion: "homepage-2026-10-29.1",
+      status: "pass",
+      signal: "present",
+      evidence: "Example",
+      summary: "A title is present.",
+    }],
+    siteName: "Example",
+    javascriptNotExecuted: false,
+    redirectCount: 0,
+    httpStatus: 200,
     ...overrides,
   };
 }
 
 function payload(overrides: Record<string, unknown> = {}) {
   return {
-    scanReference: SCAN,
-    submissionId: SUBMISSION,
+    scanId: SCAN,
+    requestId: REQUEST,
     name: NAME,
     email: EMAIL,
     goal: GOAL,
     phone: PHONE,
+    locale: "en",
     marketingOptIn: true,
-    canonicalUrl: "https://evil.example/override",
+    normalizedUrl: "https://evil.example/override",
     ruleVersion: "client-tampered",
-    findings: [{ observed: "tampered" }],
+    findings: [{ evidence: "tampered" }],
     ...overrides,
   };
 }
 
 function harness(options: {
-  lookup?: ScanLookupResult | ((reference: string, now: Date) => ScanLookupResult | Promise<ScanLookupResult>);
-  notify?: (calls: number) => { status: "sent" } | { status: "unconfigured" } | { status: "failed"; errorCode: string };
+  lookup?: ScanLookupResult | ((scanId: string, now: Date, locale: "en" | "zh") => ScanLookupResult | Promise<ScanLookupResult>);
+  notify?: (calls: number) => { status: "sent" } | { status: "not_configured" } | { status: "failed"; errorCode: string };
   now?: Date;
   retentionDays?: number;
   rateLimitPerHour?: number;
@@ -80,10 +94,10 @@ function harness(options: {
   const logs: unknown[] = [];
   let now = options.now ?? new Date("2026-01-01T00:00:00.000Z");
   const scanDirectory: ScanDirectory = {
-    async lookup(reference, at) {
-      lookups.push(reference);
+    async lookup(scanId, at, locale) {
+      lookups.push(scanId);
       const lookup = options.lookup ?? { status: "verified", snapshot: snapshot() };
-      return typeof lookup === "function" ? lookup(reference, at) : lookup;
+      return typeof lookup === "function" ? lookup(scanId, at, locale) : lookup;
     },
   };
   const deps: InquiryDeps = {
@@ -140,11 +154,13 @@ test("copies the server snapshot and ignores client facts", async () => {
   assert.equal(result.notification.status, "sent");
   const record = await env.store?.getInquiry(result.inquiryId);
   assert.ok(record);
-  assert.equal(record.snapshot.canonicalUrl, "https://example.com/");
+  assert.equal(record.snapshot.normalizedUrl, "https://example.com/");
   assert.equal(record.snapshot.finalUrl, "https://example.com/home");
   assert.equal(record.snapshot.checkedAt, "2025-12-31T12:00:00.000Z");
-  assert.equal(record.snapshot.ruleVersion, "2026-10-29.1");
-  assert.equal(record.snapshot.findings[0]?.observed, "missing");
+  assert.equal(record.snapshot.ruleVersion, "homepage-2026-10-29.1");
+  assert.equal(record.snapshot.findings[0]?.evidence, "no meta description");
+  assert.equal(record.snapshot.findings[0]?.signal, "missing");
+  assert.equal(record.scanId, SCAN);
   assert.equal(record.email, EMAIL);
   assert.equal(record.phone, PHONE);
   assert.equal(record.deleteAt, "2026-04-01T00:00:00.000Z");
@@ -155,7 +171,7 @@ test("copies the server snapshot and ignores client facts", async () => {
 
 test("phone is optional and names are not split", async () => {
   const env = harness();
-  const result = await createInquiry(payload({ phone: "  ", submissionId: "submission-id-0002" }), env.deps);
+  const result = await createInquiry(payload({ phone: "  ", requestId: "submission-id-0002" }), env.deps);
   assert.equal(result.ok, true);
   if (!result.ok) return;
   const record = await env.store?.getInquiry(result.inquiryId);
@@ -165,7 +181,7 @@ test("phone is optional and names are not split", async () => {
 
 test("rejects incomplete contact details without saving", async () => {
   const env = harness();
-  for (const overrides of [{ name: " " }, { email: "not-an-email" }, { goal: "" }, { phone: "call me" }, { scanReference: "../secret" }]) {
+  for (const overrides of [{ name: " " }, { email: "not-an-email" }, { goal: "" }, { phone: "call me" }, { scanId: "../secret" }]) {
     const result = await createInquiry(payload(overrides), env.deps);
     assert.deepEqual(result, { ok: false, error: "validation" });
   }
@@ -177,9 +193,7 @@ test("rejects incomplete contact details without saving", async () => {
 test("rejects missing, expired, and invalid scan references", async () => {
   for (const lookup of [
     { status: "not_found" },
-    { status: "expired" },
     { status: "invalid" },
-    { status: "verified", snapshot: snapshot({ findings: [{ ...snapshot().findings[0], ruleId: "bad id" }] }) },
   ] as ScanLookupResult[]) {
     const env = harness({ lookup });
     const result = await createInquiry(payload(), env.deps);
@@ -195,13 +209,13 @@ test("keeps the saved snapshot after the scan directory expires", async () => {
   const env = harness({ lookup: () => phase });
   const saved = await createInquiry(payload(), env.deps);
   assert.equal(saved.ok, true);
-  phase = { status: "expired" };
-  const again = await createInquiry(payload({ submissionId: "submission-id-0002" }), env.deps);
-  assert.deepEqual(again, { ok: false, error: "scan_expired" });
+  phase = { status: "not_found" };
+  const again = await createInquiry(payload({ requestId: "inquiry-request-0002" }), env.deps);
+  assert.deepEqual(again, { ok: false, error: "scan_not_found" });
   if (!saved.ok) return;
   const record = await env.store?.getInquiry(saved.inquiryId);
   assert.equal(record?.snapshot.checkedAt, "2025-12-31T12:00:00.000Z");
-  assert.equal(record?.snapshot.ruleVersion, "2026-10-29.1");
+  assert.equal(record?.snapshot.ruleVersion, "homepage-2026-10-29.1");
 });
 
 test("retries of the same submission do not create or notify twice", async () => {
@@ -256,7 +270,7 @@ test("save failure is not success and does not notify", async () => {
   const result = await createInquiry(payload(), env.deps);
   assert.deepEqual(result, { ok: false, error: "save_failed" });
   assert.equal(env.sends.length, 0);
-  assert.equal(await store.getSubmission(SUBMISSION), null);
+  assert.equal(await store.getSubmission(REQUEST), null);
   assertNoSensitiveLogs(env.logs);
 });
 
@@ -290,15 +304,15 @@ test("notification failure keeps the inquiry and can be retried later", async ()
   assertNoSensitiveLogs(env.logs);
 });
 
-test("unconfigured notification is not reported as delivered", async () => {
-  const env = harness({ notify: () => ({ status: "unconfigured" }) });
+test("not_configured notification is not reported as delivered", async () => {
+  const env = harness({ notify: () => ({ status: "not_configured" }) });
   const saved = await createInquiry(payload(), env.deps);
   assert.equal(saved.ok, true);
   if (!saved.ok) return;
-  assert.equal(saved.notification.status, "unconfigured");
+  assert.equal(saved.notification.status, "not_configured");
   assert.equal(saved.notification.delivered, false);
   const note = await env.store?.getNotification(saved.inquiryId);
-  assert.equal(note?.status, "unconfigured");
+  assert.equal(note?.status, "not_configured");
   assert.notEqual(note?.status, "sent");
 });
 
@@ -316,14 +330,14 @@ test("recovers a claimed submission that never finished saving", async () => {
   const env = harness();
   const body = payload();
   const fingerprint = fingerprintInquiry({
-    scanReference: SCAN,
+    scanId: SCAN,
     name: NAME,
     email: EMAIL,
     goal: GOAL,
     phone: PHONE,
   });
   const inquiryId = `inq_${"ab".repeat(16)}`;
-  await env.store?.claimSubmission({ submissionId: SUBMISSION, inquiryId, fingerprint });
+  await env.store?.claimSubmission({ requestId: REQUEST, inquiryId, fingerprint });
   const saved = await createInquiry(body, env.deps);
   assert.equal(saved.ok && saved.inquiryId, inquiryId);
   assert.equal(env.sends.length, 1);
@@ -336,11 +350,11 @@ test("purges contact records after the retention window", async () => {
   assert.equal(saved.ok, true);
   if (!saved.ok) return;
   env.setNow(new Date("2026-04-01T00:00:00.000Z"));
-  const next = await createInquiry(payload({ submissionId: "submission-id-0090" }), env.deps);
+  const next = await createInquiry(payload({ requestId: "submission-id-0090" }), env.deps);
   assert.equal(next.ok, true);
   assert.equal(await env.store?.getInquiry(saved.inquiryId), null);
   assert.equal(await env.store?.getNotification(saved.inquiryId), null);
-  assert.equal(await env.store?.getSubmission(SUBMISSION), null);
+  assert.equal(await env.store?.getSubmission(REQUEST), null);
 });
 
 test("deletes a matching request and does not reveal other people", async () => {
@@ -355,7 +369,7 @@ test("deletes a matching request and does not reveal other people", async () => 
   assert.deepEqual(removed, { ok: true });
   assert.equal(await env.store?.getInquiry(saved.inquiryId), null);
   assert.equal(await env.store?.getNotification(saved.inquiryId), null);
-  assert.equal(await env.store?.getSubmission(SUBMISSION), null);
+  assert.equal(await env.store?.getSubmission(REQUEST), null);
   assertNoSensitiveLogs(env.logs);
 });
 
@@ -370,7 +384,7 @@ test("does not save when persistence is not configured", async () => {
 test("rate limits new submissions but still replays the saved one", async () => {
   const env = harness({ rateLimitPerHour: 1 });
   const first = await createInquiry(payload(), env.deps, "203.0.113.8");
-  const second = await createInquiry(payload({ submissionId: "submission-id-0002" }), env.deps, "203.0.113.8");
+  const second = await createInquiry(payload({ requestId: "submission-id-0002" }), env.deps, "203.0.113.8");
   const replay = await createInquiry(payload(), env.deps, "203.0.113.8");
   assert.equal(first.ok, true);
   assert.deepEqual(second, { ok: false, error: "rate_limited" });
@@ -391,7 +405,7 @@ test("blob-backed claims are idempotent and private records round-trip", async (
   assert.equal([...client.objects.keys()].some((key) => key.includes(EMAIL)), false);
   if (!saved.ok) return;
   const record = await store.getInquiry(saved.inquiryId);
-  assert.equal(record?.snapshot.ruleVersion, "2026-10-29.1");
+  assert.equal(record?.snapshot.ruleVersion, "homepage-2026-10-29.1");
   await store.deleteInquiry(saved.inquiryId);
   assert.equal(await store.getInquiry(saved.inquiryId), null);
 });
@@ -414,7 +428,7 @@ test("http saves only after persistence and never lists leads", async () => {
   const createdBody = await created.json();
   assert.equal(createdBody.received, true);
   assert.equal(JSON.stringify(createdBody).includes(EMAIL), false);
-  assert.equal(createdBody.notification.delivered, true);
+  assert.equal(createdBody.notificationStatus, "sent");
 
   const replay = await handleInquiryHttp(request("https://www.nlstudio.io/api/seo-inquiries", payload()), env.httpDeps);
   assert.equal(replay.status, 200);
@@ -434,14 +448,14 @@ test("http saves only after persistence and never lists leads", async () => {
 });
 
 test("http distinguishes save failure, scan failure, and a disallowed origin", async () => {
-  const env = harness({ lookup: { status: "expired" } });
+  const env = harness({ lookup: { status: "not_found" } });
   const expired = await handleInquiryHttp(new Request("https://www.nlstudio.io/api/seo-inquiries", {
     method: "POST",
     headers: { "content-type": "application/json", accept: "application/json", origin: "https://www.nlstudio.io" },
     body: JSON.stringify(payload()),
   }), env.httpDeps);
   assert.equal(expired.status, 422);
-  assert.deepEqual(await expired.json(), { received: false, error: "scan_expired" });
+  assert.deepEqual(await expired.json(), { received: false, error: "scan_not_found" });
 
   const blocked = await handleInquiryHttp(new Request("https://www.nlstudio.io/api/seo-inquiries", {
     method: "POST",
@@ -452,23 +466,23 @@ test("http distinguishes save failure, scan failure, and a disallowed origin", a
   assert.equal(blocked.headers.get("access-control-allow-origin"), null);
 
   const missingStore = harness({ store: null });
-  const unconfigured = await handleInquiryHttp(new Request("https://www.nlstudio.io/api/seo-inquiries", {
+  const not_configured = await handleInquiryHttp(new Request("https://www.nlstudio.io/api/seo-inquiries", {
     method: "POST",
     headers: { "content-type": "application/json", accept: "application/json", origin: "http://localhost:3000" },
     body: JSON.stringify(payload()),
   }), missingStore.httpDeps);
-  assert.equal(unconfigured.status, 503);
-  assert.deepEqual(await unconfigured.json(), { received: false, error: "persistence_unconfigured" });
+  assert.equal(not_configured.status, 503);
+  assert.deepEqual(await not_configured.json(), { received: false, error: "persistence_unconfigured" });
 });
 
 test("html responses keep typed values on failure and do not fake delivery", async () => {
-  const env = harness({ notify: () => ({ status: "unconfigured" }) });
+  const env = harness({ notify: () => ({ status: "not_configured" }) });
   const failed = await handleInquiryHttp(new Request("https://www.nlstudio.io/api/seo-inquiries", {
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded", origin: "https://www.nlstudio.io" },
     body: new URLSearchParams({
-      scanReference: SCAN,
-      submissionId: SUBMISSION,
+      scanId: SCAN,
+      requestId: REQUEST,
       name: `<script>alert(1)</script>`,
       email: "not-an-email",
       goal: GOAL,
@@ -487,8 +501,8 @@ test("html responses keep typed values on failure and do not fake delivery", asy
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded", origin: "https://www.nlstudio.io" },
     body: new URLSearchParams({
-      scanReference: SCAN,
-      submissionId: SUBMISSION,
+      scanId: SCAN,
+      requestId: REQUEST,
       name: NAME,
       email: EMAIL,
       goal: GOAL,
@@ -562,9 +576,9 @@ test("resend delivery follows the provider response and stays quiet without a ke
   });
   const record = {
     inquiryId: `inq_${"cd".repeat(16)}`,
-    submissionId: SUBMISSION,
+    requestId: REQUEST,
     fingerprint: "abc",
-    scanReference: SCAN,
+    scanId: SCAN,
     snapshot: snapshot(),
     name: NAME,
     email: EMAIL,
@@ -593,22 +607,83 @@ test("resend delivery follows the provider response and stays quiet without a ke
   });
   assert.deepEqual(await offline.send(record), { status: "failed", errorCode: "resend_network" });
 
-  assert.deepEqual(await createUnconfiguredNotifier().send(record), { status: "unconfigured" });
-  assert.deepEqual(await createNotifierFromEnv({}).send(record), { status: "unconfigured" });
+  assert.deepEqual(await createUnconfiguredNotifier().send(record), { status: "not_configured" });
+  assert.deepEqual(await createNotifierFromEnv({}).send(record), { status: "not_configured" });
 });
 
-test("snapshot copy drops tampered or oversized finding lists", () => {
-  assert.equal(copyScanSnapshot(SCAN, { ...snapshot(), reference: "other_scan_1" }), null);
-  const tooMany = snapshot();
-  tooMany.findings = [tooMany.findings[0], tooMany.findings[0], tooMany.findings[0]];
-  assert.equal(copyScanSnapshot(SCAN, tooMany), null);
-  const copied = copyScanSnapshot(SCAN, { ...snapshot(), secret: EMAIL });
-  assert.equal(copied && "secret" in copied, false);
+test("readStoredScan keeps a cached check and drops it after retention", async () => {
+  const time = clock(Date.parse("2026-01-01T00:00:00.000Z"));
+  const store = createMemoryStore();
+  const transport = scriptedConnector(() => htmlResult(pageHtml()));
+  const deps = {
+    store,
+    resolver: publicResolver().resolver,
+    connector: transport.connector,
+    now: time.now,
+  };
+  const checked = await runSeoCheck(
+    { url: "https://example.com/", locale: "en", requestId: requestId(1), clientIp: "203.0.113.50" },
+    deps,
+  );
+  const scanId = checked.body.scanId ?? "";
+  assert.match(scanId, /^scan_/);
+  time.advance(24 * 60 * 60 * 1000 + 1);
+  const stillThere = await readStoredScan(scanId, "en", { store, now: time.now });
+  assert.equal(stillThere?.checkedAt, checked.body.checkedAt);
+  assert.equal(stillThere?.normalizedUrl, "https://example.com/");
+  assert.notEqual(stillThere?.findings, checked.body.findings && "client");
+
+  const savedEnv = harness({ now: new Date(time.now()) });
+  const inquiry = await createInquiry({
+    scanId,
+    requestId: "inquiry-request-live1",
+    name: NAME,
+    email: EMAIL,
+    goal: "Use the stored homepage, not this sentence as evidence",
+    locale: "en",
+    findings: [{ evidence: "tampered by the browser" }],
+    normalizedUrl: "https://evil.example/override",
+  }, {
+    ...savedEnv.deps,
+    scanDirectory: createScanDirectory({ store, now: time.now }),
+    now: () => new Date(time.now()),
+  });
+  assert.equal(inquiry.ok, true);
+  if (!inquiry.ok) return;
+  const savedRecord = await savedEnv.store?.getInquiry(inquiry.inquiryId);
+  assert.equal(savedRecord?.snapshot.normalizedUrl, "https://example.com/");
+  assert.equal(savedRecord?.snapshot.checkedAt, checked.body.checkedAt);
+  assert.equal(JSON.stringify(savedRecord?.snapshot).includes("tampered by the browser"), false);
+  assert.equal(JSON.stringify(savedRecord?.snapshot).includes("evil.example"), false);
+
+  time.advance(7 * 24 * 60 * 60 * 1000);
+  const expired = await createInquiry({
+    scanId,
+    requestId: "inquiry-request-live2",
+    name: NAME,
+    email: EMAIL,
+    goal: GOAL,
+    locale: "en",
+  }, {
+    ...harness().deps,
+    scanDirectory: createScanDirectory({ store, now: time.now }),
+    now: () => new Date(time.now()),
+  });
+  assert.deepEqual(expired, { ok: false, error: "scan_not_found" });
+
+  const invalid = await createInquiry({
+    scanId: "../secret",
+    requestId: "inquiry-request-live3",
+    name: NAME,
+    email: EMAIL,
+    goal: GOAL,
+  }, harness().deps);
+  assert.deepEqual(invalid, { ok: false, error: "validation" });
 });
 
 test("inquiry link carries only the scan reference and locale", () => {
-  assert.equal(seoInquiryHref(SCAN), `/seo?scan=${SCAN}#inquiry`);
-  assert.equal(seoInquiryHref(SCAN, "zh"), `/seo?scan=${SCAN}&locale=zh#inquiry`);
+  assert.equal(seoInquiryHref(SCAN), `/seo?scan=${SCAN}#seo-inquiry`);
+  assert.equal(seoInquiryHref(SCAN, "zh"), `/seo?scan=${SCAN}&locale=zh#seo-inquiry`);
 });
 
 test("production settings fail closed without blob or retry credentials", () => {

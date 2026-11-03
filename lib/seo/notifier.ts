@@ -1,9 +1,10 @@
 import { siteEmail } from "../../app/site.ts";
-import type { InquiryRecord, NotificationStatus } from "./contract.ts";
+import type { SeoNotificationStatus } from "../../shared/seo-check/contract.ts";
+import type { InquiryRecord } from "./inquiry-store.ts";
 
 export type NotifyResult =
   | { status: "sent" }
-  | { status: "unconfigured" }
+  | { status: "not_configured" }
   | { status: "failed"; errorCode: string };
 
 export interface InquiryNotifier {
@@ -13,12 +14,12 @@ export interface InquiryNotifier {
 export function createUnconfiguredNotifier(): InquiryNotifier {
   return {
     async send(): Promise<NotifyResult> {
-      return { status: "unconfigured" };
+      return { status: "not_configured" };
     },
   };
 }
 
-export function notificationDelivered(status: NotificationStatus): boolean {
+export function notificationDelivered(status: SeoNotificationStatus): boolean {
   return status === "sent";
 }
 
@@ -32,15 +33,15 @@ export function inquiryNotificationText(record: InquiryRecord): string {
     ? snapshot.findings.map((finding, index) => [
       `${index + 1}. ${finding.ruleId} @ ${finding.ruleVersion}`,
       `   URL: ${finding.url}`,
-      `   Observed: ${finding.observed}`,
       `   Evidence: ${finding.evidence}`,
       `   Checked: ${finding.checkedAt}`,
       `   Why: ${finding.reason}`,
-      `   Suggestion: ${finding.suggestion}`,
+      `   Condition: ${finding.condition}`,
+      `   Suggestion: ${finding.suggestions.join(" ")}`,
     ].join("\n")).join("\n")
     : "(none displayed)";
-  const checks = snapshot.checks.length
-    ? snapshot.checks.map((check) => `- ${check.ruleId} @ ${check.ruleVersion}: ${check.state}; ${check.observed}`).join("\n")
+  const checks = snapshot.rules.length
+    ? snapshot.rules.map((rule) => `- ${rule.ruleId} @ ${rule.ruleVersion}: ${rule.status}; ${rule.summary}`).join("\n")
     : "(none)";
 
   return [
@@ -53,14 +54,14 @@ export function inquiryNotificationText(record: InquiryRecord): string {
     "What they want to improve:",
     record.goal,
     "",
-    `Scan reference: ${snapshot.reference}`,
+    `Scan reference: ${snapshot.scanId}`,
     `Checked at: ${snapshot.checkedAt}`,
     `Rule version: ${snapshot.ruleVersion}`,
     `Locale: ${snapshot.locale}`,
     `Status: ${snapshot.status}`,
-    `Canonical URL: ${snapshot.canonicalUrl}`,
-    `Final URL: ${snapshot.finalUrl}`,
-    `Cache hit: ${snapshot.cacheHit ? "yes" : "no"}`,
+    `Normalized URL: ${snapshot.normalizedUrl}`,
+    `Final URL: ${snapshot.finalUrl ?? ""}`,
+    `Cache hit: ${snapshot.cached ? "yes" : "no"}`,
     `Cache expires: ${snapshot.cacheExpiresAt}`,
     `Coverage: completed ${snapshot.coverage.completed}, unknown ${snapshot.coverage.unknown}, not applicable ${snapshot.coverage.notApplicable}`,
     "",

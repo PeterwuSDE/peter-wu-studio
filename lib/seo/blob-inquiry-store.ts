@@ -1,5 +1,4 @@
-import type { InquiryRecord, NotificationRecord, SubmissionClaim } from "./contract.ts";
-import type { InquiryStore } from "./inquiry-store.ts";
+import type { InquiryNotification, InquiryRecord, InquiryStore, SubmissionClaim } from "./inquiry-store.ts";
 
 /**
  * Narrow blob client so tests can stand in for @vercel/blob.
@@ -14,8 +13,8 @@ export interface PrivateBlobClient {
 
 const ROOT = "seo-inquiries";
 
-function submissionPath(submissionId: string): string {
-  return `${ROOT}/submissions/${submissionId}.json`;
+function submissionPath(requestId: string): string {
+  return `${ROOT}/submissions/${requestId}.json`;
 }
 
 function inquiryPath(inquiryId: string): string {
@@ -51,20 +50,20 @@ async function readJson<T>(client: PrivateBlobClient, pathname: string): Promise
 
 export function createBlobInquiryStore(client: PrivateBlobClient): InquiryStore {
   return {
-    async getSubmission(submissionId) {
-      return readJson<SubmissionClaim>(client, submissionPath(submissionId));
+    async getSubmission(requestId) {
+      return readJson<SubmissionClaim>(client, submissionPath(requestId));
     },
     async claimSubmission(claim) {
       try {
-        await client.put(submissionPath(claim.submissionId), JSON.stringify(claim), { allowOverwrite: false });
+        await client.put(submissionPath(claim.requestId), JSON.stringify(claim), { allowOverwrite: false });
         return "claimed";
       } catch (error) {
         if (isBlobAlreadyExists(error)) return "exists";
         throw error;
       }
     },
-    async releaseSubmission(submissionId) {
-      await client.del(submissionPath(submissionId));
+    async releaseSubmission(requestId) {
+      await client.del(submissionPath(requestId));
     },
     async putInquiry(record) {
       await client.put(inquiryPath(record.inquiryId), JSON.stringify(record), { allowOverwrite: true });
@@ -79,7 +78,7 @@ export function createBlobInquiryStore(client: PrivateBlobClient): InquiryStore 
       await client.put(notificationPath(record.inquiryId), JSON.stringify(record), { allowOverwrite: true });
     },
     async getNotification(inquiryId) {
-      return readJson<NotificationRecord>(client, notificationPath(inquiryId));
+      return readJson<InquiryNotification>(client, notificationPath(inquiryId));
     },
     async deleteNotification(inquiryId) {
       await client.del(notificationPath(inquiryId));
@@ -95,7 +94,7 @@ export function createBlobInquiryStore(client: PrivateBlobClient): InquiryStore 
     },
     async listNotifications() {
       const paths = await client.list(`${ROOT}/notifications/`);
-      const records: NotificationRecord[] = [];
+      const records: InquiryNotification[] = [];
       for (const pathname of paths) {
         const record = await readJson<NotificationRecord>(client, pathname);
         if (record) records.push(record);

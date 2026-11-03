@@ -1,12 +1,8 @@
-import type { SeoLocale } from "./contract.ts";
+import type { SeoCheckLocale } from "../../shared/seo-check/contract.ts";
 
-/**
- * Link the homepage-check result (issue #4) to this follow-up form.
- * The page reads `scan` and `locale` in the browser. The server reloads the
- * snapshot from the scan directory and does not trust any other query facts.
- */
-export function seoInquiryHref(scanReference: string, locale: SeoLocale = "en"): string {
-  const params = new URLSearchParams({ scan: scanReference });
+/** Deep link used when a full page load should reopen the inquiry entry. */
+export function seoInquiryHref(scanId: string, locale: SeoCheckLocale = "en"): string {
+  const params = new URLSearchParams({ scan: scanId });
   if (locale === "zh") params.set("locale", "zh");
-  return `/seo?${params.toString()}#inquiry`;
+  return `/seo?${params.toString()}#seo-inquiry`;
 }

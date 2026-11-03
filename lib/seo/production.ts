@@ -1,6 +1,7 @@
 import { createBlobInquiryStore } from "./blob-inquiry-store.ts";
 import type { HttpDeps } from "./http.ts";
 import type { InquiryLogger } from "./inquiry-service.ts";
+import { FileInquiryStore, MemoryInquiryStore, type InquiryStore } from "./inquiry-store.ts";
 import { createNotifierFromEnv } from "./notifier.ts";
 import { createScanDirectory } from "./scan-directory.ts";
 
@@ -39,6 +40,24 @@ export function inquirySettings(env: Record<string, string | undefined>) {
   };
 }
 
+let memoryStore: MemoryInquiryStore | null = null;
+const fileStores = new Map<string, FileInquiryStore>();
+
+function localInquiryStore(env: Record<string, string | undefined>): InquiryStore | null {
+  if (env.SEO_INQUIRY_STORE === "off") return null;
+  if (env.SEO_INQUIRY_STORE === "memory") {
+    memoryStore ??= new MemoryInquiryStore();
+    return memoryStore;
+  }
+  const filePath = env.SEO_INQUIRY_STORE_PATH?.trim() || (env.VERCEL ? "" : ".data/seo-inquiries.json");
+  if (!filePath) return null;
+  const existing = fileStores.get(filePath);
+  if (existing) return existing;
+  const created = new FileInquiryStore(filePath);
+  fileStores.set(filePath, created);
+  return created;
+}
+
 const logger: InquiryLogger = {
   info(event) {
     console.info(JSON.stringify(event));
@@ -66,6 +85,7 @@ export async function createProductionDeps(
       store = null;
     }
   }
+  store ??= localInquiryStore(env);
 
   return {
     store,
