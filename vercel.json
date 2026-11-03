@@ -4,6 +4,11 @@
   "buildCommand": "npm run export:static",
   "outputDirectory": "dist/client",
   "installCommand": "npm ci",
+  "functions": {
+    "api/seo-check.ts": {
+      "maxDuration": 15
+    }
+  },
   "redirects": [
     {
       "source": "/mac-mini",
