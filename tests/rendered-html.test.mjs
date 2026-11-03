@@ -231,6 +231,7 @@ test("gives every page a first-screen mailto and cross-links", async () => {
     assert.doesNotMatch(html, /Seattle|Bellevue|Kirkland|Redmond|Washington/);
     assert.match(html, /aria-label="北境 logo"/);
     assert.match(html, /aria-controls="mobile-navigation"/);
+    assert.ok(html.includes('/section-navigation.js'), page.path + " static fragment navigation guard");
     assert.doesNotMatch(html, /<details class="mobile-menu"/);
 
     const hrefs = [...html.matchAll(/href="(\/(?:websites|seo|care|contact))"/g)].map((match) => match[1]);
@@ -505,3 +506,9 @@ test("points the legacy GitHub Pages output at the production origin", async () 
   assert.match(workflow, /path: github-pages/);
 });
 
+
+test("exports the static fragment navigation guard", async () => {
+  const source = await readFile(new URL("../public/section-navigation.js", import.meta.url), "utf8");
+  const shipped = await readFile(new URL("../dist/client/section-navigation.js", import.meta.url), "utf8");
+  assert.equal(shipped, source);
+});
