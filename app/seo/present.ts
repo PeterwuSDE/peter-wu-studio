@@ -1,10 +1,10 @@
-import type { SeoCheckBlock, SeoCheckItem, SeoCheckLocale, SeoCheckReport, SeoSignalStatus } from "./contract";
-import { copyFor, type SeoCheckCopy } from "./copy";
+import { RULE_STATUS_LABELS, type SeoCheckLocale, type SeoCheckResponse, type SeoRuleResult } from "../../shared/seo-check/contract";
+import { copyFor } from "./copy";
 
-export type PresentedItem = {
+export type PresentedRule = {
   key: string;
   ruleId: string;
-  status: Exclude<SeoSignalStatus, "review">;
+  status: SeoRuleResult["status"];
   statusLabel: string;
   summary: string;
 };
@@ -17,50 +17,48 @@ export type PresentedFinding = {
   evidence: string;
   checkedAt: string;
   condition: string;
-  explanation: string;
+  reason: string;
   suggestions: string[];
 };
 
 export type PresentedReport = {
   displayName: string;
+  message: string;
+  scope: string;
   normalizedUrl: string;
   finalUrl: string | null;
   timeLine: string;
   cacheUntil: string | null;
   ruleVersion: string;
   coverageLine: string;
-  partialNote: string | null;
-  unsupportedNote: string | null;
   scriptNote: string | null;
+  pageHttp: string | null;
+  redirects: string | null;
   findings: PresentedFinding[];
-  emptyFindings: string | null;
-  nothingCompleted: string | null;
-  passed: PresentedItem[];
-  unknown: PresentedItem[];
-  notApplicable: PresentedItem[];
+  passed: PresentedRule[];
+  review: PresentedRule[];
+  unknown: PresentedRule[];
+  notApplicable: PresentedRule[];
 };
 
-export type PresentedBlock = {
-  message: string;
-  showRetry: boolean;
-  showContact: boolean;
-};
-
-export function presentReport(report: SeoCheckReport, locale: SeoCheckLocale): PresentedReport {
+export function presentReport(report: SeoCheckResponse, locale: SeoCheckLocale): PresentedReport {
   const copy = copyFor(locale);
-  const time = formatCheckedAt(report.checkedAt, locale);
-  const finalDiffers = report.finalUrl !== report.normalizedUrl;
+  const labels = RULE_STATUS_LABELS[locale];
+  const time = report.checkedAt ? formatCheckedAt(report.checkedAt, locale) : null;
+  const finalDiffers = Boolean(report.finalUrl && report.finalUrl !== report.normalizedUrl);
   return {
-    displayName: report.displayName || hostname(report.finalUrl),
+    displayName: report.siteName || hostname(report.finalUrl || report.normalizedUrl),
+    message: report.message,
+    scope: report.scope,
     normalizedUrl: report.normalizedUrl,
     finalUrl: finalDiffers ? report.finalUrl : null,
-    timeLine: report.cached ? copy.cached(time) : copy.fresh(time),
+    timeLine: time ? (report.cached ? copy.cached(time) : copy.fresh(time)) : copy.missingTime,
     cacheUntil: report.cacheExpiresAt ? copy.cacheUntil(formatCheckedAt(report.cacheExpiresAt, locale)) : null,
     ruleVersion: report.ruleVersion,
     coverageLine: copy.coverage(report.coverage.completed, report.coverage.unknown, report.coverage.notApplicable),
-    partialNote: report.status === "partial" ? copy.partial : null,
-    unsupportedNote: report.unsupportedDocument ? copy.unsupported : null,
-    scriptNote: report.javascriptNotExecuted ? copy.javascript : null,
+    scriptNote: report.javascriptNotExecuted && !/javascript/i.test(report.message) ? copy.javascript : null,
+    pageHttp: report.httpStatus != null ? String(report.httpStatus) : null,
+    redirects: report.redirectCount > 0 ? String(report.redirectCount) : null,
     findings: report.findings.slice(0, 2).map((finding, index) => ({
       key: `${finding.ruleId}-${index}`,
       ruleId: finding.ruleId,
@@ -69,31 +67,13 @@ export function presentReport(report: SeoCheckReport, locale: SeoCheckLocale): P
       evidence: finding.evidence,
       checkedAt: formatCheckedAt(finding.checkedAt, locale),
       condition: finding.condition,
-      explanation: finding.explanation,
+      reason: finding.reason,
       suggestions: finding.suggestions.slice(0, 2),
     })),
-    emptyFindings: report.findings.length === 0 && report.coverage.completed > 0 ? copy.emptyFindings : null,
-    nothingCompleted: report.findings.length === 0 && report.coverage.completed === 0 ? copy.nothingCompleted : null,
-    passed: presentItems(report.items, "pass", copy, locale),
-    unknown: presentItems(report.items, "unknown", copy, locale),
-    notApplicable: presentItems(report.items, "not_applicable", copy, locale),
-  };
-}
-
-export function presentBlock(block: SeoCheckBlock, locale: SeoCheckLocale): PresentedBlock {
-  const copy = copyFor(locale);
-  const message = {
-    invalid_url: copy.invalidUrl,
-    network: copy.network,
-    access_restricted: copy.access,
-    unsupported_document: copy.unsupported,
-    quota: copy.quota,
-    service: copy.service,
-  }[block.reason];
-  return {
-    message,
-    showRetry: block.reason !== "invalid_url",
-    showContact: block.reason !== "invalid_url",
+    passed: presentRules(report.rules, "pass", labels.pass),
+    review: presentRules(report.rules, "review", labels.review),
+    unknown: presentRules(report.rules, "unknown", labels.unknown),
+    notApplicable: presentRules(report.rules, "not_applicable", labels.not_applicable),
   };
 }
 
@@ -108,33 +88,22 @@ export function formatCheckedAt(iso: string, locale: SeoCheckLocale): string {
   return `${formatted} UTC`;
 }
 
-function presentItems(
-  items: SeoCheckItem[],
-  status: Exclude<SeoSignalStatus, "review">,
-  copy: SeoCheckCopy,
-  locale: SeoCheckLocale,
-): PresentedItem[] {
-  const statusLabel = status === "pass" ? copy.passedMark : status === "unknown" ? copy.unknown : copy.notApplicable;
-  return items
-    .filter((item) => item.status === status)
-    .map((item, index) => ({
-      key: `${item.ruleId}-${index}`,
-      ruleId: item.ruleId,
+function presentRules(rules: SeoRuleResult[], status: SeoRuleResult["status"], statusLabel: string): PresentedRule[] {
+  return rules
+    .filter((rule) => rule.status === status)
+    .map((rule, index) => ({
+      key: `${rule.ruleId}-${index}`,
+      ruleId: rule.ruleId,
       status,
       statusLabel,
-      summary: item.summary ?? ruleLabel(item.ruleId, locale),
+      summary: rule.summary,
     }));
-}
-
-function ruleLabel(ruleId: string, locale: SeoCheckLocale): string {
-  const rules: Record<string, string> = copyFor(locale).rules;
-  return rules[ruleId] ?? ruleId;
 }
 
 function hostname(url: string): string {
   try {
     return new URL(url).hostname;
   } catch {
-    return url;
+    return url || "";
   }
 }

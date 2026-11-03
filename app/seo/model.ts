@@ -1,6 +1,7 @@
-import { postSeoCheck, type SeoCheckClient } from "./check-client";
-import { interpretSeoCheck, type SeoCheckBlock, type SeoCheckLocale, type SeoCheckReport } from "./contract";
+import type { SeoCheckLocale, SeoCheckResponse } from "../../shared/seo-check/contract";
+import { createSeoCheckRequestId, postSeoCheck, type SeoCheckClient } from "./check-client";
 import { requestSeoInquiry, type SeoInquiryContext } from "./inquiry";
+import { emptyAddressBlock, interpretSeoCheck, type SeoCheckBlock } from "./read-response";
 
 export type CheckPhase = "idle" | "checking" | "ready" | "blocked";
 export type CheckFocus = "result" | "error" | "inquiry" | null;
@@ -10,7 +11,7 @@ export type CheckSnapshot = {
   locale: SeoCheckLocale;
   url: string;
   phase: CheckPhase;
-  report: SeoCheckReport | null;
+  report: SeoCheckResponse | null;
   block: SeoCheckBlock | null;
   notice: "locale_refresh_failed" | null;
   inquiry: InquiryView;
@@ -51,7 +52,7 @@ export function createHomepageCheck(options: {
   inquiry?: InquiryPort;
 } = {}): HomepageCheckController {
   const client = options.client ?? postSeoCheck;
-  const requestId = options.requestId ?? (() => `req_${crypto.randomUUID()}`);
+  const requestId = options.requestId ?? createSeoCheckRequestId;
   const inquiry = options.inquiry ?? { request: requestSeoInquiry };
   let generation = 0;
   let active: AbortController | null = null;
@@ -91,7 +92,7 @@ export function createHomepageCheck(options: {
     }
     if (token !== generation) return;
 
-    const outcome = interpretSeoCheck(transport, { url, locale, requestId: id });
+    const outcome = interpretSeoCheck(transport, locale);
     if (outcome.kind === "report") {
       publish({
         ...snapshot,
@@ -146,7 +147,7 @@ export function createHomepageCheck(options: {
           url: source,
           phase: "blocked",
           report: null,
-          block: { reason: "invalid_url", requestId: "" },
+          block: emptyAddressBlock(snapshot.locale),
           notice: null,
           inquiry: "closed",
           focus: "error",
@@ -176,7 +177,7 @@ export function createHomepageCheck(options: {
       return Promise.resolve();
     },
     openInquiry() {
-      if (snapshot.phase !== "ready" || !snapshot.report) return "unhandled";
+      if (snapshot.phase !== "ready" || !snapshot.report?.scanId || !snapshot.report.checkedAt) return "unhandled";
       const context = toInquiry(snapshot.report);
       let outcome: "handled" | "unhandled" = "unhandled";
       try {
@@ -215,9 +216,9 @@ export function localeFromKey(current: SeoCheckLocale, key: string): SeoCheckLoc
   return null;
 }
 
-function toInquiry(report: SeoCheckReport): SeoInquiryContext {
+function toInquiry(report: SeoCheckResponse & { scanId: string; checkedAt: string }): SeoInquiryContext {
   return {
-    scanRef: report.scanRef,
+    scanId: report.scanId,
     requestId: report.requestId,
     normalizedUrl: report.normalizedUrl,
     finalUrl: report.finalUrl,
@@ -226,6 +227,7 @@ function toInquiry(report: SeoCheckReport): SeoInquiryContext {
     ruleVersion: report.ruleVersion,
     cached: report.cached,
     status: report.status,
+    code: report.code,
   };
 }
 

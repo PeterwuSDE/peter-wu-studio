@@ -5,7 +5,7 @@ import type { SeoCheckClient } from "./check-client";
 import { copyFor } from "./copy";
 import { inquiryMailto, SEO_INQUIRY_ENTRY_ID, type SeoInquiryContext } from "./inquiry";
 import { createHomepageCheck, localeFromKey, type HomepageCheckController, type InquiryPort } from "./model";
-import { presentBlock, presentReport } from "./present";
+import { presentReport } from "./present";
 import { mailtoHref } from "../site";
 
 /**
@@ -36,10 +36,9 @@ export function HomepageCheck({ client, inquiry, controller }: { client?: SeoChe
 
   const report = snapshot.phase === "ready" ? snapshot.report : null;
   const presented = report ? presentReport(report, snapshot.locale) : null;
-  const blocked = snapshot.block ? presentBlock(snapshot.block, snapshot.locale) : null;
-  const alertMessage = blocked?.message ?? (snapshot.notice ? copy.localeRefresh : null);
+  const alertMessage = snapshot.block?.message ?? (snapshot.notice ? copy.localeRefresh : null);
   const describedBy = ["seo-check-help", alertMessage ? "seo-check-error" : ""].filter(Boolean).join(" ");
-  const inquiryContext = report ? toInquiryContext(report) : null;
+  const inquiryContext = report?.scanId && report.checkedAt ? toInquiryContext({ ...report, scanId: report.scanId, checkedAt: report.checkedAt }) : null;
 
   function onLanguageKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     const next = localeFromKey(snapshot.locale, event.key);
@@ -97,15 +96,16 @@ export function HomepageCheck({ client, inquiry, controller }: { client?: SeoChe
         {alertMessage ? (
           <div id="seo-check-error" className="seo-check-error" role="alert" tabIndex={-1} ref={errorRef}>
             <p>{alertMessage}</p>
-            {blocked?.showRetry || snapshot.notice ? <button className="button button-primary" type="button" onClick={() => void checker.retry()}>{copy.retry}</button> : null}
-            {blocked?.showContact ? <a href={mailtoHref}>{copy.contact}</a> : null}
+            {snapshot.block?.showRetry || snapshot.notice ? <button className="button button-primary" type="button" onClick={() => void checker.retry()}>{copy.retry}</button> : null}
+            {snapshot.block?.showContact ? <a href={mailtoHref}>{copy.contact}</a> : null}
           </div>
         ) : null}
       </form>
       {presented && report ? (
-        <div className="seo-check-result" id="seo-check-result" data-scan-ref={report.scanRef} data-seo-cached={report.cached ? "true" : "false"} data-seo-status={report.status} lang={report.locale === "zh" ? "zh-Hans" : "en"}>
+        <div className="seo-check-result" id="seo-check-result" data-scan-id={report.scanId ?? undefined} data-seo-cached={report.cached ? "true" : "false"} data-seo-status={report.status} data-seo-code={report.code} lang={report.locale === "zh" ? "zh-Hans" : "en"}>
           <div className="seo-check-overview">
             <h3 id="seo-check-result-title" tabIndex={-1} ref={resultRef}>{presented.displayName}</h3>
+            <p>{presented.message}</p>
             <p>{copy.overview}</p>
             <dl>
               <div><dt>{copy.addressChecked}</dt><dd>{presented.normalizedUrl}</dd></div>
@@ -113,21 +113,20 @@ export function HomepageCheck({ client, inquiry, controller }: { client?: SeoChe
               <div><dt>{copy.findingTime}</dt><dd>{presented.timeLine}</dd></div>
               <div><dt>{copy.ruleVersion}</dt><dd>{presented.ruleVersion}</dd></div>
               <div><dt>{copy.coverageLabel}</dt><dd>{presented.coverageLine}</dd></div>
+              {presented.pageHttp ? <div><dt>{copy.pageHttp}</dt><dd>{presented.pageHttp}</dd></div> : null}
+              {presented.redirects ? <div><dt>{copy.redirects}</dt><dd>{presented.redirects}</dd></div> : null}
+              {presented.scope ? <div><dt>{copy.scopeLabel}</dt><dd>{presented.scope}</dd></div> : null}
             </dl>
             {presented.cacheUntil ? <p>{presented.cacheUntil}</p> : null}
-            {presented.partialNote ? <p>{presented.partialNote}</p> : null}
-            {presented.unsupportedNote ? <p>{presented.unsupportedNote}</p> : null}
             {presented.scriptNote ? <p>{presented.scriptNote}</p> : null}
           </div>
           <div className="seo-check-findings">
             <h3>{copy.findings}</h3>
-            {presented.emptyFindings ? <p>{presented.emptyFindings}</p> : null}
-            {presented.nothingCompleted ? <p>{presented.nothingCompleted}</p> : null}
             {presented.findings.map((finding) => (
               <article className="seo-check-finding" key={finding.key} data-seo-finding={finding.ruleId}>
                 <p className="seo-check-rule">{finding.ruleId} · {finding.ruleVersion}</p>
-                <h4>{finding.condition}</h4>
-                <p>{finding.explanation}</p>
+                <h4>{finding.condition || finding.reason}</h4>
+                {finding.reason ? <p>{finding.reason}</p> : null}
                 <p className="seo-check-evidence">{copy.observed}: {finding.evidence}</p>
                 <dl>
                   <div><dt>{copy.onPage}</dt><dd>{finding.url}</dd></div>
@@ -142,6 +141,9 @@ export function HomepageCheck({ client, inquiry, controller }: { client?: SeoChe
           </div>
           {presented.passed.length > 0 ? (
             <ItemGroup title={copy.passed} items={presented.passed} />
+          ) : null}
+          {presented.review.length > 0 ? (
+            <ItemGroup title={copy.review} items={presented.review} />
           ) : null}
           {presented.unknown.length > 0 ? (
             <ItemGroup title={copy.unknown} items={presented.unknown} />
@@ -161,14 +163,16 @@ export function HomepageCheck({ client, inquiry, controller }: { client?: SeoChe
                 </li>
               ))}
             </ul>
-            <div className="seo-check-actions">
-              <button className="button button-primary" type="button" data-seo-inquiry-trigger="primary" data-scan-ref={report.scanRef} onClick={() => checker.openInquiry()}>{copy.inquire}</button>
-              <button className="text-link" type="button" data-seo-inquiry-trigger="learn" data-scan-ref={report.scanRef} onClick={() => checker.openInquiry()}>{copy.learnMore}</button>
-            </div>
+            {inquiryContext ? (
+              <div className="seo-check-actions">
+                <button className="button button-primary" type="button" data-seo-inquiry-trigger="primary" data-scan-id={inquiryContext.scanId} onClick={() => checker.openInquiry()}>{copy.inquire}</button>
+                <button className="text-link" type="button" data-seo-inquiry-trigger="learn" data-scan-id={inquiryContext.scanId} onClick={() => checker.openInquiry()}>{copy.learnMore}</button>
+              </div>
+            ) : <p><a href={mailtoHref}>{copy.contact}</a></p>}
           </div>
         </div>
       ) : null}
-      <div id={SEO_INQUIRY_ENTRY_ID} className={snapshot.inquiry === "fallback" ? "seo-check-inquiry seo-check-inquiry-open" : "seo-check-inquiry"} data-seo-inquiry-entry="" data-seo-inquiry-state={snapshot.inquiry} data-scan-ref={inquiryContext?.scanRef} tabIndex={-1} ref={inquiryRef} hidden={snapshot.inquiry === "closed" ? true : undefined} role={snapshot.inquiry === "fallback" ? "region" : undefined} aria-labelledby={snapshot.inquiry === "fallback" ? "seo-inquiry-title" : undefined}>
+      <div id={SEO_INQUIRY_ENTRY_ID} className={snapshot.inquiry === "fallback" ? "seo-check-inquiry seo-check-inquiry-open" : "seo-check-inquiry"} data-seo-inquiry-entry="" data-seo-inquiry-state={snapshot.inquiry} data-scan-id={inquiryContext?.scanId} tabIndex={-1} ref={inquiryRef} hidden={snapshot.inquiry === "closed" ? true : undefined} role={snapshot.inquiry === "fallback" ? "region" : undefined} aria-labelledby={snapshot.inquiry === "fallback" ? "seo-inquiry-title" : undefined}>
         {snapshot.inquiry === "fallback" && inquiryContext ? <InquiryFallback context={inquiryContext} locale={snapshot.locale} /> : null}
       </div>
     </section>
@@ -198,7 +202,7 @@ function InquiryFallback({ context, locale }: { context: SeoInquiryContext; loca
       <h3 id="seo-inquiry-title">{copy.inquiryTitle}</h3>
       <p>{copy.inquiryBody}</p>
       <dl>
-        <div><dt>{copy.scanReference}</dt><dd>{context.scanRef}</dd></div>
+        <div><dt>{copy.scanReference}</dt><dd>{context.scanId}</dd></div>
         <div><dt>{copy.addressChecked}</dt><dd>{context.normalizedUrl}</dd></div>
         <div><dt>{copy.finalAddress}</dt><dd>{context.finalUrl}</dd></div>
         <div><dt>{copy.findingTime}</dt><dd>{context.checkedAt}</dd></div>
@@ -210,9 +214,9 @@ function InquiryFallback({ context, locale }: { context: SeoInquiryContext; loca
   );
 }
 
-function toInquiryContext(report: NonNullable<ReturnType<HomepageCheckController["getSnapshot"]>["report"]>): SeoInquiryContext {
+function toInquiryContext(report: NonNullable<ReturnType<HomepageCheckController["getSnapshot"]>["report"]> & { scanId: string; checkedAt: string }): SeoInquiryContext {
   return {
-    scanRef: report.scanRef,
+    scanId: report.scanId,
     requestId: report.requestId,
     normalizedUrl: report.normalizedUrl,
     finalUrl: report.finalUrl,
@@ -221,5 +225,6 @@ function toInquiryContext(report: NonNullable<ReturnType<HomepageCheckController
     ruleVersion: report.ruleVersion,
     cached: report.cached,
     status: report.status,
+    code: report.code,
   };
 }

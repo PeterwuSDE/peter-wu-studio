@@ -1,4 +1,4 @@
-import type { SeoCheckLocale } from "./contract";
+import type { SeoCheckLocale } from "../../shared/seo-check/contract";
 
 export const seoCheckCopy = {
   en: {
@@ -55,7 +55,12 @@ export const seoCheckCopy = {
     inquiryEmail: "Or email northlinestudio425@gmail.com and include the scan reference.",
     retry: "Try again",
     localeRefresh: "The report language could not be updated. The previous result is still shown.",
-    invalidUrl: "Enter a public web address. This check did not produce an SEO conclusion.",
+    missingTime: "The check time was not included.",
+    pageHttp: "Page response",
+    redirects: "Redirects followed",
+    scopeLabel: "What this check covers",
+    review: "Needs confirmation",
+    invalidUrl: "Use a public http or https page address. No SEO result was created.",
     network: "This page could not be read just now. You can edit the address and try again, or contact Northline.",
     access: "This page limited access for this check. Nothing was scored, and the limit was not bypassed.",
     quota: "This check is temporarily unavailable. You can still contact Northline.",
@@ -66,7 +71,7 @@ export const seoCheckCopy = {
       title: "Page title",
       description: "Meta description",
       h1: "Main heading",
-      indexing: "Indexing directive",
+      indexability: "Indexing directive",
       canonical: "Canonical link",
       viewport: "Viewport",
       image_alt: "Image alternative text",
@@ -126,7 +131,12 @@ export const seoCheckCopy = {
     inquiryEmail: "也可以发邮件到 northlinestudio425@gmail.com，并写上扫描引用。",
     retry: "重试",
     localeRefresh: "报告语言暂时没有更新。仍显示上一次的结果。",
-    invalidUrl: "请提供一个可公开访问的网页地址。本次没有形成 SEO 结论。",
+    missingTime: "结果里没有检查时间。",
+    pageHttp: "页面响应",
+    redirects: "跟随的跳转",
+    scopeLabel: "本次检查范围",
+    review: "需确认",
+    invalidUrl: "请填写可公开访问的 http 或 https 网页地址。本次没有生成 SEO 结论。",
     network: "暂时无法读取该页面。你可以修改网址后重试，或联系 Northline。",
     access: "该页面限制了本次访问。本次不扣分，也不会绕过限制。",
     quota: "暂时无法进行检查。你仍可以联系 Northline。",
@@ -137,7 +147,7 @@ export const seoCheckCopy = {
       title: "页面标题",
       description: "描述信息",
       h1: "主标题",
-      indexing: "索引限制",
+      indexability: "索引限制",
       canonical: "canonical",
       viewport: "viewport",
       image_alt: "图片替代文本",

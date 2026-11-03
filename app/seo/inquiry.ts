@@ -1,4 +1,4 @@
-import type { SeoCheckLocale } from "./contract";
+import type { SeoCheckCode, SeoCheckLocale, SeoCheckStatus } from "../../shared/seo-check/contract";
 import { siteEmail } from "../site";
 
 export const SEO_INQUIRY_ENTRY_ID = "seo-inquiry";
@@ -7,19 +7,20 @@ export const SEO_INQUIRY_STORAGE_KEY = "northline:seo-inquiry";
 
 /**
  * What the visitor saw when they asked Northline to go further.
- * Issue #5 should treat `scanRef` as a lookup key and re-validate the
- * scan on the server. The other fields are display context, not proof.
+ * Issue #5 should treat `scanId` as a lookup key and rebuild the snapshot
+ * with `readStoredScan`. The other fields are display context, not proof.
  */
 export type SeoInquiryContext = {
-  scanRef: string;
+  scanId: string;
   requestId: string;
   normalizedUrl: string;
-  finalUrl: string;
+  finalUrl: string | null;
   locale: SeoCheckLocale;
   checkedAt: string;
   ruleVersion: string;
   cached: boolean;
-  status: "complete" | "partial";
+  status: SeoCheckStatus;
+  code: SeoCheckCode;
 };
 
 export type SeoInquiryHandler = (context: SeoInquiryContext) => void;
@@ -56,11 +57,11 @@ export function deliverSeoInquiry(context: SeoInquiryContext, target: InquiryTar
 }
 
 export function inquiryMailto(context: SeoInquiryContext): string {
-  const subject = `Homepage check ${context.scanRef}`;
+  const subject = `Homepage check ${context.scanId}`;
   const body = [
-    `Scan reference: ${context.scanRef}`,
+    `Scan reference: ${context.scanId}`,
     `Normalized URL: ${context.normalizedUrl}`,
-    `Final URL: ${context.finalUrl}`,
+    `Final URL: ${context.finalUrl ?? ""}`,
     `Checked at: ${context.checkedAt}`,
     `Rule version: ${context.ruleVersion}`,
     "",
@@ -84,22 +85,24 @@ export function parseStoredInquiry(value: string | null): SeoInquiryContext | nu
   try {
     const parsed = JSON.parse(value) as Partial<SeoInquiryContext>;
     if (!parsed || typeof parsed !== "object") return null;
-    if (!isToken(parsed.scanRef) || !isToken(parsed.requestId)) return null;
-    if (!isHttpUrl(parsed.normalizedUrl) || !isHttpUrl(parsed.finalUrl)) return null;
+    if (!isToken(parsed.scanId) || !isToken(parsed.requestId)) return null;
+    if (!isHttpUrl(parsed.normalizedUrl)) return null;
+    if (parsed.finalUrl != null && !isHttpUrl(parsed.finalUrl)) return null;
     if (parsed.locale !== "en" && parsed.locale !== "zh") return null;
-    if (parsed.status !== "complete" && parsed.status !== "partial") return null;
+    if (typeof parsed.status !== "string" || typeof parsed.code !== "string") return null;
     if (typeof parsed.checkedAt !== "string" || typeof parsed.ruleVersion !== "string") return null;
     if (typeof parsed.cached !== "boolean") return null;
     return {
-      scanRef: parsed.scanRef,
+      scanId: parsed.scanId,
       requestId: parsed.requestId,
       normalizedUrl: parsed.normalizedUrl,
-      finalUrl: parsed.finalUrl,
+      finalUrl: parsed.finalUrl ?? null,
       locale: parsed.locale,
       checkedAt: parsed.checkedAt,
       ruleVersion: parsed.ruleVersion,
       cached: parsed.cached,
-      status: parsed.status,
+      status: parsed.status as SeoInquiryContext["status"],
+      code: parsed.code as SeoInquiryContext["code"],
     };
   } catch {
     return null;
@@ -117,9 +120,9 @@ export function createBrowserInquiryTarget(): InquiryTarget {
     },
     reveal(context) {
       const url = new URL(window.location.href);
-      url.searchParams.set("scan", context.scanRef);
+      url.searchParams.set("scan", context.scanId);
       url.hash = SEO_INQUIRY_ENTRY_ID;
-      window.history.replaceState({ seoInquiry: context.scanRef }, "", `${url.pathname}${url.search}${url.hash}`);
+      window.history.replaceState({ seoInquiry: context.scanId }, "", `${url.pathname}${url.search}${url.hash}`);
     },
     notify(context) {
       const event = new CustomEvent(SEO_INQUIRY_EVENT, { cancelable: true, detail: context });

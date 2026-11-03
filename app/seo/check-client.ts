@@ -1,8 +1,18 @@
-import { SEO_CHECK_PATH, type SeoCheckRequest, type SeoCheckTransport } from "./contract";
+import { SEO_CHECK_PATH, SEO_CHECK_REQUEST_ID_PATTERN } from "../../shared/seo-check/contract";
+import type { SeoCheckTransport } from "./read-response";
 
-export type SeoCheckClient = (request: SeoCheckRequest, signal?: AbortSignal) => Promise<SeoCheckTransport>;
+export type { SeoCheckTransport };
+export type SeoCheckClient = (request: { url: string; locale: "en" | "zh"; requestId: string }, signal?: AbortSignal) => Promise<SeoCheckTransport>;
 
-export async function postSeoCheck(request: SeoCheckRequest, signal?: AbortSignal): Promise<SeoCheckTransport> {
+export function createSeoCheckRequestId(): string {
+  const id = `req_${crypto.randomUUID().replaceAll("-", "")}`;
+  if (!SEO_CHECK_REQUEST_ID_PATTERN.test(id)) {
+    return `req_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
+  }
+  return id;
+}
+
+export async function postSeoCheck(request: { url: string; locale: "en" | "zh"; requestId: string }, signal?: AbortSignal): Promise<SeoCheckTransport> {
   try {
     const response = await fetch(SEO_CHECK_PATH, {
       method: "POST",

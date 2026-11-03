@@ -883,6 +883,7 @@ section[id] { scroll-margin-top: 110px; }
 .seo-check-list li { display: grid; grid-template-columns: minmax(140px, 190px) minmax(0, 1fr); gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
 .seo-check-status { font: 11px var(--font-geist-mono), monospace; letter-spacing: .04em; text-transform: uppercase; }
 .seo-check-status-pass { color: #2d6a3a; }
+.seo-check-status-review { color: var(--blue); }
 .seo-check-status-unknown, .seo-check-status-na { color: #62665c; }
 .seo-check-disclaimer { max-width: 680px; margin: 0 0 8px; font-size: 16px; line-height: 1.6; }
 .seo-check-examples { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; list-style: none; padding: 0; margin: 20px 0 28px; }
