@@ -8,10 +8,11 @@ export const metadata = pageMetadata("Business Tools & Workflow Systems | Northl
 export default function ToolsPage() {
   return <main id="top" className="service-page">
     <JsonLd data={toolsServiceJsonLd} />
-    <ServiceHero kind="tools" eyebrow="Business tools" title={<>Less friction.<br /><em>More room to work.</em></>} description="Booking, scheduling, and internal tools built around the way your business works. Start with the task that keeps slowing you down." cta="Discuss a business tool" />
+    <ServiceHero kind="tools" eyebrow="Business tools" title={<>Bookings, requests,<br /><em>and a place to manage them.</em></>} description="Move appointment requests, team schedules, and client intake out of scattered messages and spreadsheets. Start with one process, then build the tool around it." cta="Discuss a business tool" />
     <section className="service-experience" id="experience" data-service-section="experience">
       <SectionHeading number="02" label="A smoother day" title={<>Fewer loose ends.<br /><em>A clearer next step.</em></>} />
       <div className="workflow-visual" aria-label="Example workflow: request, schedule, shared workspace"><div><span>01 / INTAKE</span><strong>A request<br />comes in.</strong><small>Capture what matters.</small></div><i aria-hidden="true">→</i><div><span>02 / COORDINATE</span><strong>The right time.<br />The right person.</strong><small>Keep the next step clear.</small></div><i aria-hidden="true">→</i><div><span>03 / FOLLOW THROUGH</span><strong>One shared<br />workspace.</strong><small>Bring the details together.</small></div></div>
+      <a className="service-demo-link" href="/demos/bookings/index.html">Try Daybook: booking and scheduling →<span>Book a sample time, then reschedule it in the business view. A self-initiated Northline demo.</span></a>
       <div className="service-caption-row"><p>Illustrative workflow. Your process defines the tool.</p><span>DESIGNED AROUND THE EVERYDAY</span></div>
     </section>
     <section className="service-scope scope-with-aside" id="scope" data-service-section="scope">
@@ -26,3 +27,4 @@ export default function ToolsPage() {
     <RelatedLinks links={[{ href: "/websites", label: "Website design" }, { href: "/shopify", label: "Shopify commerce" }, { href: "/seo", label: "Search optimization" }, { href: "/care", label: "Ongoing care" }]} />
   </main>;
 }
+

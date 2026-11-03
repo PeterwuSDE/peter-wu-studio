@@ -8,9 +8,10 @@ export const metadata = pageMetadata("Shopify Stores & Commerce | Northline Stud
 export default function ShopifyPage() {
   return <main id="top" className="service-page">
     <JsonLd data={shopifyServiceJsonLd} />
-    <ServiceHero kind="shopify" eyebrow="Shopify & commerce" title={<>Your products.<br /><em>Room to shine.</em></>} description="A new or redesigned Shopify store that feels like your brand and makes the path from discovery to purchase feel natural." cta="Discuss your storefront" />
+    <ServiceHero kind="shopify" eyebrow="Shopify & commerce" title={<>Help shoppers find it.<br /><em>Make it easy to buy.</em></>} description="New Shopify stores and redesigns with clear collections, useful product pages, and a mobile shopping journey shaped around your catalog. Setup, integrations, and launch work are scoped before the build." cta="Discuss your storefront" />
     <section className="service-experience" id="experience" data-service-section="experience">
       <SectionHeading number="02" label="The shopping experience" title={<>Considered from<br /><em>first look to checkout.</em></>} />
+      <a className="service-demo-link" href="/demos/store/index.html">Explore the Form &amp; Field demo →<span>Try product filters, color selection, and a shopping bag. A custom interface demo, without a Shopify connection or real checkout.</span></a>
       <div className="outcome-grid"><Outcome icon="shape" title="A store with character">Design and imagery that give your products a recognizable home.</Outcome><Outcome icon="flow" title="An easier way to explore">Clear collections, useful product details, and thoughtful mobile navigation.</Outcome><Outcome icon="launch" title="Ready to open">The practical setup, selected integrations, and launch checks your store needs.</Outcome></div>
     </section>
     <section className="service-scope" id="scope" data-service-section="scope">
@@ -25,3 +26,4 @@ export default function ShopifyPage() {
     <RelatedLinks links={[{ href: "/websites", label: "Website design" }, { href: "/tools", label: "Business tools" }, { href: "/seo", label: "Search optimization" }, { href: "/care", label: "Ongoing care" }]} />
   </main>;
 }
+
