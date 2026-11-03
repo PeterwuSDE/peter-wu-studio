@@ -2,6 +2,7 @@ import { JsonLd, RelatedLinks } from "../Chrome";
 import { pageMetadata } from "../page-metadata";
 import { ServiceHero, SectionHeading, ServiceNext } from "../ServicePage";
 import { seoServiceJsonLd } from "../structured-data";
+import { HomepageCheck } from "./HomepageCheck";
 
 export const metadata = pageMetadata("Search Optimization | Northline Studio", "An SEO health check, a 90-day launch, and monthly search work from Northline Studio, including Google Maps and AI assistants. Request a quote.", "/seo");
 
@@ -9,6 +10,7 @@ export default function SeoPage() {
   return <main id="top" className="service-page">
     <JsonLd data={seoServiceJsonLd} />
     <ServiceHero kind="seo" eyebrow="Search optimization" title={<>Be easier<br /><em>to find.</em></>} description="Understand what is holding your website back, choose the improvements that matter, and build a clearer search presence over time." cta="Request a quote" />
+    <HomepageCheck />
     <section className="service-experience" id="experience" data-service-section="experience">
       <SectionHeading number="02" label="A clear way forward" title={<>Understand first.<br /><em>Improve with direction.</em></>} />
       <div className="search-path"><article><span>01 / UNDERSTAND</span><div className="search-symbol symbol-audit" aria-hidden="true"><i /><i /><i /></div><h3>SEO audit</h3><p>A picture of your technical foundations, content, and page structure.</p></article><article id="launch"><span>02 / PRIORITIZE</span><div className="search-symbol symbol-plan" aria-hidden="true"><i /><i /><i /></div><h3>90-day launch</h3><p>A defined checklist and a focused sequence of improvements.</p></article><article><span>03 / KEEP IMPROVING</span><div className="search-symbol symbol-grow" aria-hidden="true"><i /><i /><i /></div><h3>Ongoing monthly SEO</h3><p>Monitoring, fixes, and new opportunities as your website evolves.</p></article></div>

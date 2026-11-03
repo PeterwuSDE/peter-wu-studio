@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { access, readFile, stat } from "node:fs/promises";
+import { access, readdir, readFile, stat } from "node:fs/promises";
+import { join } from "node:path";
 import test from "node:test";
 
 let renderCount = 0;
@@ -187,7 +188,34 @@ test("describes SEO without publishing a price", async () => {
   assert.match(visible, /Gemini/);
   assert.doesNotMatch(visible, /\$\s?\d/);
   assert.doesNotMatch(visible, /Starting from|Custom proposal|\/month|\/hour/);
+  assert.match(visible, /Check your homepage/);
+  assert.match(visible, /Check this homepage for free/);
+  assert.match(visible, /No account or phone number/);
+  assert.match(visible, /not a full SEO audit/i);
+  assert.match(visible, /id="seo-check-form"/);
+  assert.match(visible, /for="seo-check-url"/);
+  assert.match(visible, /aria-live="polite"/);
+  assert.match(visible, /id="seo-inquiry"/);
+  assert.match(visible, /data-seo-inquiry-entry=""/);
+  assert.doesNotMatch(visible, /FIXTURE_EVIDENCE_DO_NOT_SHIP/);
+  assert.doesNotMatch(visible, /SEO score|full report is ready|ranking prediction/i);
+  assert.equal(await treeContains(new URL("../dist/", import.meta.url), "FIXTURE_EVIDENCE_DO_NOT_SHIP"), false);
 });
+
+async function treeContains(directory, needle) {
+  const root = directory instanceof URL ? directory.pathname : directory;
+  const entries = await readdir(root, { withFileTypes: true });
+  for (const entry of entries) {
+    const path = join(root, entry.name);
+    if (entry.isDirectory()) {
+      if (await treeContains(path, needle)) return true;
+    } else if (/\.(html|js|css|mjs|json|txt)$/i.test(entry.name)) {
+      const text = await readFile(path, "utf8");
+      if (text.includes(needle)) return true;
+    }
+  }
+  return false;
+}
 
 test("moves Care and Care Plus terms onto the care page", async () => {
   const html = await pageHtml("/care");
@@ -225,7 +253,14 @@ test("gives every page a first-screen mailto and cross-links", async () => {
     assert.equal((html.match(/<h1[\s>]/g) ?? []).length, 1, page.path);
     assert.match(html, /href="mailto:northlinestudio425@gmail\.com"/, page.path);
     assert.match(html, /class="[^"]*contact-cta[^"]*" href="mailto:northlinestudio425@gmail\.com"/, page.path);
-    assert.doesNotMatch(html, /<form\b/i);
+    const visibleForms = visibleHtml(html);
+    if (page.path === "/seo") {
+      assert.equal((visibleForms.match(/<form\b/gi) ?? []).length, 1, page.path);
+      assert.match(visibleForms, /<form\b[^>]*id="seo-check-form"/i);
+      assert.doesNotMatch(visibleForms, /type="email"|name="email"|name="phone"/i);
+    } else {
+      assert.doesNotMatch(visibleForms, /<form\b/i, page.path);
+    }
     assert.doesNotMatch(html, /small business|small-business|local business/i);
     assert.doesNotMatch(html, /↗/);
     assert.doesNotMatch(html, /Seattle|Bellevue|Kirkland|Redmond|Washington/);
