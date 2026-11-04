@@ -45,10 +45,11 @@ test("local development without shared credentials still supports its memory ada
 test("both supported credential pairs select shared REST storage and never fall back on an outage", async (t) => {
   let calls = 0;
   t.mock.method(globalThis, "fetch", async () => { calls += 1; return new Response("unavailable", { status: 503 }); });
-  for (const credentials of [
+  const credentialPairs: Record<string, string>[] = [
     { UPSTASH_REDIS_REST_URL: "https://redis.example", UPSTASH_REDIS_REST_TOKEN: "fixture" },
     { KV_REST_API_URL: "https://redis.example", KV_REST_API_TOKEN: "fixture" },
-  ]) {
+  ];
+  for (const credentials of credentialPairs) {
     const restore = environment({ VERCEL: "1", ...credentials });
     try { await assert.rejects(getDefaultStore().getByScanId("scan_outage", Date.now()), /unavailable/); }
     finally { restore(); }
