@@ -46,21 +46,34 @@ export async function handleSeoCheckRequest(request: Request, deps: SeoCheckDeps
   }
 
   const record = payload && typeof payload === "object" && !Array.isArray(payload) ? payload as Record<string, unknown> : null;
-  const result = await runSeoCheck(
-    {
-      url: record?.url,
-      locale: record?.locale,
-      requestId: record?.requestId,
-      clientIp: clientAddress(request),
-    },
-    {
-      ...deps,
-      config,
-      resolver: deps.resolver ?? getNodeResolver(),
-      connector: deps.connector ?? getNodeConnector(),
-    },
-  );
-  return applyCors(json(result.body, result.httpStatus), request, config);
+  try {
+    const result = await runSeoCheck(
+      {
+        url: record?.url,
+        locale: record?.locale,
+        requestId: record?.requestId,
+        clientIp: clientAddress(request),
+      },
+      {
+        ...deps,
+        config,
+        resolver: deps.resolver ?? getNodeResolver(),
+        connector: deps.connector ?? getNodeConnector(),
+      },
+    );
+    return applyCors(json(result.body, result.httpStatus), request, config);
+  } catch {
+    const locale = record?.locale === "zh" || (typeof record?.locale === "string" && record.locale.startsWith("zh-")) ? "zh" : "en";
+    return applyCors(json(errorResponse({
+      locale,
+      requestId: typeof record?.requestId === "string" ? record.requestId.slice(0, 80) : "",
+      status: "unavailable",
+      code: "internal_error",
+      message: locale === "zh"
+        ? "免费检查暂时不可用。本次未返回成功报告，请稍后重试或联系 Northline。"
+        : "The free check is temporarily unavailable. No successful report was returned. Try again later or contact Northline.",
+    }), 503), request, config);
+  }
 }
 
 export function applyCors(response: Response, request: Request, config: Pick<SeoCheckConfig, "allowedOrigins">): Response {

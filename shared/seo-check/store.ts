@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import type { Evaluation } from "./contract.ts";
+import { redisStoreFromEnv } from "./redis-store.ts";
 
 export interface StoredScan {
   scanId: string;
@@ -230,6 +231,11 @@ let singleton: SeoCheckStore | undefined;
 
 export function getDefaultStore(): SeoCheckStore {
   if (!singleton) {
+    const shared = redisStoreFromEnv(process.env);
+    if (shared) return singleton = shared;
+    if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+      throw new Error("Redis shared scan storage is not configured");
+    }
     const filePath = process.env.SEO_CHECK_STORE_PATH;
     singleton = filePath ? createFileStore(filePath) : createMemoryStore();
   }

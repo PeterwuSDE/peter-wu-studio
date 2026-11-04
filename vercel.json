@@ -6,7 +6,7 @@
   "installCommand": "npm ci",
   "functions": {
     "api/seo-check.ts": {
-      "maxDuration": 15
+      "maxDuration": 30
     }
   },
   "redirects": [
