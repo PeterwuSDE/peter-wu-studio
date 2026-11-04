@@ -112,7 +112,10 @@ export async function fetchPage(options: {
       if (seen.has(policy.normalized)) return { type: "too_many_redirects", redirectCount };
       seen.add(policy.normalized);
 
-      const resolved = await resolvePinned(policy.url, options.resolver);
+      const resolved = await resolvePinned(policy.url, options.resolver, controller.signal);
+      if (resolved.type === "timeout" || controller.signal.aborted || options.now() >= deadline) {
+        return { type: "timeout", redirectCount };
+      }
       if (resolved.type !== "addresses") {
         return resolved.type === "blocked"
           ? { type: "blocked", redirectCount }
@@ -165,16 +168,17 @@ export async function fetchPage(options: {
 async function resolvePinned(
   url: URL,
   resolver: DnsResolver,
-): Promise<{ type: "addresses"; pin: ResolvedAddress } | { type: "blocked" | "dns" }> {
+  signal: AbortSignal,
+): Promise<{ type: "addresses"; pin: ResolvedAddress } | { type: "blocked" | "dns" | "timeout" }> {
   const host = stripIpHost(url.hostname);
   let addresses: ResolvedAddress[];
   if (isIP(host)) {
     addresses = [{ address: host, family: isIP(host) === 6 ? 6 : 4 }];
   } else {
     try {
-      addresses = await resolver.lookup(host);
+      addresses = await awaitWithAbort(resolver.lookup(host), signal);
     } catch {
-      return { type: "dns" };
+      return { type: signal.aborted ? "timeout" : "dns" };
     }
   }
   if (addresses.length === 0) return { type: "dns" };
@@ -182,6 +186,27 @@ async function resolvePinned(
   const pin = addresses.find((item) => item.family === 4) ?? addresses[0];
   if (!pin || !isPublicIp(pin.address)) return { type: "blocked" };
   return { type: "addresses", pin };
+}
+
+function awaitWithAbort<T>(pending: Promise<T>, signal: AbortSignal): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const onAbort = () => {
+      signal.removeEventListener("abort", onAbort);
+      reject(signal.reason);
+    };
+    signal.addEventListener("abort", onAbort, { once: true });
+    pending.then(
+      (value) => {
+        signal.removeEventListener("abort", onAbort);
+        resolve(value);
+      },
+      (error) => {
+        signal.removeEventListener("abort", onAbort);
+        reject(error);
+      },
+    );
+    if (signal.aborted) onAbort();
+  });
 }
 
 async function classifyResponse(

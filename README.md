@@ -21,7 +21,11 @@ Each page includes a visible email link to `northlinestudio425@gmail.com`. The c
 
 `POST /api/seo-check` reads one public homepage (HTML and response headers only) and returns a deterministic rule result. Shared request and response types live in `shared/seo-check/contract.ts`. Import that file from the site UI. Do not import `shared/seo-check/index.ts` into client code; the server entry uses Node networking.
 
-The API is a Node function on the existing Vercel project (`api/seo-check.ts`), next to the static export. It does not add a database, queue, browser, model, or paid lookup. Cache, per-IP limits, the daily cap, and 7-day scan retention use process memory by default, which is included and has no extra fee. That state stays on one server process. Vercel does not share it across isolates. `SEO_CHECK_STORE_PATH` is only for a single long-running Node process that can keep a file; do not commit that file.
+The API is a Node function on the existing Vercel project (`api/seo-check.ts`), next to the static export. It uses shared Redis REST storage for scan snapshots, cache, request bindings, and atomic per-IP/daily quotas across functions and cold starts. Redis key TTLs enforce the 7-day scan retention and configured cache windows. There is no browser, model, paid SEO lookup, or queue.
+
+Before enabling scans on Vercel, connect a Redis REST service and configure either `UPSTASH_REDIS_REST_URL` plus `UPSTASH_REDIS_REST_TOKEN`, or `KV_REST_API_URL` plus `KV_REST_API_TOKEN`. Both the scan and inquiry functions must receive the same credentials for their environment. Production and preview use separate key prefixes. No account, subscription, or paid service is created automatically. Review the provider quota and billing before configuring it. Missing, partial, invalid, or unavailable shared storage never falls back to memory on Vercel: the scan returns a readable unavailable response with no fabricated report.
+
+Memory and `SEO_CHECK_STORE_PATH` remain available only for local development or a deliberately single-process development server without production mode. A local file is not a Vercel persistence option; do not commit it.
 
 | Variable | Default |
 | --- | --- |
@@ -35,16 +39,15 @@ The API is a Node function on the existing Vercel project (`api/seo-check.ts`), 
 | `SEO_CHECK_DAILY_CAP` | 200, or `unlimited` |
 | `SEO_CHECK_RETENTION_MS` | 7 days |
 | `SEO_CHECK_ALLOWED_ORIGINS` | extra exact origins, comma-separated |
-| `SEO_CHECK_STORE_PATH` | unset (memory) |
+| `SEO_CHECK_STORE_PATH` | unset; local development only |
 
-`vercel.json` sets the function `maxDuration` to 15 seconds so the 12 second fetch budget can finish. Lower `SEO_CHECK_TIMEOUT_MS` if the hosting plan stops the function sooner. Hosting and bandwidth can still cost money; this path does not call a paid SEO API.
+`vercel.json` gives the scan function up to 30 seconds to accommodate the 12-second website/DNS fetch budget and bounded shared-storage operations. Redis REST calls each have a 1.5-second deadline and do not follow redirects with credentials. Lower `SEO_CHECK_TIMEOUT_MS` if the hosting plan has a shorter runtime limit. Hosting, bandwidth, storage and notification delivery may have costs; no LLM or paid SEO/search API is called.
 
 ## Vercel deployment
 
 Import `PeterwuSDE/peter-wu-studio` into Vercel and deploy the `main` branch.
 The checked-in `vercel.json` configures the framework preset as Other, builds
-with `npm run export:static`, and serves `dist/client`. No environment variables
-are required.
+with `npm run export:static`, and serves `dist/client`. The static pages build without environment variables; the scan API requires shared Redis REST credentials.
 
 The production origin is [https://www.nlstudio.io](https://www.nlstudio.io).
 Canonical URLs, Open Graph and Twitter images, `robots.txt`, and `sitemap.xml`
