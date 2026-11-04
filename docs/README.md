@@ -6,7 +6,8 @@
 
 ### 服务
 
-- [网站标准服务：Modernization 与从零建站](website-standard-service.md)
+- [网站标准服务：新建与 Modernization](website-standard-service.md) — 服务范围、收费阶段、验收、14 天缺陷保障与 Care 边界
+- [网站项目内部交付 SOP](internal/website-delivery-sop.md) — 盘点、诊断、设计、迁移、上线与交接方法
 - [Northline 服务页内容设计规范](seo/service-page-content-spec.md)
 
 ### 设计规格
