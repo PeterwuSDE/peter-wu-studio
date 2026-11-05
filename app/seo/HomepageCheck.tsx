@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent } from "react";
 import type { SeoCheckClient } from "./check-client";
 import { copyFor } from "./copy";
-import { inquiryMailto, SEO_INQUIRY_ENTRY_ID, type SeoInquiryContext } from "./inquiry";
+import { inquiryMailto, registerSeoInquiryHandler, SEO_INQUIRY_ENTRY_ID, type SeoInquiryContext } from "./inquiry";
+import { SeoInquiryForm } from "./inquiry-form";
 import { createHomepageCheck, localeFromKey, type HomepageCheckController, type InquiryPort } from "./model";
 import { presentReport } from "./present";
 import { mailtoHref } from "../site";
@@ -27,6 +28,10 @@ export function HomepageCheck({ client, inquiry, controller }: { client?: SeoChe
     if (!ownsChecker) return undefined;
     return () => checker.dispose();
   }, [checker, ownsChecker]);
+
+  useEffect(() => registerSeoInquiryHandler(() => {
+    // The form below replaces the mailto fallback. The result above stays mounted.
+  }), []);
 
   useEffect(() => {
     if (snapshot.focus === "result") resultRef.current?.focus();
@@ -172,7 +177,8 @@ export function HomepageCheck({ client, inquiry, controller }: { client?: SeoChe
           </div>
         </div>
       ) : null}
-      <div id={SEO_INQUIRY_ENTRY_ID} className={snapshot.inquiry === "fallback" ? "seo-check-inquiry seo-check-inquiry-open" : "seo-check-inquiry"} data-seo-inquiry-entry="" data-seo-inquiry-state={snapshot.inquiry} data-scan-id={inquiryContext?.scanId} tabIndex={-1} ref={inquiryRef} hidden={snapshot.inquiry === "closed" ? true : undefined} role={snapshot.inquiry === "fallback" ? "region" : undefined} aria-labelledby={snapshot.inquiry === "fallback" ? "seo-inquiry-title" : undefined}>
+      <div id={SEO_INQUIRY_ENTRY_ID} className={snapshot.inquiry === "closed" ? "seo-check-inquiry" : "seo-check-inquiry seo-check-inquiry-open"} data-seo-inquiry-entry="" data-seo-inquiry-state={snapshot.inquiry} data-scan-id={inquiryContext?.scanId} tabIndex={-1} ref={inquiryRef} hidden={snapshot.inquiry === "closed" ? true : undefined} role={snapshot.inquiry === "closed" ? undefined : "region"} aria-labelledby={snapshot.inquiry === "handled" ? "seo-inquiry-form-title" : snapshot.inquiry === "fallback" ? "seo-inquiry-title" : undefined}>
+        {snapshot.inquiry === "handled" && inquiryContext ? <SeoInquiryForm context={inquiryContext} /> : null}
         {snapshot.inquiry === "fallback" && inquiryContext ? <InquiryFallback context={inquiryContext} locale={snapshot.locale} /> : null}
       </div>
     </section>
