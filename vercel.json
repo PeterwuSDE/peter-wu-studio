@@ -1,9 +1,14 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "npm run export:static",
+  "buildCommand": "npm test",
   "outputDirectory": "dist/client",
   "installCommand": "npm ci",
+  "functions": {
+    "api/seo-check.ts": {
+      "maxDuration": 30
+    }
+  },
   "redirects": [
     {
       "source": "/mac-mini",

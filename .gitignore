@@ -7,3 +7,5 @@ dist/
 *.log
 .vercel/
 .vercel
+.seo-check-store.json
+*.tsbuildinfo
