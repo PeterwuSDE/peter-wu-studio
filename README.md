@@ -47,7 +47,7 @@ Memory and `SEO_CHECK_STORE_PATH` remain available only for local development or
 
 Import `PeterwuSDE/peter-wu-studio` into Vercel and deploy the `main` branch.
 The checked-in `vercel.json` configures the framework preset as Other, builds
-with `npm run export:static`, and serves `dist/client`. The static pages still
+with `npm test` (including the static export), and serves `dist/client`. The static pages still
 build with no environment variables.
 
 `POST /api/seo-inquiries` is a separate Node function. It saves a follow-up only

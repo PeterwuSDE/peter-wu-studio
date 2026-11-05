@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "./home.css";
 import { SiteFooter, SiteHeader } from "./Chrome";
 import { siteOrigin } from "./site";
 import { studioJsonLd } from "./structured-data";
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <script src="/section-navigation.js" defer />
         <script dangerouslySetInnerHTML={{ __html: hashForwardScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
         <SiteHeader />
@@ -54,3 +56,4 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     </html>
   );
 }
+

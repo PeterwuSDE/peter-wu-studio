@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
 const mobileLinks = [
+  { href: "/#work", label: "Our builds" },
   { href: "/websites", label: "Websites" },
   { href: "/tools", label: "Business tools" },
   { href: "/shopify", label: "Shopify" },
@@ -80,3 +81,4 @@ export function MobileMenu() {
     </div>
   );
 }
+

@@ -13,9 +13,10 @@ const packages = [
 export default function WebsitesPage() {
   return <main id="top" className="service-page">
     <JsonLd data={websitesServiceJsonLd} />
-    <ServiceHero kind="websites" eyebrow="Websites & modernization" title={<>A better<br /><em>first impression.</em></>} description="A distinctive new website, or a fresh chapter for one that has outgrown its design. Clear content. Considered details. Built for every screen." />
+    <ServiceHero kind="websites" eyebrow="Websites & modernization" title={<>A better website.<br /><em>A clearer way to contact you.</em></>} description="Show customers what you do, where you work, and how to take the next step. New websites and redesigns with clear service pages, mobile layouts, and an inquiry path built around your business." />
     <section className="service-experience" id="experience" data-service-section="experience">
       <SectionHeading number="02" label="In practice" title={<>From an idea.<br /><em>To a place of your own.</em></>} text="A new build or a redesign, shaped around what your visitors need to see and do." />
+      <a className="service-demo-link" href="/demos/home-services/index.html">Try the Cedar &amp; Stone website →<span>Explore services, choose an area, and create a sample request. A self-initiated Northline build.</span></a>
       <div className="outcome-grid" id="builds"><Outcome icon="shape" title="A recognizable identity">Typography, imagery, and content that feel like your business.</Outcome><Outcome icon="flow" title="A clearer journey">Less clutter. Better structure. An obvious next step.</Outcome><Outcome icon="launch" title="A dependable launch">Responsive development, accessibility, and search foundations.</Outcome></div>
       <div className="service-process-strip" id="process"><span>HOW WE GET THERE</span><ol><li><b>01</b><h3>Direction</h3></li><li><b>02</b><h3>Design</h3></li><li><b>03</b><h3>Build</h3></li><li><b>04</b><h3>Launch & Care</h3></li></ol></div>
     </section>
@@ -33,3 +34,4 @@ export default function WebsitesPage() {
     <RelatedLinks links={[{ href: "/shopify", label: "Shopify storefronts" }, { href: "/tools", label: "Business tools" }, { href: "/seo", label: "Search optimization" }, { href: "/care", label: "Ongoing care" }]} />
   </main>;
 }
+
