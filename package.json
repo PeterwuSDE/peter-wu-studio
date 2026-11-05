@@ -13,7 +13,8 @@
     "test": "npm run test:seo-check && npm run export:static && node --test tests/*.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
-    "test:seo-check": "node --experimental-strip-types --test tests/seo-check/*.test.ts"
+    "test:seo-check": "node --experimental-strip-types --test tests/seo-check/*.test.ts",
+    "test:seo-ui": "node --test tests/seo-check-ui.test.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
