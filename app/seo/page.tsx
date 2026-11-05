@@ -9,7 +9,7 @@ export const metadata = pageMetadata("Search Optimization | Northline Studio", "
 export default function SeoPage() {
   return <main id="top" className="service-page">
     <JsonLd data={seoServiceJsonLd} />
-    <ServiceHero kind="seo" eyebrow="Search optimization" title={<>Be easier<br /><em>to find.</em></>} description="Understand what is holding your website back, choose the improvements that matter, and build a clearer search presence over time." cta="Request a quote" />
+    <ServiceHero kind="seo" eyebrow="Search optimization" title={<>Be easier<br /><em>to find.</em></>} description="Check whether your pages can be indexed, whether your services are clearly described, and where content is missing. Get a prioritized scope for technical fixes and search improvements." cta="Request a quote" />
     <HomepageCheck />
     <section className="service-experience" id="experience" data-service-section="experience">
       <SectionHeading number="02" label="A clear way forward" title={<>Understand first.<br /><em>Improve with direction.</em></>} />
