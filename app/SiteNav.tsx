@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 
 const links = [
+  { href: "/#work", label: "Our builds" },
   { href: "/websites", label: "Websites" },
   { href: "/tools", label: "Business tools" },
   { href: "/shopify", label: "Shopify" },
@@ -23,3 +24,4 @@ export function SiteNav() {
     </nav>
   );
 }
+

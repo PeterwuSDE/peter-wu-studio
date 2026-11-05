@@ -13,7 +13,7 @@ const plans = [
 export default function CarePage() {
   return <main id="top" className="service-page">
     <JsonLd data={careServiceJsonLd} />
-    <ServiceHero kind="care" eyebrow="Ongoing care" title={<>Less to manage.<br /><em>More room to grow.</em></>} description="Hosting, monitoring, maintenance, and a defined allowance for changes. Dependable support for the chapter after launch." cta="Discuss ongoing care" />
+    <ServiceHero kind="care" eyebrow="Ongoing care" title={<>Less to manage.<br /><em>More room to grow.</em></>} description="Hosting, uptime monitoring, security and dependency updates, backups, and small content changes. Choose a plan with clear monthly limits, rates, and responsibilities." cta="Discuss ongoing care" />
     <section className="service-experience" id="experience" data-service-section="experience">
       <SectionHeading number="02" label="Beyond launch" title={<>Keep the foundations<br /><em>in good hands.</em></>} />
       <div className="outcome-grid"><Outcome icon="shape" title="Keep it running">Hosting and monitoring around the essentials of your site.</Outcome><Outcome icon="flow" title="Keep it current">Updates, backups, and maintenance with clear responsibilities.</Outcome><Outcome icon="launch" title="Keep it moving">A defined monthly allowance for the changes you need.</Outcome></div>
@@ -28,3 +28,4 @@ export default function CarePage() {
     <RelatedLinks links={[{ href: "/websites", label: "Website design" }, { href: "/seo", label: "Search optimization" }, { href: "/contact", label: "Contact the studio" }]} />
   </main>;
 }
+

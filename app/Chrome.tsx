@@ -35,6 +35,7 @@ export function SiteFooter() {
       </a>
       <p>Websites, commerce, business tools, and search.<br />Thoughtfully built. Cared for beyond launch.<a className="footer-email" href={mailtoHref}>{siteEmail}</a></p>
       <div className="footer-links">
+        <a href="/#work">Our builds</a>
         <a href="/websites">Websites</a>
         <a href="/tools">Business tools</a>
         <a href="/shopify">Shopify</a>
@@ -78,3 +79,4 @@ export function Diagrams({ title, items }: { title: string; items: { src: string
     </section>
   );
 }
+

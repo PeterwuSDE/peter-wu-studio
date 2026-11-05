@@ -9,8 +9,8 @@ const pages = [
     path: "/",
     file: "index.html",
     canonical: "https://www.nlstudio.io/",
-    title: "Northline Studio | Web Design, SEO, Care",
-    description: "Northline Studio web design for people building something of their own, plus search optimization and ongoing site care.",
+    title: "Northline Studio | Websites, Stores & Business Tools",
+    description: "Websites, online stores, and booking tools for small businesses. Explore Northline demos, website redesigns, search optimization, and ongoing care.",
   },
   {
     path: "/websites",
@@ -101,26 +101,28 @@ async function pageHtml(pathname) {
   return response.text();
 }
 
-test("offers four distinct services and a separate ongoing-care path", async () => {
+test("explains customer tasks and links three self-initiated demos", async () => {
   const html = await pageHtml("/");
-  assert.equal((html.match(/<h1[\s>]/g) ?? []).length, 1);
-  const visible = visibleHtml(html);
-  assert.match(visible, /Built to stand out\./);
-  assert.match(visible, /Made to work\./);
-  assert.match(visible, /Thoughtful websites, Shopify stores, and practical business tools/);
-  for (const label of ["Explore websites", "Explore business tools", "Explore Shopify", "Explore SEO", "Explore ongoing care"]) {
-    assert.match(visible, new RegExp(label));
+  const visible = visibleHtml(html), text = pageText(html);
+  assert.equal((visible.match(/<h1[\s>]/g) ?? []).length, 1);
+  assert.match(text, /Make it easier to choose your business/);
+  assert.match(text, /small businesses/);
+  assert.match(text, /request a quote, book a time, or find the right product/);
+  for (const name of ["Cedar & Stone", "Form & Field", "Daybook"]) assert.ok(text.includes(name));
+  for (const path of ["home-services", "store", "bookings"]) {
+    assert.ok(visible.includes('href="/demos/' + path + '/index.html"'));
+    const file = await readFile(new URL("../dist/client/demos/" + path + "/index.html", import.meta.url), "utf8");
+    assert.match(file, /Self-initiated demo/);
+    assert.match(file, /noindex,follow/);
+    assert.match(file, /shared\/demo.js/);
   }
-  assert.match(visible, /Interface studies illustrate our approach; they are not client case studies/);
-  assert.match(html, /href="\/websites"/);
-  assert.match(html, /href="\/seo"/);
-  assert.match(html, /href="\/tools"/);
-  assert.match(html, /href="\/shopify"/);
-  assert.match(html, /href="\/care"/);
-  assert.doesNotMatch(html, /<img\b/);
-  assert.doesNotMatch(html, /id="work"|href="#work"|Selected concepts|CONCEPT PROJECT|Aster Atelier|Lucent House|Meridian One/);
-  assert.doesNotMatch(html, /class="intro-section|class="engagement-path/);
-  assert.doesNotMatch(visibleHtml(html), /Starting from \$2,500|Starting from \$199/);
+  for (const label of ["Explore websites", "Explore business tools", "Explore Shopify", "Explore SEO", "Explore ongoing care"]) assert.ok(text.includes(label));
+  assert.ok(visible.indexOf('id="work"') < visible.indexOf('id="services"'));
+  assert.match(text, /fictional brands and sample data/);
+  assert.match(text, /no Shopify connection/);
+  assert.ok(text.includes("The Essential Website starts at $2,500"));
+  assert.ok(text.includes("The Signature Website starts at $3,500"));
+  assert.match(visible, /href="\/care#plans"/);
 });
 
 test("gives tools and Shopify separate, honest service destinations", async () => {
@@ -226,11 +228,10 @@ test("gives every page a first-screen mailto and cross-links", async () => {
     assert.match(html, /href="mailto:northlinestudio425@gmail\.com"/, page.path);
     assert.match(html, /class="[^"]*contact-cta[^"]*" href="mailto:northlinestudio425@gmail\.com"/, page.path);
     assert.doesNotMatch(html, /<form\b/i);
-    assert.doesNotMatch(html, /small business|small-business|local business/i);
-    assert.doesNotMatch(html, /↗/);
     assert.doesNotMatch(html, /Seattle|Bellevue|Kirkland|Redmond|Washington/);
     assert.match(html, /aria-label="北境 logo"/);
     assert.match(html, /aria-controls="mobile-navigation"/);
+    assert.ok(html.includes('/section-navigation.js'), page.path + " static fragment navigation guard");
     assert.doesNotMatch(html, /<details class="mobile-menu"/);
 
     const hrefs = [...html.matchAll(/href="(\/(?:websites|seo|care|contact))"/g)].map((match) => match[1]);
@@ -503,4 +504,11 @@ test("points the legacy GitHub Pages output at the production origin", async () 
   assert.match(html, /location\.replace\("https:\/\/www\.nlstudio\.io\/"/);
   assert.doesNotMatch(workflow, /export:static|GITHUB_PAGES_BASE|npm run build/);
   assert.match(workflow, /path: github-pages/);
+});
+
+
+test("exports the static fragment navigation guard", async () => {
+  const source = await readFile(new URL("../public/section-navigation.js", import.meta.url), "utf8");
+  const shipped = await readFile(new URL("../dist/client/section-navigation.js", import.meta.url), "utf8");
+  assert.equal(shipped, source);
 });
