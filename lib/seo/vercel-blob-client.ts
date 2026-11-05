@@ -1,8 +1,6 @@
 import { del, get, list, put } from "@vercel/blob";
 import type { PrivateBlobClient } from "./blob-inquiry-store.ts";
 
-const LIST_CAP = 500;
-
 /**
  * Private Vercel Blob adapter. Lead JSON is unreadable without the store token.
  * Create the store as private on the existing Vercel project; do not upload
@@ -27,6 +25,10 @@ export function createVercelBlobClient(): PrivateBlobClient {
     async del(pathname) {
       await del(pathname);
     },
+    async listPage(prefix, cursor, limit) {
+      const page = await list({ prefix, cursor, limit });
+      return { paths: page.blobs.map((blob) => blob.pathname), nextCursor: page.hasMore ? page.cursor ?? null : null };
+    },
     async list(prefix) {
       const pathnames: string[] = [];
       let cursor: string | undefined;
@@ -34,8 +36,8 @@ export function createVercelBlobClient(): PrivateBlobClient {
         const page = await list({ prefix, cursor, limit: 1000 });
         for (const blob of page.blobs) pathnames.push(blob.pathname);
         cursor = page.hasMore ? page.cursor : undefined;
-      } while (cursor && pathnames.length < LIST_CAP);
-      return pathnames.slice(0, LIST_CAP);
+      } while (cursor);
+      return pathnames;
     },
   };
 }

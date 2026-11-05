@@ -95,6 +95,7 @@ export function createResendNotifier(options: ResendNotifierOptions): InquiryNot
           headers: {
             authorization: `Bearer ${options.apiKey}`,
             "content-type": "application/json",
+            "Idempotency-Key": `inquiry:${record.inquiryId}`,
           },
           body: JSON.stringify({
             from: options.from,

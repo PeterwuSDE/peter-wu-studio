@@ -14,7 +14,21 @@ export interface SubmissionClaim {
   fingerprint: string;
 }
 
+export interface MaintenancePage<T> {
+  records: T[];
+  nextCursor: string | null;
+}
+
+/** Remote stores can resume bounded maintenance across independent workers. */
+export interface InquiryMaintenance {
+  inquiryPage(limit: number): Promise<MaintenancePage<InquiryRecord>>;
+  notificationPage(limit: number): Promise<MaintenancePage<InquiryNotification>>;
+  /** Commit only after every item in the page has been processed successfully. */
+  commit(kind: "inquiries" | "notifications", nextCursor: string | null): Promise<void>;
+}
+
 export interface InquiryStore {
+  maintenance?: InquiryMaintenance;
   getSubmission(requestId: string): Promise<SubmissionClaim | null>;
   /**
    * Create the submission claim once. A second call with the same id must

@@ -44,6 +44,7 @@ let memoryStore: MemoryInquiryStore | null = null;
 const fileStores = new Map<string, FileInquiryStore>();
 
 function localInquiryStore(env: Record<string, string | undefined>): InquiryStore | null {
+  if (env.VERCEL || env.NODE_ENV === "production") return null;
   if (env.SEO_INQUIRY_STORE === "off") return null;
   if (env.SEO_INQUIRY_STORE === "memory") {
     memoryStore ??= new MemoryInquiryStore();

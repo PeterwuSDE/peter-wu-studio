@@ -326,7 +326,7 @@ test("a thrown notifier still leaves a pending retry", async () => {
   assertNoSensitiveLogs(env.logs);
 });
 
-test("recovers a claimed submission that never finished saving", async () => {
+test("preserves an unfinished submission claim without taking ownership", async () => {
   const env = harness();
   const body = payload();
   const fingerprint = fingerprintInquiry({
@@ -339,10 +339,186 @@ test("recovers a claimed submission that never finished saving", async () => {
   const inquiryId = `inq_${"ab".repeat(16)}`;
   await env.store?.claimSubmission({ requestId: REQUEST, inquiryId, fingerprint });
   const saved = await createInquiry(body, env.deps);
-  assert.equal(saved.ok && saved.inquiryId, inquiryId);
-  assert.equal(env.sends.length, 1);
-  assert.equal((await env.store?.listInquiries())?.length, 1);
+  assert.deepEqual(saved, { ok: false, error: "save_failed" });
+  assert.equal(env.sends.length, 0);
+  assert.equal((await env.store?.listInquiries())?.length, 0);
+  assert.deepEqual(await env.store?.getSubmission(REQUEST), { requestId: REQUEST, inquiryId, fingerprint });
 });
+
+for (const failFirstWrite of [false, true]) {
+  test(`concurrent replay cannot take over a ${failFirstWrite ? "failing" : "successful"} active writer`, async () => {
+    const store = new MemoryInquiryStore();
+    const env = harness({ store });
+    const entered = Promise.withResolvers<void>();
+    const resume = Promise.withResolvers<void>();
+    const putInquiry = store.putInquiry.bind(store);
+    let firstWrite = true;
+    store.putInquiry = async (record) => {
+      if (firstWrite) {
+        firstWrite = false;
+        entered.resolve();
+        await resume.promise;
+        if (failFirstWrite) throw new Error("transient write failed");
+      }
+      await putInquiry(record);
+    };
+    const original = createInquiry(payload(), env.deps);
+    await entered.promise;
+    let replay;
+    try {
+      replay = await createInquiry(payload(), env.deps);
+      assert.deepEqual(replay, { ok: false, error: "save_failed" });
+      assert.equal(env.sends.length, 0);
+      assert.equal((await store.listInquiries()).length, 0);
+    } finally {
+      resume.resolve();
+      await original;
+    }
+    const result = await original;
+    if (failFirstWrite) {
+      assert.deepEqual(result, { ok: false, error: "save_failed" });
+      assert.equal(await store.getSubmission(REQUEST), null);
+      const retry = await createInquiry(payload(), env.deps);
+      assert.equal(retry.ok, true);
+      assert.equal((await store.listInquiries()).length, 1);
+      assert.equal(env.sends.length, 1);
+    } else {
+      assert.equal(result.ok, true);
+      if (!result.ok) return;
+      assert.ok(await store.getInquiry(result.inquiryId));
+      assert.equal(env.sends.length, 1);
+      const retry = await createInquiry(payload(), env.deps);
+      assert.equal(retry.ok && retry.inquiryId, result.inquiryId);
+      assert.equal(env.sends.length, 1);
+    }
+  });
+}
+
+for (const failNotificationWrite of [false, true]) {
+  test(`concurrent replay waits for the initial notification write to ${failNotificationWrite ? "fail" : "commit"}`, async () => {
+    const store = new MemoryInquiryStore();
+    const env = harness({ store });
+    const entered = Promise.withResolvers<void>();
+    const resume = Promise.withResolvers<void>();
+    const putNotification = store.putNotification.bind(store);
+    let firstWrite = true;
+    store.putNotification = async (notification) => {
+      if (firstWrite) {
+        firstWrite = false;
+        entered.resolve();
+        await resume.promise;
+        if (failNotificationWrite) throw new Error("initial notification write failed");
+      }
+      await putNotification(notification);
+    };
+    const original = createInquiry(payload(), env.deps);
+    await entered.promise;
+    try {
+      assert.equal((await store.listInquiries()).length, 1);
+      assert.equal((await store.listNotifications()).length, 0);
+      const replay = await createInquiry(payload(), env.deps);
+      assert.deepEqual(replay, { ok: false, error: "save_failed" });
+      assert.equal(env.sends.length, 0);
+    } finally {
+      resume.resolve();
+      await original;
+    }
+    const result = await original;
+    if (failNotificationWrite) {
+      assert.deepEqual(result, { ok: false, error: "save_failed" });
+      // A rejected remote marker write may have committed; preserve its
+      // associated record and claim until their state can be reconciled.
+      assert.equal((await store.listInquiries()).length, 1);
+      assert.equal((await store.listNotifications()).length, 0);
+      assert.ok(await store.getSubmission(REQUEST));
+      assert.deepEqual(await createInquiry(payload(), env.deps), { ok: false, error: "save_failed" });
+      assert.equal(env.sends.length, 0);
+    } else {
+      assert.equal(result.ok, true);
+      if (!result.ok) return;
+      assert.ok(await store.getInquiry(result.inquiryId));
+      const replay = await createInquiry(payload(), env.deps);
+      assert.equal(replay.ok && replay.inquiryId, result.inquiryId);
+      assert.equal(env.sends.length, 1);
+    }
+  });
+}
+
+test("a published notification whose write rejects cannot roll back an acknowledged replay", async () => {
+  const store = new MemoryInquiryStore();
+  const env = harness({ store });
+  const entered = Promise.withResolvers<void>();
+  const rejectWrite = Promise.withResolvers<void>();
+  const putNotification = store.putNotification.bind(store);
+  let firstWrite = true;
+  store.putNotification = async (notification) => {
+    await putNotification(notification);
+    if (firstWrite) {
+      firstWrite = false;
+      entered.resolve();
+      await rejectWrite.promise;
+      throw new Error("Blob committed but response was lost");
+    }
+  };
+  const original = createInquiry(payload(), env.deps);
+  await entered.promise;
+  const replay = await createInquiry(payload(), env.deps);
+  try {
+    assert.equal(replay.ok, true);
+  } finally {
+    rejectWrite.resolve();
+    await original;
+  }
+  assert.deepEqual(await original, { ok: false, error: "save_failed" });
+  if (!replay.ok) return;
+  assert.ok(await store.getInquiry(replay.inquiryId));
+  assert.ok(await store.getNotification(replay.inquiryId));
+  assert.equal((await store.getSubmission(REQUEST))?.inquiryId, replay.inquiryId);
+  const recovered = await createInquiry(payload(), env.deps);
+  assert.equal(recovered.ok && recovered.inquiryId, replay.inquiryId);
+  assert.deepEqual(await sweepDueNotifications(env.deps), { due: 1, sent: 1, pending: 0, notConfigured: 0 });
+  assert.equal(env.sends.length, 1);
+});
+
+for (const state of ["sent", "backoff", "expired", "newer_due"] as const) {
+  test(`a delayed notification lease rereads ${state} state before sending`, async () => {
+    const store = new MemoryInquiryStore();
+    let deliver = false;
+    const env = harness({ store, notify: () => deliver ? { status: "sent" } : { status: "failed", errorCode: "resend_503" } });
+    const saved = await createInquiry(payload(), env.deps);
+    assert.equal(saved.ok, true);
+    if (!saved.ok) return;
+    env.setNow(new Date("2026-01-01T00:06:00.000Z"));
+    const entered = Promise.withResolvers<void>();
+    const resume = Promise.withResolvers<void>();
+    const tryLease = store.tryLease.bind(store);
+    let firstLease = true;
+    store.tryLease = async (...args) => {
+      if (firstLease) {
+        firstLease = false;
+        entered.resolve();
+        await resume.promise;
+      }
+      return tryLease(...args);
+    };
+    const delayed = sweepDueNotifications(env.deps);
+    await entered.promise;
+    try {
+      if (state === "expired") {
+        env.setNow(new Date("2026-04-01T00:00:00.000Z"));
+      } else {
+        deliver = state === "sent";
+        await sweepDueNotifications(env.deps);
+        if (state === "newer_due") env.setNow(new Date("2026-01-01T00:30:00.000Z"));
+      }
+    } finally {
+      resume.resolve();
+      await delayed;
+    }
+    assert.equal(env.sends.length, state === "expired" ? 1 : state === "newer_due" ? 3 : 2);
+    assert.equal((await store.getNotification(saved.inquiryId))?.attempts, state === "expired" ? 1 : state === "newer_due" ? 3 : 2);
+  });
+}
 
 test("purges contact records after the retention window", async () => {
   const env = harness({ retentionDays: 90 });
@@ -564,13 +740,13 @@ test("deletion over http removes the lead only when the email matches", async ()
 });
 
 test("resend delivery follows the provider response and stays quiet without a key", async () => {
-  const calls: Array<{ url: string; body: string }> = [];
+  const calls: Array<{ url: string; body: string; headers: Headers }> = [];
   const notifier = createResendNotifier({
     apiKey: "re_test",
     from: "Northline Studio <onboarding@resend.dev>",
     to: "northlinestudio425@gmail.com",
     fetchImpl: async (url, init) => {
-      calls.push({ url: String(url), body: String(init?.body ?? "") });
+      calls.push({ url: String(url), body: String(init?.body ?? ""), headers: new Headers(init?.headers) });
       return new Response("secret body with " + EMAIL, { status: 202 });
     },
   });
@@ -590,6 +766,11 @@ test("resend delivery follows the provider response and stays quiet without a ke
   assert.deepEqual(await notifier.send(record), { status: "sent" });
   assert.match(calls[0].body, /2026-10-29\.1/);
   assert.doesNotMatch(calls[0].body, /evil\.example/);
+  await notifier.send(record);
+  await notifier.send({ ...record, inquiryId: `inq_${"ef".repeat(16)}` });
+  assert.equal(calls[0].headers.get("Idempotency-Key"), "inquiry:inq_cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd");
+  assert.equal(calls[1].headers.get("Idempotency-Key"), "inquiry:inq_cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd");
+  assert.equal(calls[2].headers.get("Idempotency-Key"), "inquiry:inq_efefefefefefefefefefefefefefefef");
 
   const failing = createResendNotifier({
     apiKey: "re_test",
@@ -695,4 +876,45 @@ test("production settings fail closed without blob or retry credentials", () => 
   assert.equal(settings.retryTokens.length, 0);
   assert.ok(settings.allowedOrigins.includes("https://www.nlstudio.io"));
   assert.ok(settings.allowedOrigins.includes("https://preview.example"));
+});
+
+test("authenticated cron GET retries due notifications without opening other GET operations", async () => {
+  let sent = false;
+  const env = harness({ notify: () => sent ? { status: "sent" } : { status: "failed", errorCode: "resend_503" } });
+  const saved = await createInquiry(payload(), env.deps);
+  assert.equal(saved.ok, true);
+  env.setNow(new Date("2026-01-01T00:06:00.000Z"));
+  sent = true;
+  const retryRequest = (token?: string) => new Request("https://www.nlstudio.io/api/seo-inquiry-retries", {
+    headers: token ? { authorization: `Bearer ${token}` } : {},
+  });
+  for (const token of [undefined, "wrong-token"]) {
+    const denied = await handleInquiryHttp(retryRequest(token), env.httpDeps);
+    assert.equal(denied.status, 401);
+  }
+  assert.equal(env.sends.length, 1);
+  const cron = await handleInquiryHttp(retryRequest("retry-token"), env.httpDeps);
+  assert.equal(cron.status, 200);
+  assert.deepEqual(await cron.json(), { ok: true, due: 1, sent: 1, pending: 0, notConfigured: 0 });
+  assert.equal(env.sends.length, 2);
+  for (const path of ["seo-inquiries", "seo-inquiry-deletions"]) {
+    const response = await handleInquiryHttp(new Request(`https://www.nlstudio.io/api/${path}`, {
+      headers: { authorization: "Bearer retry-token" },
+    }), env.httpDeps);
+    assert.equal(response.status, 405);
+  }
+});
+
+test("OPTIONS returns an empty 204 response with allowed-origin CORS headers", async () => {
+  const env = harness();
+  for (const path of ["seo-inquiries", "seo-inquiry-deletions", "seo-inquiry-retries"]) {
+    const response = await handleInquiryHttp(new Request(`https://www.nlstudio.io/api/${path}`, {
+      method: "OPTIONS",
+      headers: { origin: "https://www.nlstudio.io" },
+    }), env.httpDeps);
+    assert.equal(response.status, 204);
+    assert.equal(await response.text(), "");
+    assert.equal(response.headers.get("access-control-allow-origin"), "https://www.nlstudio.io");
+    assert.match(response.headers.get("access-control-allow-methods") ?? "", /POST/);
+  }
 });

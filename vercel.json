@@ -6,13 +6,13 @@
   "installCommand": "npm ci",
   "functions": {
     "api/seo-check.ts": {
-      "maxDuration": 15
+      "maxDuration": 30
     },
     "api/seo-inquiries.ts": {
-      "maxDuration": 15
+      "maxDuration": 60
     },
     "api/seo-inquiry-retries.ts": {
-      "maxDuration": 15
+      "maxDuration": 60
     }
   },
   "crons": [

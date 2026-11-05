@@ -95,7 +95,7 @@ function json(body: unknown, status: number, request: Request, deps: HttpDeps): 
     "x-content-type-options": "nosniff",
   });
   applyCors(headers, request, deps);
-  return new Response(JSON.stringify(body), { status, headers });
+  return new Response(status === 204 ? null : JSON.stringify(body), { status, headers });
 }
 
 function html(body: string, status: number, request: Request, deps: HttpDeps): Response {
@@ -113,7 +113,7 @@ function applyCors(headers: Headers, request: Request, deps: HttpDeps) {
   if (origin && deps.allowedOrigins.includes(origin)) {
     headers.set("access-control-allow-origin", origin);
     headers.set("vary", "Origin");
-    headers.set("access-control-allow-methods", "POST, OPTIONS");
+    headers.set("access-control-allow-methods", routeName(new URL(request.url).pathname) === "retry" ? "GET, POST, OPTIONS" : "POST, OPTIONS");
     headers.set("access-control-allow-headers", "Content-Type, Accept, Authorization");
   }
 }
@@ -193,7 +193,8 @@ export async function handleInquiryHttp(request: Request, deps: HttpDeps): Promi
   if (request.method === "OPTIONS") {
     return json({ ok: true }, 204, request, deps);
   }
-  if (route === "unknown" || request.method === "GET" || request.method !== "POST") {
+  const methodAllowed = request.method === "POST" || (route === "retry" && request.method === "GET");
+  if (route === "unknown" || !methodAllowed) {
     return json({ received: false, error: "method_not_allowed" }, 405, request, deps);
   }
   if (!originAllowed(request, deps.allowedOrigins)) {

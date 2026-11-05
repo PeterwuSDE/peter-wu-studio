@@ -152,27 +152,39 @@ function backoffMs(attempts: number): number {
   return BACKOFF_MINUTES[index] * 60 * 1000;
 }
 
+async function purgeRecord(deps: InquiryDeps, store: InquiryStore, record: InquiryRecord): Promise<void> {
+  // Keep the record as a retry anchor until every associated object is gone.
+  await store.deleteNotification(record.inquiryId);
+  await store.releaseLease(record.inquiryId);
+  await store.releaseSubmission(record.requestId);
+  await store.deleteInquiry(record.inquiryId);
+  logInfo(deps, { event: "purged", inquiryId: record.inquiryId });
+}
+
 async function purgeExpired(deps: InquiryDeps, store: InquiryStore, now: Date): Promise<void> {
-  const records = await store.listInquiries();
+  const maintenance = store.maintenance;
+  const page = maintenance ? await maintenance.inquiryPage(25) : null;
+  const records = page ? page.records : await store.listInquiries();
   for (const record of records) {
     if (Date.parse(record.deleteAt) > now.getTime()) continue;
-    await store.deleteInquiry(record.inquiryId);
-    await store.deleteNotification(record.inquiryId);
-    await store.releaseSubmission(record.requestId);
-    await store.releaseLease(record.inquiryId);
-    logInfo(deps, { event: "purged", inquiryId: record.inquiryId });
+    await purgeRecord(deps, store, record);
   }
+  if (page && maintenance) await maintenance.commit("inquiries", page.nextCursor);
 }
 
 async function replayExisting(
   store: InquiryStore,
   claim: { inquiryId: string; fingerprint: string },
   fingerprint: string,
+  now: Date,
 ): Promise<CreateInquiryResult> {
   if (claim.fingerprint !== fingerprint) return { ok: false, error: "conflict" };
   const record = await store.getInquiry(claim.inquiryId);
-  if (!record) return { ok: false, error: "save_failed" };
+  if (!record || Date.parse(record.deleteAt) <= now.getTime()) return { ok: false, error: "save_failed" };
   const notification = await store.getNotification(record.inquiryId);
+  // The initial notification is the publication marker. Until it exists, the
+  // save is incomplete and cannot be acknowledged by another request.
+  if (!notification) return { ok: false, error: "save_failed" };
   return {
     ok: true,
     created: false,
@@ -194,20 +206,38 @@ async function attemptDelivery(deps: InquiryDeps, store: InquiryStore, record: I
     nextAttemptAt: null,
     lastError: null,
   };
-  if (base.status === "sent") return base;
+  if (Date.parse(record.deleteAt) <= now.getTime()) return base;
+  if (base.status === "sent") {
+    // Reconcile a queue entry left behind by an uncertain sent-marker write.
+    await store.putNotification(base);
+    return base;
+  }
   if (base.nextAttemptAt && Date.parse(base.nextAttemptAt) > now.getTime()) return base;
 
   const leased = await store.tryLease(record.inquiryId, now, LEASE_MS);
   if (!leased) return base;
 
   try {
+    // A worker may have completed or rescheduled delivery while this request
+    // waited for its lease. Revalidate the durable state under ownership.
+    const [latest, latestRecord] = await Promise.all([
+      store.getNotification(record.inquiryId),
+      store.getInquiry(record.inquiryId),
+    ]);
+    const leasedNow = deps.now();
+    if (!latest || !latestRecord || Date.parse(latestRecord.deleteAt) <= leasedNow.getTime()) return latest ?? base;
+    if (latest.status === "sent") {
+      await store.putNotification(latest);
+      return latest;
+    }
+    if (latest.nextAttemptAt && Date.parse(latest.nextAttemptAt) > leasedNow.getTime()) return latest;
     let result;
     try {
-      result = await deps.notifier.send(record);
+      result = await deps.notifier.send(latestRecord);
     } catch {
       result = { status: "failed" as const, errorCode: "notifier_threw" };
     }
-    const attempts = base.attempts + 1;
+    const attempts = latest.attempts + 1;
     const errorCode = result.status === "failed" && /^[a-z0-9_-]{1,40}$/i.test(result.errorCode)
       ? result.errorCode
       : "notifier_failed";
@@ -256,28 +286,16 @@ export async function createInquiry(raw: unknown, deps: InquiryDeps, clientKey =
 
   const now = deps.now();
   try {
-    await purgeExpired(deps, store, now);
+    if (!store.maintenance) await purgeExpired(deps, store, now);
   } catch (error) {
     logError(deps, { event: "purge_failed", errorName: error instanceof Error ? error.name : "Error" });
   }
 
   const existing = await store.getSubmission(parsed.requestId);
   if (existing) {
-    if (existing.fingerprint !== parsed.fingerprint) return { ok: false, error: "conflict" };
-    const record = await store.getInquiry(existing.inquiryId);
-    if (record) {
-      const notification = await store.getNotification(record.inquiryId);
-      logInfo(deps, { event: "replay", inquiryId: record.inquiryId });
-      return {
-        ok: true,
-        created: false,
-        inquiryId: record.inquiryId,
-        scanId: record.scanId,
-        requestId: record.requestId,
-        createdAt: record.createdAt,
-        notification: publicNotification(notification),
-      };
-    }
+    // A claim without a record may belong to an active writer. Without an
+    // ownership token it cannot safely be recovered or cleaned up here.
+    return replayExisting(store, existing, parsed.fingerprint, now);
   }
 
   const allowed = await store.consumeRate(rateBucket("create", clientKey, now), deps.rateLimitPerHour);
@@ -296,18 +314,16 @@ export async function createInquiry(raw: unknown, deps: InquiryDeps, clientKey =
   const snapshot = lookup.snapshot;
   if (snapshot.scanId !== parsed.scanId) return { ok: false, error: "scan_invalid" };
 
-  const inquiryId = existing?.inquiryId ?? createInquiryId();
-  if (!existing) {
-    const claim = await store.claimSubmission({
-      requestId: parsed.requestId,
-      inquiryId,
-      fingerprint: parsed.fingerprint,
-    });
-    if (claim === "exists") {
-      const winner = await store.getSubmission(parsed.requestId);
-      if (!winner) return { ok: false, error: "save_failed" };
-      return replayExisting(store, winner, parsed.fingerprint);
-    }
+  const inquiryId = createInquiryId();
+  const claim = await store.claimSubmission({
+    requestId: parsed.requestId,
+    inquiryId,
+    fingerprint: parsed.fingerprint,
+  });
+  if (claim === "exists") {
+    const winner = await store.getSubmission(parsed.requestId);
+    if (!winner) return { ok: false, error: "save_failed" };
+    return replayExisting(store, winner, parsed.fingerprint, now);
   }
 
   const createdAt = now.toISOString();
@@ -324,8 +340,10 @@ export async function createInquiry(raw: unknown, deps: InquiryDeps, clientKey =
     deleteAt: new Date(now.getTime() + deps.retentionDays * 24 * 60 * 60 * 1000).toISOString(),
   };
 
+  let notificationWriteStarted = false;
   try {
     await store.putInquiry(record);
+    notificationWriteStarted = true;
     await store.putNotification({
       inquiryId,
       status: "pending",
@@ -334,14 +352,18 @@ export async function createInquiry(raw: unknown, deps: InquiryDeps, clientKey =
       lastError: null,
     });
   } catch (error) {
-    await store.deleteInquiry(inquiryId).catch(() => undefined);
-    await store.deleteNotification(inquiryId).catch(() => undefined);
-    if (!existing) await store.releaseSubmission(parsed.requestId).catch(() => undefined);
+    // A remote marker write may have committed even when its response rejects.
+    // Once publication is possible, preserve every object a replay can observe.
+    if (!notificationWriteStarted) {
+      await store.deleteInquiry(inquiryId).catch(() => undefined);
+      await store.deleteNotification(inquiryId).catch(() => undefined);
+      await store.releaseSubmission(parsed.requestId).catch(() => undefined);
+    }
     logError(deps, { event: "save_failed", inquiryId, errorName: error instanceof Error ? error.name : "Error" });
     return { ok: false, error: "save_failed" };
   }
 
-  logInfo(deps, { event: "saved", inquiryId, created: !existing });
+  logInfo(deps, { event: "saved", inquiryId, created: true });
   let notification: InquiryNotification;
   try {
     notification = await attemptDelivery(deps, store, record);
@@ -356,13 +378,15 @@ export async function createInquiry(raw: unknown, deps: InquiryDeps, clientKey =
     };
   }
 
-  await sweepDueNotifications(deps, 5).catch((error: unknown) => {
-    logError(deps, { event: "sweep_failed", errorName: error instanceof Error ? error.name : "Error" });
-  });
+  if (!store.maintenance) {
+    await sweepDueNotifications(deps, 5).catch((error: unknown) => {
+      logError(deps, { event: "sweep_failed", errorName: error instanceof Error ? error.name : "Error" });
+    });
+  }
 
   return {
     ok: true,
-    created: !existing,
+    created: true,
     inquiryId,
     scanId: record.scanId,
     requestId: record.requestId,
@@ -413,27 +437,41 @@ export async function sweepDueNotifications(deps: InquiryDeps, limit = 10): Prom
   if (!store) return { due: 0, sent: 0, pending: 0, notConfigured: 0 };
   const now = deps.now();
   await purgeExpired(deps, store, now);
-  const notifications = await store.listNotifications();
-  let due = 0;
+  const deliveryLimit = Math.max(0, Math.min(10, Math.floor(limit)));
+  if (deliveryLimit === 0) return { due: 0, sent: 0, pending: 0, notConfigured: 0 };
+  // One notification page is no larger than the delivery budget, so due items
+  // never get skipped when committing the page's cursor.
+  const maintenance = store.maintenance;
+  const page = maintenance ? await maintenance.notificationPage(deliveryLimit) : null;
+  const notifications = page ? page.records : await store.listNotifications();
+  const dueNotes = notifications.filter((note) => note.status !== "sent"
+    && (!note.nextAttemptAt || Date.parse(note.nextAttemptAt) <= now.getTime()));
   let sent = 0;
   let pending = 0;
   let notConfigured = 0;
-  let attempted = 0;
-  for (const note of notifications) {
-    if (note.status === "sent") continue;
-    if (note.nextAttemptAt && Date.parse(note.nextAttemptAt) > now.getTime()) continue;
-    due += 1;
-    if (attempted >= limit) continue;
+  const processNotification = async (note: InquiryNotification) => {
     const record = await store.getInquiry(note.inquiryId);
     if (!record) {
       await store.deleteNotification(note.inquiryId);
-      continue;
+      return;
     }
-    attempted += 1;
+    if (Date.parse(record.deleteAt) <= now.getTime()) {
+      await purgeRecord(deps, store, record);
+      return;
+    }
     const updated = await attemptDelivery(deps, store, record);
     if (updated.status === "sent") sent += 1;
     else if (updated.status === "not_configured") notConfigured += 1;
     else pending += 1;
+  };
+  const selected = dueNotes.slice(0, deliveryLimit);
+  for (let offset = 0; offset < selected.length; offset += 5) {
+    // Bound provider concurrency and wait for all writes before advancing or
+    // reporting a failed page. A rejected write keeps the cursor unchanged.
+    const outcomes = await Promise.allSettled(selected.slice(offset, offset + 5).map(processNotification));
+    const failed = outcomes.find((outcome) => outcome.status === "rejected");
+    if (failed?.status === "rejected") throw failed.reason;
   }
-  return { due, sent, pending, notConfigured };
+  if (page && maintenance) await maintenance.commit("notifications", page.nextCursor);
+  return { due: dueNotes.length, sent, pending, notConfigured };
 }
