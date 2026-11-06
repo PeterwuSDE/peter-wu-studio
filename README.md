@@ -15,7 +15,7 @@ npm run dev
 npm run build
 ```
 
-Each page includes a visible email link to `northlinestudio425@gmail.com`. The contact page also lists what to include in an inquiry. There is no contact form.
+Each page includes a visible email link to `northlinestudio425@gmail.com`. The contact page also lists what to include in an inquiry. The SEO page also offers an optional follow-up form after a real free result.
 
 ## Homepage SEO check
 
@@ -47,7 +47,14 @@ Memory and `SEO_CHECK_STORE_PATH` remain available only for local development or
 
 Import `PeterwuSDE/peter-wu-studio` into Vercel and deploy the `main` branch.
 The checked-in `vercel.json` configures the framework preset as Other, builds
-with `npm run export:static`, and serves `dist/client`. The static pages build without environment variables; the scan API requires shared Redis REST credentials.
+with `npm test` (including the static export), and serves `dist/client`. The static pages still
+build with no environment variables.
+
+`POST /api/seo-inquiries` is a separate Node function. It saves a follow-up only
+when a private Vercel Blob store is connected, and it notifies Northline only
+when Resend credentials are set. With either missing, the API does not pretend
+that save or delivery succeeded. See `.env.example`. The form on `/seo` always
+shows `northlinestudio425@gmail.com` as the fallback. `createScanDirectory()` reads the server-side snapshot from the same shared Redis scan store; clients cannot supply their own URL or findings as proof.
 
 The production origin is [https://www.nlstudio.io](https://www.nlstudio.io).
 Canonical URLs, Open Graph and Twitter images, `robots.txt`, and `sitemap.xml`
@@ -64,3 +71,13 @@ publishes a short redirect to `https://www.nlstudio.io/` and does not upload
 the Vercel build. Disabling the `github.io` host completely is a repository
 setting (Settings → Pages → None). After that setting is turned off, delete
 the Pages workflow so later pushes do not try to deploy it.
+
+## Follow-up reliability and deployment checks
+
+The free check is visible before the optional contact form. To enable the complete flow, configure shared Redis scanning, a private Blob inquiry store, Resend delivery credentials, and `CRON_SECRET` for the authenticated daily GET cron. Never put these secrets into GitHub or a public Blob store. Missing Blob persistence returns an error rather than acknowledging an unsaved inquiry; unconfigured delivery is reported separately after the inquiry is saved.
+
+The retry route accepts authenticated GET for Vercel Cron and authenticated POST for manual operations. Inquiry creation/deletion remain POST-only. Blob maintenance reads bounded pages with persisted cursors instead of scanning every object during a new inquiry. Pending/failed/unconfigured notifications have their own queue, separate from sent receipts, so retained successful notifications cannot hide a failed lead. Each cron processes up to 25 retention candidates and up to 10 queued notification candidates, with at most 5 concurrent delivery attempts. Cursor progress is committed only after a page completes. The inquiry and retry functions have a 60-second platform limit; the provider request deadline remains 8 seconds. A slow, active submission owns its claim exclusively; concurrent replays do not overwrite or roll back that owner's data. A caught record write failure before publication can release its owned claim for retry. Once the notification publication write starts, an error may mean the write committed but its response was lost, so the service preserves the claim and any saved data rather than deleting an acknowledged lead. A genuine crash or incomplete uncertain publication can leave a reserved claim requiring manual reconciliation; the service does not assume it is abandoned. Verify the original outcome before issuing a new request ID.
+
+Run `npm test` for scan, UI, inquiry/pagination and static-site tests. Node's module-mocking flag in the inquiry script replaces only the external Blob SDK in its pagination integration test. Production code still uses the actual SDK. Also run a scoped TypeScript check for new server modules; the repository's existing Cloudflare worker typing limitations are separate from these changes.
+
+Retention cleanup is incremental: 90 days marks a record eligible for deletion, and physical cleanup progresses on the daily cron as its cursor advances. Monitor backlog and run additional authenticated maintenance calls when needed; this is not an exact-time deletion guarantee. Expired records are not acknowledged on replay or sent as notifications while awaiting cleanup. The new Blob notification layout uses separate pending/sent directories; existing flat-layout preview data, if any, needs an explicit migration before using that store with this version. No migration or deletion is run automatically.
